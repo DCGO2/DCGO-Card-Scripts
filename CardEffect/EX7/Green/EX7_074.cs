@@ -162,6 +162,7 @@ namespace DCGO.CardEffects.EX7
                     return (cardSource.ContainsTraits("Liberator") || cardSource.ContainsTraits("LIBERATOR")) &&
                            cardSource.HasPlayCost &&
                            cardSource.GetCostItself <= 4 &&
+                           !cardSource.IsDigiEgg &&
                            CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 
