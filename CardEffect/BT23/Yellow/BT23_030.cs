@@ -69,7 +69,7 @@ namespace DCGO.CardEffects.BT23
 
                 bool CanSelectHandCardCondition(CardSource cardSource)
                 {
-                    return cardSource.IsDigimon
+                    return (cardSource.IsDigimon || cardSource.IsTamer)
                         && cardSource.HasPlayCost && cardSource.BasePlayCostFromEntity <= 3
                         && (cardSource.ContainsCardName("Chuumon") || cardSource.ContainsCardName("Sukamon") || cardSource.HasCSTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
