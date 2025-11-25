@@ -134,6 +134,7 @@ namespace DCGO.CardEffects.EX9
                 {
                     return cardSource.HasPlayCost && cardSource.GetCostItself <= 5 &&
                            cardSource.EqualsTraits("DM") &&
+                           !cardSource.IsDigiEgg &&
                            CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 
