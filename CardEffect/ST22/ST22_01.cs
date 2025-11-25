@@ -4,7 +4,7 @@ using System.Collections.Generic;
 //Viximon
 namespace DCGO.CardEffects.ST22
 {
-    public class ST22_001 : CEntity_Effect
+    public class ST22_01 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
