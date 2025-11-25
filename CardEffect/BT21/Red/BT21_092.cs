@@ -237,6 +237,7 @@ namespace DCGO.CardEffects.BT21
                             if (cardSource.EqualsTraits("Xros Heart"))
                             {
                                 if (!cardSource.IsDigiEgg)
+                                {
                                     return true;
                                 }
                             }
