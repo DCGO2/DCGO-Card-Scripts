@@ -18,6 +18,7 @@ namespace DCGO.CardEffects.BT16
                 activateClass.SetIsInheritedEffect(true);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false,
                     EffectDiscription());
+                activateClass.SetHashString("Delete_BT16_001");
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
