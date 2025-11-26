@@ -16,7 +16,7 @@ namespace DCGO.CardEffects.BT16
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delete opponent's Digimon with 2000 DP or less.", CanUseCondition, card);
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false,
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false,
                     EffectDiscription());
                 activateClass.SetHashString("Delete_BT16_001");
                 cardEffects.Add(activateClass);
