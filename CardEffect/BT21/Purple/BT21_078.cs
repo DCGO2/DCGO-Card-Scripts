@@ -13,12 +13,18 @@ namespace DCGO.CardEffects.BT21
             #region Alternate Digivolution Requirement
             if (timing == EffectTiming.None)
             {
-                static bool PermanentCondition(Permanent targetPermanent)
+                bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return (targetPermanent.TopCard.EqualsTraits("ADVENTURE") || targetPermanent.TopCard.ContainsCardName("Garurumon")) && targetPermanent.TopCard.HasLevel && targetPermanent.TopCard.Level == 4;
+                    return targetPermanent.TopCard.IsLevel4 &&
+                           (targetPermanent.TopCard.HasGarurumonName || targetPermanent.TopCard.HasAdventureTraits);
                 }
 
-                cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
+                cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(
+                    permanentCondition: PermanentCondition,
+                    digivolutionCost: 3,
+                    ignoreDigivolutionRequirement: false,
+                    card: card,
+                    condition: null));
             }
             #endregion
 
