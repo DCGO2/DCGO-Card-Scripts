@@ -19,7 +19,7 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Reduce the digivolution cost by 1", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
                 activateClass.SetHashString("DigivolutionCost-1_P_117");
 
