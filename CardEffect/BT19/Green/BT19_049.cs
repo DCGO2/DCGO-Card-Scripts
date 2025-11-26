@@ -101,12 +101,7 @@ namespace DCGO.CardEffects.BT19
                 {
                     return "[When Attacking] [Once Per Turn] Suspend 1 of your opponent's Digimon.";
                 }
-
-                bool SelectOpponentDigimon(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
-                }
-
+               
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
@@ -116,7 +111,7 @@ namespace DCGO.CardEffects.BT19
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        return CardEffectCommons.HasMatchConditionOpponentsPermanent(card, SelectOpponentDigimon);
+                        return true;
                     }
 
                     return false;
