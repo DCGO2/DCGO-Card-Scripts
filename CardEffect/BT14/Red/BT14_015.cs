@@ -46,10 +46,7 @@ namespace DCGO.CardEffects.BT14
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                        {
-                            return true;
-                        }
+                         return true;
                     }
 
                     return false;
