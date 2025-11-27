@@ -59,7 +59,7 @@ namespace DCGO.CardEffects.ST22
                 {
                     bool CanSelectCardCondition(CardSource cardSource)
                     {
-                        return cardSource.EqualsTraits("Onmyōjutsu") || cardSource.EqualsTraits("Plug-In");
+                        return cardSource.IsOption && (cardSource.EqualsTraits("Onmyōjutsu") || cardSource.EqualsTraits("Plug-In"));
                     }
 
                     if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition))
