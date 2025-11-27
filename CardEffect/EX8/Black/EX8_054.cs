@@ -69,18 +69,21 @@ namespace DCGO.CardEffects.EX8
                     {
                         foreach (CardSource source in card.PermanentOfThisCard().DigivolutionCards)
                         {
-                            if (!source.ContainsCardName("Justimon"))
-                                continue;
+                            if (!cardSource.IsFlipped)
+                            {
+                                if (!source.ContainsCardName("Justimon"))
+                                    continue;
 
-                            List<ICardEffect> effects = source.EffectList(EffectTiming.OnEnterFieldAnyone)
-                            .Clone()
-                            .Filter(cardEffect => cardEffect != null && cardEffect is ActivateICardEffect && !cardEffect.IsSecurityEffect && cardEffect.IsWhenDigivolving);
+                                List<ICardEffect> effects = source.EffectList(EffectTiming.OnEnterFieldAnyone)
+                                .Clone()
+                                .Filter(cardEffect => cardEffect != null && cardEffect is ActivateICardEffect && !cardEffect.IsSecurityEffect && cardEffect.IsWhenDigivolving);
 
 
-                            if (effects.Count == 0)
-                                continue;
+                                if (effects.Count == 0)
+                                    continue;
 
-                            return true;
+                                return true;
+                            }
                         }
                     }
 
@@ -95,7 +98,7 @@ namespace DCGO.CardEffects.EX8
 
                         foreach (CardSource source in card.PermanentOfThisCard().DigivolutionCards)
                         {
-                            if (!source.ContainsCardName("Justimon"))
+                            if (!source.ContainsCardName("Justimon") && !Source.IsFlipped)
                                 continue;
 
                             List<ICardEffect> effects = source.EffectList_ForCard(EffectTiming.OnEnterFieldAnyone, card)
