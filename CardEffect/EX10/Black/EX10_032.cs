@@ -132,7 +132,7 @@ namespace DCGO.CardEffects.EX10
                                 yield return ContinuousController.instance.StartCoroutine(sunarizamon.AddDigivolutionCardsBottom(new List<CardSource>() { landramon }, activateClass));
                                 if (sunarizamon.DigivolutionCards.Contains(landramon))
                                 {
-                                    #region Digivolve into MarineBullmon
+                                    #region Digivolve into Proganomon
 
                                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                                         sunarizamon,
@@ -145,7 +145,8 @@ namespace DCGO.CardEffects.EX10
                                         activateClass: activateClass,
                                         successProcess: null,
                                         ignoreSelection: true,
-                                        failedProcess: FailureProcess()));
+                                        failedProcess: FailureProcess()
+                                        isOptional: false));
 
                                     #endregion
                                 }
