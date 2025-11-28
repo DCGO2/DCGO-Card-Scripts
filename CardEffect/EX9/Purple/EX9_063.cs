@@ -207,7 +207,7 @@ namespace DCGO.CardEffects.EX9
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.IsDigimon && cardSource.EqualsTraits("DM") && cardSource.BasePlayCostFromEntity <= 4;
+                    return cardSource.IsDigimon && cardSource.EqualsTraits("DM") && cardSource.getPlayCostItself <= 4;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
