@@ -162,7 +162,8 @@ namespace DCGO.CardEffects.BT22
                                         activateClass: activateClass,
                                         successProcess: null,
                                         ignoreSelection:true,
-                                        failedProcess:FailureProcess()));
+                                        failedProcess:FailureProcess(),
+                                        isOptional: false));
 
                                     #endregion
                                 }
