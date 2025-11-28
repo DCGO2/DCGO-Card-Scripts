@@ -145,7 +145,7 @@ namespace DCGO.CardEffects.P
                             {
                                 if (cardSource.Owner == card.Owner)
                                 {
-                                    return (cardSource.EqualsTraits("Free");
+                                    return cardSource.EqualsTraits("Free");
                                 }
                             }
 
