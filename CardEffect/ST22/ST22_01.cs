@@ -32,7 +32,7 @@ namespace DCGO.CardEffects.ST22
 
                 bool DigivolutionTarget(CardSource source)
                 {
-                    return (source.EqualsCardName("Kyubimon") || source.EqualsCardName("Taomon") || source.EqualsCardName("Sakuyamon")) &&
+                    return (source.ContainsCardName("Kyubimon") || source.ContainsCardName("Taomon") || source.ContainsCardName("Sakuyamon")) &&
                            source.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, true, activateClass);
                 }
 
