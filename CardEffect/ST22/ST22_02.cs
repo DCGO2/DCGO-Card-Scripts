@@ -13,7 +13,7 @@ namespace DCGO.CardEffects.ST22
             #region WM/OP Shared
             string EffectDiscriptionShared(string tag)
             {
-                return $"[{tag}] By trashing 1 card in your hand, you may return 1 card with the [Onmyōjutsu] or [Plug-In] trait from your trash to your hand.";
+                return $"[{tag}] By trashing 1 card in your hand, you may return 1 Option card with the [Onmyōjutsu] or [Plug-In] trait from your trash to your hand.";
             }
             bool CanActivateConditionShared(Hashtable hashtable)
             {
