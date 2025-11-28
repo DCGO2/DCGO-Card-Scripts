@@ -163,7 +163,7 @@ namespace DCGO.CardEffects.BT22
                                         successProcess: null,
                                         ignoreSelection:true,
                                         failedProcess:FailureProcess()
-                                        isOptional: false));
+                                        ,isOptional: false));
 
                                     #endregion
                                 }
