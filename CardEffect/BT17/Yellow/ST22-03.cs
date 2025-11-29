@@ -76,7 +76,7 @@ namespace DCGO.CardEffects.ST22
 			{
 				ActivateClass activateClass = new ActivateClass();
 				activateClass.SetUpICardEffect("Reveal the top 3 cards of deck, CanUseCondition, card);
-				activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, flase, EffectDiscriptionShared("When Moving"));
+				activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, false, EffectDiscriptionShared("When Moving"));
 				cardEffects.Add(activateClass);
 
 				bool PermanentCondition(Permanent permanent)
