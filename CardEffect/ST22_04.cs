@@ -287,41 +287,97 @@ namespace DCGO.CardEffects.ST22
                                 activateClass: activateClass,
                                 payCost: false,
                                 root: SelectCardEffect.Root.Hand));
-                            
-                            #endregion
                         }
+                        #endregion
                             
-                            if (!fromHand)
+                        if (!fromHand)
+                        {
+                            #region Select 1 Tamer
+                            if (selectedCards.Count >= 1)
                             {
-                                #region Play from Tamer
+                                if (card.Owner.GetBattleAreaPermanents().Count(CanSelectTamerCondition) >= 1)
+                                {
+                                    maxCount = 1;
 
-                                SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                                    if (card.Owner.GetBattleAreaPermanents().Count(CanSelectTamerCondition) < maxCount)
+                                    {
+                                        maxCount = card.Owner.GetBattleAreaPermanents().Count(CanSelectTamerCondition);
+                                    }
 
-                                selectCardEffect.SetUp(
-                                    canTargetCondition: IsYaoQinglanOrSangomon,
-                                    canTargetCondition_ByPreSelecetedList: null,
-                                    canEndSelectCondition: null,
-                                    canNoSelect: () => true,
-                                    selectCardCoroutine: SelectCardCoroutine,
-                                    afterSelectCardCoroutine: null,
-                                    message: "Select 1 card to add as source.",
-                                    maxCount: 1,
-                                    canEndNotMax: false,
-                                    isShowOpponent: true,
-                                    mode: SelectCardEffect.Mode.Custom,
-                                    root: SelectCardEffect.Root.Trash,
-                                    customRootCardList: null,
-                                    canLookReverseCard: true,
-                                    selectPlayer: card.Owner,
-                                    cardEffect: activateClass);
+                                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                                selectCardEffect.SetUpCustomMessage("Select 1 tamer.", "The opponent is selecting 1 tamer.");
+                                    selectPermanentEffect.SetUp(
+                                        selectPlayer: card.Owner,
+                                        canTargetCondition: CanSelectTamerCondition,
+                                        canTargetCondition_ByPreSelecetedList: null,
+                                        canEndSelectCondition: null,
+                                        maxCount: maxCount,
+                                        canNoSelect: true,
+                                        canEndNotMax: false,
+                                        selectPermanentCoroutine: SelectPermanentCoroutine,
+                                        afterSelectPermanentCoroutine: null,
+                                        mode: SelectPermanentEffect.Mode.Custom,
+                                        cardEffect: activateClass);
 
-                                yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-                                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Trash, true));
+                                    selectPermanentEffect.SetUpCustomMessage("Select a Tamer.", "The opponent is selecting a Tamer.");
 
-                                #endregion
+                                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                                    {
+                                        Permanent selectedPermanent = permanent;
+
+                                        if (selectedPermanent != null)
+                                        {
+                                            yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
+
+                                            placed = true;
+                                        }
+                                    }
+                                }
                             }
+                            #endregion
+                                
+                            #region Use from Tamer
+                            SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                            selectCardEffect.SetUp(
+                                canTargetCondition: CanSelectCardCondition,
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                canNoSelect: () => true,
+                                selectCardCoroutine: SelectCardCoroutine,
+                                afterSelectCardCoroutine: null,
+                                message: "Select 1 option to use.",
+                                maxCount: 1,
+                                canEndNotMax: false,
+                                isShowOpponent: true,
+                                mode: SelectCardEffect.Mode.Custom,
+                                root: SelectCardEffect.Root.Trash,
+                                customRootCardList: null,
+                                canLookReverseCard: true,
+                                selectPlayer: card.Owner,
+                                cardEffect: activateClass);
+
+                            selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
+
+                            yield return StartCoroutine(selectCardEffect.Activate());
+
+                            IEnumerator SelectCardCoroutine(CardSource cardSource)
+                            {
+                                selectedCards.Add(cardSource);
+
+                                yield return null;
+                            }
+
+                            yield return ContinuousController.instance.StartCoroutine(
+                                CardEffectCommons.PlayOptionCards(
+                                cardSources: selectedCards,
+                                activateClass: activateClass,
+                                payCost: false,
+                                root: SelectCardEffect.Root.Hand));
+                            }
+                            #endregion
                         }
                     }
                 #endregion
