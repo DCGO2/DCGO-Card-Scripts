@@ -315,13 +315,7 @@ namespace DCGO.CardEffects.BT17
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        if (card.Owner.Enemy.SecurityCards.Count >= 1)
-                        {
-                            if (Count() >= 1)
-                            {
-                                return true;
-                            }
-                        }
+                        return true;
                     }
 
                     return false;
