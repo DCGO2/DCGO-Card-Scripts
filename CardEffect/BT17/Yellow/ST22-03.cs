@@ -59,7 +59,7 @@ namespace DCGO.CardEffects.ST22
 						{
 						new SimplifiedSelectCardConditionClass(
 							canTargetCondition:CanSelectCardCondition,
-							message: "Select 1 Digimon card with [Renamon]/[Kyubimon]/[Taomon]/[Sakuyamon]/[Rina Nanoka] in its name or [Onmyōjutsu]/[Plug-In] in its traits.",
+							message: "Select 1 card with [Renamon]/[Kyubimon]/[Taomon]/[Sakuyamon]/[Rina Nanoka] in its name or the [Onmyōjutsu]/[Plug-In] trait.",
 							mode: SelectCardEffect.Mode.AddHand,
 							maxCount: 1,
 							selectCardCoroutine: null),
