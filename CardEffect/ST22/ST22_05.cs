@@ -11,13 +11,16 @@ namespace DCGO.CardEffects.ST22
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
+            #region Static Effects
+
             #region Alt Digivolution
 
             if (timing == EffectTiming.None)
             {
                 bool PermanentCondition(Permanent permanent)
                 {
-                     return permanent.TopCard.EqualsCardName("Sakuyamon: Maid Mode");
+                    return permanent.TopCard.HasLevel && permanent.TopCard.IsLevel6
+                        && permanent.TopCard.EqualsCardName("Sakuyamon: Maid Mode");
 
                 }
 
@@ -32,6 +35,16 @@ namespace DCGO.CardEffects.ST22
             {
                 cardEffects.Add(CardEffectFactory.BlastDigivolveEffect(card: card, condition: null));
             }
+            #endregion
+
+            #region Alliance
+
+            if (timing == EffectTiming.OnAllyAttack)
+            {
+                cardEffects.Add(CardEffectFactory.AllianceSelfEffect(isInheritedEffect: false, card: card, condition: null));
+            }
+
+            #endregion
 
             #endregion
 
