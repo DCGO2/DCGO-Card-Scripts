@@ -154,14 +154,17 @@ namespace DCGO.CardEffects.BT16
                 {
                     if (cardSource.HasPlayCost && cardSource.GetCostItself <= 5)
                     {
-                        if (cardSource.ContainsTraits("X Antibody") || cardSource.CardTraits.Contains("X-Antibody"))
+                        if (!cardSource.IsDigiEgg)
                         {
-                            return true;
-                        }
+                            if (cardSource.ContainsTraits("X Antibody") || cardSource.CardTraits.Contains("X-Antibody"))
+                            {
+                                return true;
+                            }
 
-                        if (cardSource.ContainsTraits("SoC"))
-                        {
-                            return true;
+                            if (cardSource.ContainsTraits("SoC"))
+                            {
+                                return true;
+                            }
                         }
                     }
 

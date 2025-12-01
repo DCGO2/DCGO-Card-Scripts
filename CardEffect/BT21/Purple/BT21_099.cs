@@ -271,6 +271,7 @@ namespace DCGO.CardEffects.BT21
                 {
                     return cardSource.HasSaveText &&
                            cardSource.HasPlayCost && cardSource.GetCostItself <= 5 &&
+                           !cardSource.IsDigiEgg &&
                            CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 

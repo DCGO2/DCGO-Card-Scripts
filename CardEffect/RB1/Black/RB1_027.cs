@@ -58,7 +58,7 @@ public class RB1_027 : CEntity_Effect
 
                     List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
                         {
-                            new SelectionElement<bool>(message: $"Securit Top", value : true, spriteIndex: 0),
+                            new SelectionElement<bool>(message: $"Security Top", value : true, spriteIndex: 0),
                             new SelectionElement<bool>(message: $"Security Bottom", value : false, spriteIndex: 1),
                         };
 

@@ -92,19 +92,19 @@ namespace DCGO.CardEffects.BT23
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnField(card)
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerWhenPermanentSuspends(hashtable, IsYourDigimon);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnField(card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
                 bool IsYourDigimon(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && permanent != permanent.TopCard.PermanentOfThisCard();
+                        && permanent != card.PermanentOfThisCard();
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
@@ -145,7 +145,7 @@ namespace DCGO.CardEffects.BT23
 
                         if (selectedPermament != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
                             targetPermanent: selectedPermament,
-                            changeValue: 2000,
+                            changeValue: -2000,
                             effectDuration: EffectDuration.UntilEachTurnEnd,
                             activateClass: activateClass));
                     }

@@ -248,7 +248,10 @@ namespace DCGO.CardEffects.BT21
                         {
                             if (cardSource.HasText("Gammamon"))
                             {
-                                return true;
+                                if (!cardSource.IsDigiEgg)
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }

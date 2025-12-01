@@ -172,7 +172,7 @@ namespace DCGO.CardEffects.BT21
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Suspend one tamer to gain Security Attack +1 and +3000 DP", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
                 activateClass.SetHashString("Suspend_BT21_045");
                 cardEffects.Add(activateClass);
 
