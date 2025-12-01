@@ -23,21 +23,16 @@ namespace DCGO.CardEffects.ST22
 
 			bool CanSelectCardCondition(CardSource cardSource)
 				{
-					if (cardSource.IsDigimon)
-					{
-						if (cardSource.ContainsCardName("Sakuyamon")
+					if (cardSource.ContainsCardName("Sakuyamon")
 							|| cardSource.ContainsCardName("Kyubimon")
 							|| cardSource.ContainsCardName("Taomon")
 							|| cardSource.ContainsCardName("Sakuyamon")
 							|| cardSource.ContainsCardName("Rika Nonaka")
 							|| cardSource.EqualsTraits("Onmyōjutsu")
 							|| cardSource.EqualsTraits("Plug-In"))
-						{
-							return true;
-						}
+					{
+						return true;
 					}
-
-					return false;
 				}
 
 				bool CanActivateConditionShared(Hashtable hashtable)
@@ -46,8 +41,6 @@ namespace DCGO.CardEffects.ST22
 					{
 						return true;
 					}
-
-					return false;
 				}
 
 				IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -75,14 +68,9 @@ namespace DCGO.CardEffects.ST22
 			if (timing == EffectTiming.OnMove)
 			{
 				ActivateClass activateClass = new ActivateClass();
-				activateClass.SetUpICardEffect("Reveal the top 3 cards of deck, CanUseCondition, card);
+				activateClass.SetUpICardEffect("Reveal the top 3 cards of deck", CanUseCondition, card);
 				activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, false, EffectDiscriptionShared("When Moving"));
 				cardEffects.Add(activateClass);
-
-				bool PermanentCondition(Permanent permanent)
-				{
-					return permanent == card.PermanentOfThisCard();
-				}
 
 				bool CanUseCondition(Hashtable hashtable)
 				{
@@ -100,11 +88,6 @@ namespace DCGO.CardEffects.ST22
 				activateClass.SetUpICardEffect("Reveal the top 3 cards of deck", CanUseCondition, card);
 				activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, false, EffectDiscriptionShared("When Digivolving"));
 				cardEffects.Add(activateClass);
-
-				string EffectDiscription()
-				{
-					return "[When Digivolving] Trash any 2 digivolution cards from your opponent's Digimon.";
-				}
 
 				bool CanUseCondition(Hashtable hashtable)
 				{
