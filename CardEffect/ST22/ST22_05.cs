@@ -26,6 +26,15 @@ namespace DCGO.CardEffects.ST22
 
             #endregion
 
+            #region Blast Digivolve
+
+            if (timing == EffectTiming.OnCounterTiming)
+            {
+                cardEffects.Add(CardEffectFactory.BlastDigivolveEffect(card: card, condition: null));
+            }
+
+            #endregion
+
             #region OP/WD/WA Shared
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
