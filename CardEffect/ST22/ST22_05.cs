@@ -19,8 +19,7 @@ namespace DCGO.CardEffects.ST22
             {
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return permanent.TopCard.HasLevel && permanent.TopCard.IsLevel6
-                        && permanent.TopCard.EqualsCardName("Sakuyamon: Maid Mode");
+                    return permanent.TopCard.EqualsCardName("Sakuyamon: Maid Mode");
 
                 }
 
