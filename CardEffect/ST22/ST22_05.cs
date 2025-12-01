@@ -76,7 +76,8 @@ namespace DCGO.CardEffects.ST22
                 bool SelectSourceCard(CardSource source)
                 {
                     return source.IsOption
-                        && (source.EqualsTraits("Onmyōjutsu") || source.EqualsTraits("Plug-In"));
+                        && (source.EqualsTraits("Onmyōjutsu") || source.EqualsTraits("Plug-In"))
+                        && CardEffectCommons.CanTriggerOptionMainEffect(hashtable, source);
                 }
 
                 bool CanSelectPermanent(Permanent permanent)
