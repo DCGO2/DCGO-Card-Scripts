@@ -102,7 +102,7 @@ namespace DCGO.CardEffects.ST22
 
 						yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
 							targetPermanent: selectedPermanent,
-							changeValue: -6000,
+							changeValue: -3000,
 							effectDuration: EffectDuration.UntilOpponentTurnEnd,
 							activateClass: activateClass));
 					}
@@ -200,18 +200,14 @@ namespace DCGO.CardEffects.ST22
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        if (card.Owner.HandCards.Count >= 1)
+                        if (CardEffectCommons.HasMatchConditionOwnersHand(CanSelectCardCondition))
                         {
                             return true;
                         }
                         
-                        if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaTamer(permanent, card))
+                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectTamerCondition))
                         {
-                            totalSourceCount = permanent.DigivolutionCards.Count(CanSelectCardCondition);
-                            if (totalSourceCount >= 1)
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
 
@@ -220,10 +216,10 @@ namespace DCGO.CardEffects.ST22
                 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
-                    bool canSelectTamer = CardEffectCommons.HasMatchConditionPermanent(card, CanSelectTamerCondition);
+                    bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(CanSelectCardCondition);
+                    bool canSelectTamer = CardEffectCommons.HasMatchConditionPermanent(CanSelectTamerCondition);
                     
-                     if (canSelectHand || canSelectTamer)
+                    if (canSelectHand || canSelectTamer)
                     {
                         #region Option Selection
 
@@ -293,18 +289,9 @@ namespace DCGO.CardEffects.ST22
                         if (!fromHand)
                         {
                             #region Select 1 Tamer
-                            if (selectedCards.Count >= 1)
-                            {
-                                if (card.Owner.GetBattleAreaPermanents().Count(CanSelectTamerCondition) >= 1)
-                                {
-                                    maxCount = 1;
-
-                                    if (card.Owner.GetBattleAreaPermanents().Count(CanSelectTamerCondition) < maxCount)
-                                    {
-                                        maxCount = card.Owner.GetBattleAreaPermanents().Count(CanSelectTamerCondition);
-                                    }
-
-                                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+							Permanent selectedPermanent = null;
+							
+							SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                                     selectPermanentEffect.SetUp(
                                         selectPlayer: card.Owner,
@@ -325,61 +312,57 @@ namespace DCGO.CardEffects.ST22
 
                                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                                     {
-                                        Permanent selectedPermanent = permanent;
-
-                                        if (selectedPermanent != null)
-                                        {
-                                            yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
-
-                                            placed = true;
-                                        }
+                                        selectedPermanent = permanent;
+										yield return null;
                                     }
-                                }
-                            }
-                            #endregion
-                                
-                            #region Use from Tamer
-                            SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+							#endregion
 
-                            selectCardEffect.SetUp(
-                                canTargetCondition: CanSelectCardCondition,
-                                canTargetCondition_ByPreSelecetedList: null,
-                                canEndSelectCondition: null,
-                                canNoSelect: () => true,
-                                selectCardCoroutine: SelectCardCoroutine,
-                                afterSelectCardCoroutine: null,
-                                message: "Select 1 option to use.",
-                                maxCount: 1,
-                                canEndNotMax: false,
-                                isShowOpponent: true,
-                                mode: SelectCardEffect.Mode.Custom,
-                                root: SelectCardEffect.Root.Trash,
-                                customRootCardList: null,
-                                canLookReverseCard: true,
-                                selectPlayer: card.Owner,
-                                cardEffect: activateClass);
-
-                            selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
-
-                            yield return StartCoroutine(selectCardEffect.Activate());
-
-                            IEnumerator SelectCardCoroutine(CardSource cardSource)
-                            {
-                                selectedCards.Add(cardSource);
-
-                                yield return null;
-                            }
-
-                            yield return ContinuousController.instance.StartCoroutine(
-                                CardEffectCommons.PlayOptionCards(
-                                cardSources: selectedCards,
-                                activateClass: activateClass,
-                                payCost: false,
-                                root: SelectCardEffect.Root.Hand));
-                            }
+							#region Use from Tamer
+							if(selectedPermanent != null)
+							{		
+								List<CardSource> selectedCards = new list<CardSource>();
+	                            SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+	
+	                            selectCardEffect.SetUp(
+	                                canTargetCondition: CanSelectCardCondition,
+	                                canTargetCondition_ByPreSelecetedList: null,
+	                                canEndSelectCondition: null,
+	                                canNoSelect: () => true,
+	                                selectCardCoroutine: SelectCardCoroutine,
+	                                afterSelectCardCoroutine: null,
+	                                message: "Select 1 option to use.",
+	                                maxCount: 1,
+	                                canEndNotMax: false,
+	                                isShowOpponent: true,
+	                                mode: SelectCardEffect.Mode.Custom,
+	                                root: SelectCardEffect.Root.Custm,
+	                                customRootCardList: selectedPermanent.DigivolutionCards,
+	                                canLookReverseCard: true,
+	                                selectPlayer: card.Owner,
+	                                cardEffect: activateClass);
+	
+	                            selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
+	
+	                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+	
+	                            IEnumerator SelectCardCoroutine(CardSource cardSource)
+	                            {
+	                                selectedCards.Add(cardSource);
+	
+	                                yield return null;
+	                            }
+	
+	                            yield return ContinuousController.instance.StartCoroutine(
+	                                CardEffectCommons.PlayOptionCards(
+	                                cardSources: selectedCards,
+	                                activateClass: activateClass,
+	                                payCost: false,
+	                                root: SelectCardEffect.Root.Hand));
+							}
                             #endregion
                         }
                     }
+				}
                 #endregion
                 
                 #Inherit EoA
