@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+// Taomon
 namespace DCGO.CardEffects.ST22
 {
 	public class ST22_04 : CEntity_Effect
@@ -406,30 +407,29 @@ namespace DCGO.CardEffects.ST22
                             destroySecurityCount: 1,
                             cardEffect: activateClass,
                             fromTop: true).DestroySecurity());
+                                                
+                        	if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+	                        {
+	                            int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+	
+	                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+	
+	                            selectPermanentEffect.SetUp(
+	                                selectPlayer: card.Owner,
+	                                canTargetCondition: CanSelectPermanentCondition,
+	                                canTargetCondition_ByPreSelecetedList: null,
+	                                canEndSelectCondition: null,
+	                                maxCount: maxCount,
+	                                canNoSelect: false,
+	                                canEndNotMax: false,
+	                                selectPermanentCoroutine: null,
+	                                afterSelectPermanentCoroutine: null,
+	                                mode: SelectPermanentEffect.Mode.UnTap,
+	                                cardEffect: activateClass);
+	
+	                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());                
+	                        }
                         }
-                        
-                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                        {
-                            int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
-
-                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                            selectPermanentEffect.SetUp(
-                                selectPlayer: card.Owner,
-                                canTargetCondition: CanSelectPermanentCondition,
-                                canTargetCondition_ByPreSelecetedList: null,
-                                canEndSelectCondition: null,
-                                maxCount: maxCount,
-                                canNoSelect: false,
-                                canEndNotMax: false,
-                                selectPermanentCoroutine: null,
-                                afterSelectPermanentCoroutine: null,
-                                mode: SelectPermanentEffect.Mode.UnTap,
-                                cardEffect: activateClass);
-
-                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());                
-                        }
-                        
                     }
                 }
                 #endregion
