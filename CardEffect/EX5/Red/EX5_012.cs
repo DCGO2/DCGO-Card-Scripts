@@ -21,7 +21,7 @@ public class EX5_012 : CEntity_Effect
                         return true;
                     }
 
-                    if (targetPermanent.TopCard.CardTraits.Contains("LightFung"))
+                    if (targetPermanent.TopCard.CardTraits.Contains("LightFang"))
                     {
                         return true;
                     }
@@ -60,7 +60,7 @@ public class EX5_012 : CEntity_Effect
                             return true;
                         }
 
-                        if (permanent.TopCard.CardTraits.Contains("LightFung"))
+                        if (permanent.TopCard.CardTraits.Contains("LightFang"))
                         {
                             return true;
                         }
@@ -161,7 +161,7 @@ public class EX5_012 : CEntity_Effect
                             return true;
                         }
 
-                        if (permanent.TopCard.CardTraits.Contains("LightFung"))
+                        if (permanent.TopCard.CardTraits.Contains("LightFang"))
                         {
                             return true;
                         }

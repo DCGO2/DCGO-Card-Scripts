@@ -41,7 +41,10 @@ namespace DCGO.CardEffects.BT20
                     {                    
                         if (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, PermanentCondition))
                         {
-                            return true;
+                            if (CardEffectCommons.IsOwnerTurn(card))
+                            {
+                                return true;
+                            }
                         }
                     }                    
                     return false;

@@ -45,13 +45,6 @@ namespace DCGO.CardEffects.BT12
                         {
                             return true;
                         }
-                        else
-                        {
-                            if (card.Owner.LibraryCards.Count >= 1)
-                            {
-                                return true;
-                            }
-                        }
                     }
 
                     return false;

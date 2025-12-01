@@ -307,7 +307,7 @@ namespace DCGO.CardEffects.BT23
 
             #endregion
 
-            #region AT/ESS Shared
+            #region YT/ESS Shared
 
             IEnumerator SharedActivateCoroutine1(Hashtable hashtable, ActivateClass activateClass)
             {
@@ -332,18 +332,18 @@ namespace DCGO.CardEffects.BT23
                     canNotBeDestroyedByBattleCondition: CanNotBeDestroyedByBattleCondition,
                     effectDuration: EffectDuration.UntilOpponentTurnEnd,
                     activateClass: activateClass,
-                    effectName: "Can't be desstroyed by battle"));
+                    effectName: "Can't be destroyed by battle"));
             }
 
             #endregion
 
-            #region All Turns - OPT
+            #region Your Turns - OPT
 
             if (timing == EffectTiming.WhenLinked)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Gain immunity from battle", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine1(hash, activateClass), 1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine1(hashtable, activateClass), 1, false, EffectDiscription());
                 activateClass.SetHashString("BT23_021_WL");
                 cardEffects.Add(activateClass);
 
@@ -355,7 +355,8 @@ namespace DCGO.CardEffects.BT23
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerWhenLinked(hashtable, perm => perm == card.PermanentOfThisCard(), null);
+                        && CardEffectCommons.CanTriggerWhenLinked(hashtable, permanent => permanent == card.PermanentOfThisCard(), null)
+                        && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
