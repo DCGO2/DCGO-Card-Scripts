@@ -44,14 +44,15 @@ namespace DCGO.CardEffects.BT24
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card) 
-                        && CardEffectCommons.IsOwnerTurn(card)
-                        && card.Owner.LibraryCards.Count >= 1
-                        && card.Owner.HandCards.Count >= 1;
+                        && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                    if (card.Owner.LibraryCards.Count >= 1) 
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                    }
 
                     if (card.Owner.HandCards.Count >= 1)
                     {
