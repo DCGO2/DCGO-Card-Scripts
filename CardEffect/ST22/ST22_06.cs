@@ -345,9 +345,13 @@ namespace DCGO.CardEffects.ST22
                     }
                 }
 
-                #endregion
 
-                return cardEffects;
+
+
             }
+            #endregion
+
+            return cardEffects;
         }
     }
+}
