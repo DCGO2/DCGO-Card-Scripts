@@ -19,7 +19,8 @@ DCGO-Card-Scripts is a collection of scripts and card effect definitions for the
    ```powershell
    git clone https://github.com/DCGO2/DCGO-Card-Scripts.git
    ```
-2. Open the project in your preferred C# IDE.
+2. Open the project in your preferred C# IDE along with Unity Editor. *Requires Unity and .NET SDK installed*
+
 
 ## Contributing
 
@@ -33,11 +34,6 @@ Join our community on Discord for discussions, support, and updates: [Discord In
 
 - **Card Effect**: A script or function that defines the behavior or special abilities of a card during gameplay.
 - **Set**: A collection of cards released together, organized in folders such as BT1, EX1, ST1, etc.
-- **Script**: A C# file that implements game logic, card interactions, or utility functions.
-- **Meta File**: Unity-specific file (.meta) that stores metadata about assets and scripts.
-- **Controller**: A script that manages the state, behavior, or interactions of cards and game objects.
-- **Factory**: A design pattern used to create card effects or other objects dynamically based on type or configuration.
-- **Commons**: Shared logic or utilities used across multiple scripts or card effects.
 
 ## Additional Notes
 
