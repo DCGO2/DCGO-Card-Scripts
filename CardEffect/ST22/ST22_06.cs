@@ -35,8 +35,8 @@ namespace DCGO.CardEffects.ST22
                 bool SelectSourceCard(CardSource source)
                 {
                     return source.IsOption
-                        && (source.EqualsTraits("Onmyōjutsu") || source.EqualsTraits("Plug-In"))
-                        &&  if (!cardSource.CanNotPlayThisOption) ;
+                        && !source.CanNotPlayThisOption
+                        && (source.EqualsTraits("Onmyōjutsu") || source.EqualsTraits("Plug-In"));
                 }
 
                 bool CanSelectPermanent(Permanent permanent)
