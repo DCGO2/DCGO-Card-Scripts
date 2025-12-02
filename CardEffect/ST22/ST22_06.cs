@@ -11,8 +11,6 @@ namespace DCGO.CardEffects.ST22
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-            #region Static Effects
-
             #region Alt Digivolution
 
             if (timing == EffectTiming.None)
@@ -25,8 +23,6 @@ namespace DCGO.CardEffects.ST22
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(PermanentCondition, 1, true, card, null));
             }
-
-            #endregion
 
             #endregion
 
@@ -178,19 +174,21 @@ namespace DCGO.CardEffects.ST22
 
                 #endregion
             }
+
+            #endregion
+
             #region On Play - OPT
 
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("You may then 1 [Pipe Fox] Token, then you may use 1 [Onmyōjutsu] or [Plug-In] trait in hand or under a tamer", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, true, EffectDiscription());
-                activateClass.SetHashString("ST22-005");
+                activateClass.SetUpICardEffect("You may use 1 [Onmyōjutsu] or [Plug-In] trait in hand or under a tamer", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                 {
-                    return "[On Play] [Once Per Turn] You may play 1 [Pipe Fox] Token. Then, you may use 1 Option card with the [Onmyōjutsu] or [Plug-In] trait from your hand or under your Tamers without paying the cost.";
+                    return "[On Play] You may use 1 Option card with the [Onmyōjutsu] or [Plug-In] trait from your hand or under your Tamers without paying the cost.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -212,14 +210,13 @@ namespace DCGO.CardEffects.ST22
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("You may then 1 [Pipe Fox] Token, then you may use 1 [Onmyōjutsu] or [Plug-In] trait in hand or under a tamer", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, true, EffectDiscription());
-                activateClass.SetHashString("ST22-005");
+                activateClass.SetUpICardEffect("You may use 1 [Onmyōjutsu] or [Plug-In] trait in hand or under a tamer", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                 {
-                    return "[When Digivolving] [Once Per Turn] You may play 1 [Pipe Fox] Token. Then, you may use 1 Option card with the [Onmyōjutsu] or [Plug-In] trait from your hand or under your Tamers without paying the cost.";
+                    return "[When Digivolving] You may use 1 Option card with the [Onmyōjutsu] or [Plug-In] trait from your hand or under your Tamers without paying the cost.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -236,42 +233,12 @@ namespace DCGO.CardEffects.ST22
 
             #endregion
 
-            #region When Attacking - OPT
-
-            if (timing == EffectTiming.OnAllyAttack)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("You may then 1 [Pipe Fox] Token, then you may use 1 [Onmyōjutsu] or [Plug-In] trait in hand or under a tamer", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, true, EffectDiscription());
-                activateClass.SetHashString("ST22-005");
-                cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[When Attacking] [Once Per Turn] You may play 1 [Pipe Fox] Token. Then, you may use 1 Option card with the [Onmyōjutsu] or [Plug-In] trait from your hand or under your Tamers without paying the cost.";
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerOnAttack(hashtable, card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-            }
-
-            #endregion
-
             #region On Lose Security / On Use Option - OPT
 
-            if (timing == EffectTiming.OnLoseSecurity || EffectTiming.OnUseOption)
+            if (timing == EffectTiming.OnLoseSecurity || timing == EffectTiming.OnUseOption)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(
-                    "By placing 1 Digimon in Security, trash top Security", CanUseCondition, card);
+                activateClass.SetUpICardEffect("By placing 1 Digimon in Security, trash top Security", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetHashString("ST22-06_AT");
                 cardEffects.Add(activateClass);
@@ -290,6 +257,7 @@ namespace DCGO.CardEffects.ST22
                     {
                         return true;
                     }
+                    return false;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -299,6 +267,7 @@ namespace DCGO.CardEffects.ST22
                     {
                         return true;
                     }
+                    return false;
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
@@ -307,15 +276,16 @@ namespace DCGO.CardEffects.ST22
                     {
                         if (permanent.IsDigimon)
                         {
-                            if (!permanent.TopCard.CanNotBeAffected)
+                            if (!permanent.TopCard.CanNotBeAffected(activateClass))
                             {
-                                if(CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy));
+                                if (CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy)) ;
                                 {
                                     return true;
                                 }
                             }
                         }
                     }
+                    return false;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -351,11 +321,16 @@ namespace DCGO.CardEffects.ST22
 
                         if (selectedPermanent != null)
                         {
+                            yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
+                                permanent: selectedPermanent,
+                                hashtable: hashtable,
+                                toTop: false).PutSecurity());
+                                
                             yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
-                        player: card.Owner.Enemy,
-                        destroySecurityCount: 1,
-                        cardEffect: activateClass,
-                        fromTop: true).DestroySecurity());
+                                player: card.Owner.Enemy,
+                                destroySecurityCount: 1,
+                                cardEffect: activateClass,
+                                fromTop: true).DestroySecurity());
                         }
                     }
                 }
@@ -363,9 +338,9 @@ namespace DCGO.CardEffects.ST22
 
             #endregion
 
+            #endregion
+
             return cardEffects;
         }
-
-        #endregion
     }
 }
