@@ -321,24 +321,33 @@ namespace DCGO.CardEffects.ST22
 
                         if (selectedPermanent != null)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
+                            if (selectedPermanent.TopCard.Owner.CanAddSecurity(activateClass))
+                            {
+                                CardSource topCard = selectedPermanent.TopCard;
+
+                                // TODO: Replace this and if below with a PlaceInSecurityProcessFromResult - P-187 Mastemon
+                                yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
                                 permanent: selectedPermanent,
                                 hashtable: hashtable,
                                 toTop: false).PutSecurity());
 
-                            yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
-                                player: card.Owner.Enemy,
-                                destroySecurityCount: 1,
-                                cardEffect: activateClass,
-                                fromTop: true).DestroySecurity());
+                                if (topCard.Owner.SecurityCards.Contains(topCard) || topCard.IsToken)
+                                {
+
+                                    yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
+                                        player: card.Owner.Enemy,
+                                        destroySecurityCount: 1,
+                                        cardEffect: activateClass,
+                                        fromTop: true).DestroySecurity());
+                                }
+                            }
                         }
                     }
                 }
+
+                #endregion
+
+                return cardEffects;
             }
-
-            #endregion
-
-            return cardEffects;
         }
     }
-}
