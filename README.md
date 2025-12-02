@@ -28,7 +28,7 @@ Contributions are welcome! Please submit issues or pull requests for bug fixes, 
 
 ## Discord Link
 
-Join our community on Discord for discussions, support, and updates: [Discord Invite Link](https://discord.gg/EcjZaD4jhs)
+Join our community on [Discord](https://discord.gg/EcjZaD4jhs) for discussions, support, and updates
 
 ## Glossary
 
