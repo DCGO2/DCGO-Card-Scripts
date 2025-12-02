@@ -325,7 +325,7 @@ namespace DCGO.CardEffects.ST22
                                 permanent: selectedPermanent,
                                 hashtable: hashtable,
                                 toTop: false).PutSecurity());
-                                
+
                             yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
                                 player: card.Owner.Enemy,
                                 destroySecurityCount: 1,
@@ -335,8 +335,6 @@ namespace DCGO.CardEffects.ST22
                     }
                 }
             }
-
-            #endregion
 
             #endregion
 
