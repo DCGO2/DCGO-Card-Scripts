@@ -50,7 +50,7 @@ namespace DCGO.CardEffects.ST22
 
                 if (canSelectHand || canSelectTamer)
                 {
-                    if (canSelectHand && canSelectTamer && useOption)
+                    if (canSelectHand && canSelectTamer)
                     {
                         List<SelectionElement<bool>> selectionElements2 = new List<SelectionElement<bool>>()
                     {
