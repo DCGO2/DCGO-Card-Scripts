@@ -1,6 +1,6 @@
 # DCGO-Card-Scripts
 
-DCGO-Card-Scripts is a collection of scripts and card effect definitions for the DCGO card game. This repository organizes card effects, game logic, and supporting scripts to facilitate the development and management of card sets and gameplay mechanics.
+DCGO-Card-Scripts is a collection of scripts and card effect definitions for the Digimon Trading Card Game. This repository organizes card effects, game logic, and supporting scripts to facilitate the development and management of card sets and gameplay mechanics.
 
 ## Project Structure
 
@@ -20,12 +20,14 @@ DCGO-Card-Scripts is a collection of scripts and card effect definitions for the
    git clone https://github.com/DCGO2/DCGO-Card-Scripts.git
    ```
 2. Open the project in your preferred C# IDE.
-3. Ensure you have the required dependencies and game engine Unity.
-4. Build and run the project to test card scripts and effects.
 
 ## Contributing
 
 Contributions are welcome! Please submit issues or pull requests for bug fixes, new features, or card effect scripts.
+
+## Discord Link
+
+Join our community on Discord for discussions, support, and updates: [Discord Invite Link](https://discord.gg/EcjZaD4jhs)
 
 ## Glossary
 
