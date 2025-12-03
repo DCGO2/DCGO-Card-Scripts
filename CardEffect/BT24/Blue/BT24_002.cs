@@ -25,7 +25,7 @@ namespace DCGO.CardEffects.BT24
                 string EffectDescription()
                 {
                     return
-                        "[End of Your Turn] [Once Per Turn] By paying 1 cost, this blue Digimon with the [TS] train unsuspends.";
+                        "[End of Your Turn] [Once Per Turn] By paying 1 cost, this blue Digimon with the [TS] trait unsuspends.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -37,17 +37,17 @@ namespace DCGO.CardEffects.BT24
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.IsOwnerTurn(card)
-                        && permanent.TopCard.CardColors.Contains(CardColor.Blue)
-                        && CardEffectCommons.CanUnsuspend(card.PermanentOfThisCard())
-                        && permanent.TopCard.CardTraits.Contains("TS");
+                        && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(-1, activateClass));
 
-                    if (card.PermanentOfThisCard().CanActivateCondition()) {
+                    if (card.PermanentOfThisCard().CanActivateCondition()
+                        && permanent.TopCard.CardColors.Contains(CardColor.Blue)
+                        && CardEffectCommons.CanUnsuspend(card.PermanentOfThisCard())
+                        && permanent.TopCard.ContainsTrait("TS")) {
                         yield return ContinuousController.instance.StartCoroutine(new IUnsuspendPermanents(new List<Permanent> { card.PermanentOfThisCard() }, activateClass).Unsuspend());
                     }                
                 }
