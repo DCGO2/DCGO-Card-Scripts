@@ -32,9 +32,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool HasARequiredTrait(CardSource cardSource)
                 {
-                    return (cardSource.ContainsTraits("Reptile") 
-                        || cardSource.ContainsTraits("Dragonkin") 
-                        || cardSource.ContainsTraits("LIBERATOR"));
+                    return (cardSource.EqualsTraits("Reptile") 
+                        || cardSource.EqualsTraits("Dragonkin") 
+                        || cardSource.EqualsTraits("LIBERATOR"));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
