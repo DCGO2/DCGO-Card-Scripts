@@ -73,7 +73,7 @@ namespace DCGO.CardEffects.BT21
 
                 string EffectDescription()
                 {
-                    return "[Your Turn] When one of your [Galacticmon] attacks, <Delay>.\n• Delete 1 of your opponent's Digimon with the lowest play cost. If this effect didn't delete, trash the top cards of your opponent's security stack so that is has 1 card left.";
+                    return "[Your Turn] When one of your [Galacticmon] attacks, <Delay>.\nâ€¢ Delete 1 of your opponent's Digimon with the lowest play cost. If this effect didn't delete, trash the top cards of your opponent's security stack so that is has 1 card left.";
                 }
 
                 bool PermanentCondition(Permanent permanent)
@@ -222,6 +222,7 @@ namespace DCGO.CardEffects.BT21
                     return (cardSource.HasText("Vemmon")) &&
                            cardSource.HasPlayCost &&
                            cardSource.GetCostItself <= 6 &&
+                           !cardSource.IsDigiEgg &&
                            CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 

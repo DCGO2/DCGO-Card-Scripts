@@ -209,7 +209,7 @@ namespace DCGO.CardEffects.EX9
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(
-                    "By trashing the top card of your security stack, prevent one Digimon from leaving the battle area",
+                    "By trashing the top card of your security stack, prevent Digimon from leaving the battle area",
                     CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true,
                     EffectDescription());

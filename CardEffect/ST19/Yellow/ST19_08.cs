@@ -38,6 +38,7 @@ namespace DCGO.CardEffects.ST19
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return (cardSource.ContainsTraits("Liberator") || cardSource.ContainsTraits("LIBERATOR")) &&
+                            !cardSource.IsDigiEgg &&
                            cardSource.HasPlayCost && cardSource.GetCostItself <= 4;
                 }
 
