@@ -58,6 +58,11 @@ namespace DCGO.CardEffects.BT24
                     return "[On Deletion] <De-Digivolve 1> 1 of your opponent's Digimon.";
                 }
 
+                bool SelectableOpponentsDigimon(Permanent permanent)
+                {
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
+                }
+
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.CanTriggerOnDeletion(hashtable, card);
