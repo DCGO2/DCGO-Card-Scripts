@@ -20,11 +20,21 @@ namespace DCGO.CardEffects.P
                 ignoreColorConditionClass.SetUpIgnoreColorConditionClass(cardCondition: CardCondition);
                 cardEffects.Add(ignoreColorConditionClass);
 
+                bool HasThreeMusketeersTrait(Permanent permanent)
+                {
+                    return permanent.IsDigimon &&
+                           permanent.TopCard.ContainsTraits("Three Musketeers");
+                }
+
                 bool CanUseCondition(Hashtable hashtable)
-                    => CardEffectCommons.HasMatchConditionPermanent((permanent) => permanent.IsDigimon && permanent.TopCard.HasThreeMusketeersTraits, true);
+                {
+                    return CardEffectCommons.HasMatchConditionOwnersPermanent(card, HasThreeMusketeersTrait);
+                }
 
                 bool CardCondition(CardSource cardSource)
-                    => cardSource == card;
+                {
+                    return cardSource == card;
+                }
             }
 
             #endregion

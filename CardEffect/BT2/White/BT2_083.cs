@@ -82,7 +82,7 @@ public class BT2_083 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[On Deletion] If this card had digivolution cardsCou may play this card from your trash without paying its memory cost.";
+                return "[On Deletion] If this card had digivolution cards, You may play this card from your trash without paying its memory cost.";
             }
 
             bool CanUseCondition(Hashtable hashtable)
