@@ -56,12 +56,27 @@ namespace DCGO.CardEffects.EX5
                     {
                         if (permanent.DigivolutionCards.Count >= 3)
                         {
-                            if (permanent.TopCard.HasLightFangOrNightClawTraits)
+                            if (permanent.TopCard.CardTraits.Contains("Light Fang"))
                             {
                                 return true;
                             }
 
-                            if (permanent.TopCard.HasGalaxyTraits)
+                            if (permanent.TopCard.CardTraits.Contains("LightFang"))
+                            {
+                                return true;
+                            }
+
+                            if (permanent.TopCard.CardTraits.Contains("Night Claw"))
+                            {
+                                return true;
+                            }
+
+                            if (permanent.TopCard.CardTraits.Contains("NightClaw"))
+                            {
+                                return true;
+                            }
+
+                            if (permanent.TopCard.CardTraits.Contains("Galaxy"))
                             {
                                 return true;
                             }
@@ -141,13 +156,28 @@ namespace DCGO.CardEffects.EX5
                     if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
                     {
                         if (permanent.DigivolutionCards.Count >= 3)
-                        {
-                            if (permanent.TopCard.HasLightFangOrNightClawTraits)
+                            {
+                                if (permanent.TopCard.CardTraits.Contains("Light Fang"))
                             {
                                 return true;
                             }
 
-                            if (permanent.TopCard.HasGalaxyTraits)
+                            if (permanent.TopCard.CardTraits.Contains("LightFang"))
+                            {
+                                return true;
+                            }
+
+                            if (permanent.TopCard.CardTraits.Contains("Night Claw"))
+                            {
+                                return true;
+                            }
+
+                            if (permanent.TopCard.CardTraits.Contains("NightClaw"))
+                            {
+                                return true;
+                            }
+
+                            if (permanent.TopCard.CardTraits.Contains("Galaxy"))
                             {
                                 return true;
                             }

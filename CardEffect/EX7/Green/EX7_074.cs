@@ -142,7 +142,7 @@ namespace DCGO.CardEffects.EX7
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect($"Play 1 [LIBERATOR] trait card from hand or trash and add this card to hand",
                     CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, true, EffectDescription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
                 activateClass.SetIsSecurityEffect(true);
                 cardEffects.Add(activateClass);
 
@@ -162,6 +162,7 @@ namespace DCGO.CardEffects.EX7
                     return (cardSource.ContainsTraits("Liberator") || cardSource.ContainsTraits("LIBERATOR")) &&
                            cardSource.HasPlayCost &&
                            cardSource.GetCostItself <= 4 &&
+                           !cardSource.IsDigiEgg &&
                            CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 

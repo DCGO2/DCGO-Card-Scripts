@@ -11,6 +11,30 @@ public class BT4_031 : CEntity_Effect
     {
         List<ICardEffect> cardEffects = new List<ICardEffect>();
 
+         if (timing == EffectTiming.None)
+        {
+            ChangeCardNamesClass changeCardNamesClass = new ChangeCardNamesClass();
+            changeCardNamesClass.SetUpICardEffect("Also treated as having [Kimeramon] in its name", CanUseCondition, card);
+            changeCardNamesClass.SetUpChangeCardNamesClass(changeCardNames: changeCardNames);
+
+            cardEffects.Add(changeCardNamesClass);
+
+            bool CanUseCondition(Hashtable hashtable)
+            {
+                return true;
+            }
+
+            List<string> changeCardNames(CardSource cardSource, List<string> CardNames)
+            {
+                if (cardSource == card)
+                {
+                    CardNames.Add("Kimeramon_BT4_031");
+                }
+
+                return CardNames;
+            }
+        }
+        
         if (timing == EffectTiming.OnEnterFieldAnyone)
         {
             ActivateClass activateClass = new ActivateClass();

@@ -140,14 +140,14 @@ namespace DCGO.CardEffects.EX10
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && HasLinkedCards(card.PermanentOfThisCard().TopCard.PermanentOfThisCard())
-                        && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CardCondition);
+                        && HasLinkedCards(card.PermanentOfThisCard().TopCard.PermanentOfThisCard());
                 }
 
                 bool CardCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon
-                        && cardSource.HasAppmonTraits;
+                        && cardSource.HasAppmonTraits
+                        && cardSource != null;
                 }
 
                 bool HasLinkedCards(Permanent permanent)

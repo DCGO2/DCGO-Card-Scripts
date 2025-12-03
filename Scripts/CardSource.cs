@@ -3412,6 +3412,18 @@ public class CardSource : MonoBehaviour
 
     #endregion
 
+    #region whether this card has "Iliad" trait
+
+    public bool HasIliadTraits
+    {
+        get
+        {
+            return EqualsTraits("Iliad");
+        }
+    }
+
+    #endregion
+
     #region whether this card has "Unidentified" trait
 
     public bool HasUnidentifiedTraits
