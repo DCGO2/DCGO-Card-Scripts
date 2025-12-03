@@ -130,7 +130,7 @@ namespace DCGO.CardEffects.EX10
                             afterSelectCardCoroutine: null,
                             message: "Select 5 [Lucemon] in text cards to bottom deck",
                             maxCount: maxCount,
-                            canEndNotMax: true,
+                            canEndNotMax: false,
                             isShowOpponent: true,
                             mode: SelectCardEffect.Mode.Custom,
                             root: SelectCardEffect.Root.Trash,
