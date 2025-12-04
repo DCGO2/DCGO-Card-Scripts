@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.ST22
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                    return (CardEffectCommons.IsExistsOnBattleAreaDigimon(card) && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card));
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
@@ -77,30 +77,13 @@ namespace DCGO.CardEffects.ST22
                             maxCount: 1,
                             canNoSelect: true,
                             canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
+                            selectPermanentCoroutine: null,
                             afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
+                            mode: SelectPermanentEffect.Mode.Tap,
                             cardEffect: activateClass);
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-
-                            yield return null;
-                        }
-
-                        if (selectedPermanent != null &&
-                            selectedPermanent.TopCard &&
-                            !selectedPermanent.TopCard.CanNotBeAffected(activateClass) &&
-                            !selectedPermanent.IsSuspended && selectedPermanent.CanSuspend)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(
-                                new SuspendPermanentsClass(new List<Permanent>() { selectedPermanent },
-                                    CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
-
-                        }  
                      Permanent permanent = card.PermanentOfThisCard();
                       yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
                             targetPermanent: permanent,
@@ -132,7 +115,7 @@ namespace DCGO.CardEffects.ST22
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card) && CardEffectCommons.IsExistsOnBattleAreaDigimon(card);
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
@@ -163,30 +146,14 @@ namespace DCGO.CardEffects.ST22
                             maxCount: 1,
                             canNoSelect: true,
                             canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
+                            selectPermanentCoroutine: null,
                             afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
+                            mode: SelectPermanentEffect.Mode.Tap,
                             cardEffect: activateClass);
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-
-                            yield return null;
-                        }
-
-                        if (selectedPermanent != null &&
-                            selectedPermanent.TopCard &&
-                            !selectedPermanent.TopCard.CanNotBeAffected(activateClass) &&
-                            !selectedPermanent.IsSuspended && selectedPermanent.CanSuspend)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(
-                                new SuspendPermanentsClass(new List<Permanent>() { selectedPermanent },
-                                    CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
-
-                        }  
+                      
                      Permanent permanent = card.PermanentOfThisCard();
                       yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
                             targetPermanent: permanent,
@@ -257,30 +224,13 @@ namespace DCGO.CardEffects.ST22
                             maxCount: 1,
                             canNoSelect: true,
                             canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
+                            selectPermanentCoroutine: null,
                             afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
+                            mode: SelectPermanentEffect.Mode.Tap,
                             cardEffect: activateClass);
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-
-                            yield return null;
-                        }
-
-                        if (selectedPermanent != null &&
-                            selectedPermanent.TopCard &&
-                            !selectedPermanent.TopCard.CanNotBeAffected(activateClass) &&
-                            !selectedPermanent.IsSuspended && selectedPermanent.CanSuspend)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(
-                                new SuspendPermanentsClass(new List<Permanent>() { selectedPermanent },
-                                    CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
-
-                        }  
                      Permanent permanent = card.PermanentOfThisCard();
                       yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
                             targetPermanent: permanent,
@@ -301,7 +251,7 @@ namespace DCGO.CardEffects.ST22
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Unsuspend this Digimon with [Vortex Warriors] trait.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
                 activateClass.SetHashString("Unsuspend_ST22_013");
                 cardEffects.Add(activateClass);
@@ -318,7 +268,7 @@ namespace DCGO.CardEffects.ST22
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card) && CardEffectCommons.CanUnsuspend(card.PermanentOfThisCard()))
+                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
                     {
                        //Check if opponent has no unsuspended Digimon
                        if (card.Owner.Enemy.GetBattleAreaDigimons().Count((permanent) => !permanent.IsSuspended) == 0)
