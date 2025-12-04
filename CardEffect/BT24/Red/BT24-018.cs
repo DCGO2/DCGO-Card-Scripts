@@ -45,7 +45,7 @@ namespace DCGO.CardEffects.BT24
 
             if (timing == EffectTiming.None)
             {
-                cardEffects.Add(CardEffectFactory.BlockerSelfStaticEffect(isInheritedEffect: false, card: card, condition: null));
+            cardEffects.Add(CardEffectFactory.BlockerSelfStaticEffect(isInheritedEffect: false, card: card, condition: null));
             }
 
             if (timing == EffectTiming.WhenPermanentWouldBeDeleted)
