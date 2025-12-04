@@ -111,7 +111,7 @@ namespace DCGO.CardEffects.BT23
 
                     IEnumerator SelectCantUnsuspendPermanentCoroutine(Permanent permanent)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCantUnsuspendNextActivePhase(
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCantUnsuspendUntilOpponentTurnEnd(
                                     targetPermanent: permanent,
                                     activateClass: activateClass
                                 ));
