@@ -81,7 +81,7 @@ namespace DCGO.CardEffects.P
                     if (card.Owner.SecurityCards.Count <= 3)
                     {
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainRush(
-                            targetPermanent: selectedPermanent, 
+                            targetPermanent: card.PermanentOfThisCard(),
                             effectDuration: EffectDuration.UntilOpponentTurnEnd, 
                             activateClass: activateClass));
 
