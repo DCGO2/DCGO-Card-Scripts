@@ -245,12 +245,9 @@ namespace DCGO.CardEffects.LM
                 {
                     if (cardSource.Owner == card.Owner)
                     {
-                        if (cardSource.IsDigimon)
+                        if (cardSource.HasText("Jellymon"))
                         {
-                            if (cardSource.HasText("Jellymon"))
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
 
