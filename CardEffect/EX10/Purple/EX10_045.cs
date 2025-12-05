@@ -141,7 +141,7 @@ namespace DCGO.CardEffects.EX10
 
             bool CanSelectPermamentTrashDigivolution(Permanent permanent)
             {
-                return CanSelectPermanent(permanent.TopCard);
+                return CanSelectPermanent(permanent);
                     && permanent.DigivolutionCards.Count > 0;
             }
 
