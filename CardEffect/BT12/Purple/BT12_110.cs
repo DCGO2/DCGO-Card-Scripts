@@ -19,7 +19,7 @@ namespace DCGO.CardEffects.BT12
 
                 string EffectDiscription()
                 {
-                    return "[Trash][Your Turn] If one of your Digimon digivolves into [Beelzemon (X Antibody)], by returning this card to the bottom of your deck, delete 1 of your opponentÅf Digimon with the lowest level.";
+                    return "[Trash][Your Turn] If one of your Digimon digivolves into [Beelzemon (X Antibody)], by returning this card to the bottom of your deck, delete 1 of your opponent's Digimon with the lowest level.";
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
@@ -105,7 +105,7 @@ namespace DCGO.CardEffects.BT12
 
                 string EffectDiscription()
                 {
-                    return "[Main] Delete 1 of your opponentÅf Digimon with the lowest level.";
+                    return "[Main] Delete 1 of your opponent's Digimon with the lowest level.";
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
