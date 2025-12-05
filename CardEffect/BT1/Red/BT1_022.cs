@@ -30,7 +30,7 @@ public class BT1_022 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[Your Turn] When this Digimon is blocked�Ctrigger <Draw 1>. (Draw 1 card from your deck.)";
+                return "[Your Turn] When this Digimon is blocked, trigger <Draw 1>. (Draw 1 card from your deck.)";
             }
 
             bool CanUseCondition(Hashtable hashtable)
