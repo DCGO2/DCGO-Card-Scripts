@@ -191,12 +191,9 @@ namespace DCGO.CardEffects.EX5
                 {
                     if (card.PermanentOfThisCard() == null)
                     {
-                        if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
+                        if (CardEffectCommons.HasMatchConditionPermanent(PermanentCondition1))
                         {
-                            if (CardEffectCommons.HasMatchConditionPermanent(PermanentCondition1))
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
 
