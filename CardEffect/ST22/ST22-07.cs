@@ -28,7 +28,7 @@ namespace DCGO.CardEffects.ST22
             {
                 if (CardEffectCommons.IsExistOnBattleArea(card))
                 {
-                    if (card.Owner.HandCards.Count >= 1)
+                    if (card.Owner.HandCards.Some(CanSelectCardCondition))
                     {
                         return true;
                     }
@@ -38,71 +38,65 @@ namespace DCGO.CardEffects.ST22
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
+                bool placed = false;
+
+                int maxCount = 1;
+
+                List<CardSource> selectedCards = new List<CardSource>();
+
+                SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+
+                selectHandEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: CanSelectCardCondition,
+                    canTargetCondition_ByPreSelecetedList: null,
+                    canEndSelectCondition: CanEndSelectCondition,
+                    maxCount: maxCount,
+                    canNoSelect: true,
+                    canEndNotMax: false,
+                    isShowOpponent: true,
+                    selectCardCoroutine: SelectCardCoroutine,
+                    afterSelectCardCoroutine: null,
+                    mode: SelectHandEffect.Mode.Custom,
+                    cardEffect: activateClass);
+
+                selectHandEffect.SetUpCustomMessage("Select 1 card to place under Tamer.", "The opponent is selecting 1 card to place under Tamer.");
+                selectHandEffect.SetNotShowCard();
+
+                yield return StartCoroutine(selectHandEffect.Activate());
+
+                bool CanEndSelectCondition(List<CardSource> cardSources)
                 {
-                    if (card.Owner.HandCards.Some(CanSelectCardCondition))
+                    if (CardEffectCommons.HasNoElement(cardSources))
                     {
-                        bool placed = false;
-
-                        int maxCount = 1;
-
-                        List<CardSource> selectedCards = new List<CardSource>();
-
-                        SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
-
-                        selectHandEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectCardCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: CanEndSelectCondition,
-                            maxCount: maxCount,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            isShowOpponent: true,
-                            selectCardCoroutine: SelectCardCoroutine,
-                            afterSelectCardCoroutine: null,
-                            mode: SelectHandEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectHandEffect.SetUpCustomMessage("Select 1 card to place under Tamer.", "The opponent is selecting 1 card to place under Tamer.");
-                        selectHandEffect.SetNotShowCard();
-
-                        yield return StartCoroutine(selectHandEffect.Activate());
-
-                        bool CanEndSelectCondition(List<CardSource> cardSources)
-                        {
-                            if (CardEffectCommons.HasNoElement(cardSources))
-                            {
-                                return false;
-                            }
-
-                            return true;
-                        }
-
-                        IEnumerator SelectCardCoroutine(CardSource cardSource)
-                        {
-                            selectedCards.Add(cardSource);
-
-                            yield return null;
-                        }
-
-                        if (selectedCards.Count >= 1)
-                        {
-                            if (!card.PermanentOfThisCard().IsToken)
-                            {
-                                yield return ContinuousController.instance.StartCoroutine(card.PermanentOfThisCard().AddDigivolutionCardsBottom(selectedCards, activateClass));
-
-                                placed = true;
-                            }
-                        }
-
-                        if (placed)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
-
-                            yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
-                        }
+                        return false;
                     }
+
+                    return true;
+                }
+
+                IEnumerator SelectCardCoroutine(CardSource cardSource)
+                {
+                    selectedCards.Add(cardSource);
+
+                    yield return null;
+                }
+
+                if (selectedCards.Count >= 1)
+                {
+                    if (!card.PermanentOfThisCard().IsToken)
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(card.PermanentOfThisCard().AddDigivolutionCardsBottom(selectedCards, activateClass));
+
+                        placed = true;
+                    }
+                }
+
+                if (placed)
+                {
+                    yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+
+                    yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
                 }
             }
 
@@ -119,9 +113,12 @@ namespace DCGO.CardEffects.ST22
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.CanTriggerOnPlay(hashtable, card))
+                    if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        return true;
+                        if (CardEffectCommons.IsOwnerTurn(card))
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 }                
@@ -142,7 +139,10 @@ namespace DCGO.CardEffects.ST22
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        return true;
+                        if (CardEffectCommons.CanTriggerOnPlay(hashtable, card))
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 }
