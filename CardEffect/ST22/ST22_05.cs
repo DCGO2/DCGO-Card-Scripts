@@ -90,22 +90,8 @@ namespace DCGO.CardEffects.ST22
 
                 if (canSelectHand || canSelectTamer)
                 {
-                    List<SelectionElement<bool>> selectionElements1 = new List<SelectionElement<bool>>()
+                    if (canSelectHand && canSelectTamer)
                     {
-                        new SelectionElement<bool>(message: $"Yes", value : true, spriteIndex: 0),
-                        new SelectionElement<bool>(message: $"No", value : false, spriteIndex: 1),
-                    };
-
-                    string selectPlayerMessage1 = "Will you use an option from hand or tamer sources?";
-                    string notSelectPlayerMessage1 = "The opponent is choosing to use an option";
-
-                    GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements1, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage1, notSelectPlayerMessage: notSelectPlayerMessage1);
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
-                    bool useOption = GManager.instance.userSelectionManager.SelectedBoolValue;
-
-                    if (canSelectHand && canSelectTamer && useOption)
-                    {
-                        List<SelectionElement<bool>> selectionElements2 = new List<SelectionElement<bool>>()
                     {
                         new SelectionElement<bool>(message: $"From hand", value : true, spriteIndex: 0),
                         new SelectionElement<bool>(message: $"From tamer", value : false, spriteIndex: 1),
