@@ -605,10 +605,7 @@ namespace DCGO.CardEffects.BT17
                             card.PermanentOfThisCard().TopCard.ContainsTraits("Ten Warriors") ||
                             card.PermanentOfThisCard().TopCard.ContainsTraits("TenWarriors"))
                         {
-                            if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                            {
                                 return true;
-                            }
                         }
                     }
 

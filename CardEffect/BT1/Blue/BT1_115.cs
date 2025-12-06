@@ -22,7 +22,7 @@ public class BT1_115 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[When Attacking][Once Per Turn] If you have a Tamer in play�Cunsuspend this Digimon.";
+                return "[When Attacking][Once Per Turn] If you have a Tamer in play, unsuspend this Digimon.";
             }
 
             bool CanUseCondition(Hashtable hashtable)

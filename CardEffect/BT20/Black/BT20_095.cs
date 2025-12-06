@@ -211,6 +211,7 @@ namespace DCGO.CardEffects.BT20
                 {
                     return cardSource.ContainsTraits("Chronicle") &&
                            cardSource.HasPlayCost && cardSource.GetCostItself <= 5 &&
+                           !cardSource.IsDigiEgg &&
                            CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 
