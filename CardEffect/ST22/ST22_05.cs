@@ -92,15 +92,16 @@ namespace DCGO.CardEffects.ST22
                 {
                     if (canSelectHand && canSelectTamer)
                     {
+                        List<SelectionElement<bool>> selectionElements1 = new List<SelectionElement<bool>>()
                     {
                         new SelectionElement<bool>(message: $"From hand", value : true, spriteIndex: 0),
                         new SelectionElement<bool>(message: $"From tamer", value : false, spriteIndex: 1),
                     };
 
-                        string selectPlayerMessage2 = "From which area do you select a card?";
-                        string notSelectPlayerMessage2 = "The opponent is choosing from which area to select a card.";
+                        string selectPlayerMessage1 = "From which area do you select a card?";
+                        string notSelectPlayerMessage1 = "The opponent is choosing from which area to select a card.";
 
-                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements2, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage2, notSelectPlayerMessage: notSelectPlayerMessage2);
+                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements1, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage1, notSelectPlayerMessage: notSelectPlayerMessage1);
                     }
                     else
                     {
