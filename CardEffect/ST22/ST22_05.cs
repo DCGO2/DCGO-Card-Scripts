@@ -142,7 +142,7 @@ namespace DCGO.CardEffects.ST22
                             mode: SelectHandEffect.Mode.Custom,
                             cardEffect: activateClass);
 
-                        selectHandEffect.SetUpCustomMessage("Select 1 option to use.", "The opponent is selecting 1 option to use.");
+                        selectHandEffect.SetUpCustomMessage("Select 1 option to use.", "The opponent is selecting a option to use.");
 
                         yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
                         if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayOptionCards(
@@ -199,7 +199,7 @@ namespace DCGO.CardEffects.ST22
                                 selectPlayer: card.Owner,
                                 cardEffect: activateClass);
 
-                            selectCardEffect.SetUpCustomMessage("Select 1 1 option card to use.", "The opponent is selecting 1 1 option card to use.");
+                            selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting a option card to use.");
                             yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
                             if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayOptionCards(
