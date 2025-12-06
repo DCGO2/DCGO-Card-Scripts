@@ -1895,6 +1895,25 @@ public class CardSource : MonoBehaviour
 
     #endregion
 
+    #region [Onmyōjutsu] or [Plug-In] trait
+
+    public bool HasOnmyoOrPluginTraits
+    {
+        get
+        {
+            if (EqualsTraits("Plug-In"))
+            {
+                return true;
+            }
+            if (EqualsTraits("Onmyōjutsu"))
+            {
+                return true;
+            }
+        }
+    }
+
+    #endregion
+
     #region whether this card has the string in text
 
     public bool HasText(string text)
