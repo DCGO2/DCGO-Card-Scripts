@@ -3798,19 +3798,36 @@ public class ISecurityCheck
 
 public class IDestroySecurity
 {
+    private enum TrashMode
+    {
+        TopSecurity,
+        BottomSecurity,
+        SelectedCard,
+    }
+
     public IDestroySecurity(Player player, int destroySecurityCount, ICardEffect cardEffect, bool fromTop)
     {
         _player = player;
         _destroySecurityCount = destroySecurityCount;
         _cardEffect = cardEffect;
-        _fromTop = fromTop;
+        _trashMode = fromTop ? TrashMode.TopSecurity : TrashMode.BottomSecurity;
+    }
+
+    public IDestroySecurity(Player player, CardSource card, ICardEffect cardEffect)
+    {
+        _player = player;
+        _destroySecurityCount = 1;
+        _cardEffect = cardEffect;
+        _trashMode = TrashMode.SelectedCard;
+        _selectedCard = card;
     }
 
     Player _player = null;
     int _destroySecurityCount = 0;
     public List<CardSource> DestroyedSecurity = new List<CardSource>();
     ICardEffect _cardEffect = null;
-    bool _fromTop = false;
+    TrashMode _trashMode = TrashMode.TopSecurity;
+    CardSource _selectedCard = null;
 
     public bool IsDestroyed(CardSource cardSource)
     {
@@ -3856,11 +3873,24 @@ public class IDestroySecurity
                 {
                     count++;
 
-                    CardSource destroyedSecurityCard = _player.SecurityCards[0];
+                    CardSource destroyedSecurityCard = null;
 
-                    if (!_fromTop)
+                    switch (_trashMode)
                     {
-                        destroyedSecurityCard = _player.SecurityCards[_player.SecurityCards.Count - 1];
+                        case TrashMode.TopSecurity:
+                            destroyedSecurityCard = _player.SecurityCards[0];
+                            break;
+                        case TrashMode.BottomSecurity:
+                            destroyedSecurityCard = _player.SecurityCards[_player.SecurityCards.Count - 1];
+                            break;
+                        case TrashMode.SelectedCard:
+                            destroyedSecurityCard = _player.SecurityCards.Contains(_selectedCard) ? _selectedCard : null;
+                            break;
+                    }
+
+                    if (destroyedSecurityCard == null)
+                    {
+                        break;
                     }
 
                     discardedCards.Add(destroyedSecurityCard);
@@ -3919,7 +3949,20 @@ public class IDestroySecurity
             {
                 string log = "";
 
-                string fromString = _fromTop ? "Top" : "Bottom";
+                string modeString = "";
+
+                switch (_trashMode)
+                {
+                    case TrashMode.TopSecurity:
+                        modeString = "Top";
+                        break;
+                    case TrashMode.BottomSecurity:
+                        modeString = "Bottom";
+                        break;
+                    case TrashMode.SelectedCard:
+                        modeString = "Selected";
+                        break;
+                }
 
                 log += $"\nDiscarded From {fromString} Security Cards:";
 
