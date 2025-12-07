@@ -116,7 +116,7 @@ namespace DCGO.CardEffects.EX4
 
                 string EffectDiscription()
                 {
-                    return "[On Deletion] <Recovery +1 (Deck)>. (Place the top card of your deck on top of your security stack.) Then, 1 of your opponent�f Digimon gets -4000 DP for the turn for each card in your security stack.";
+                    return "[On Deletion] <Recovery +1 (Deck)>. (Place the top card of your deck on top of your security stack.) Then, 1 of your opponent's Digimon gets -4000 DP for the turn for each card in your security stack.";
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)

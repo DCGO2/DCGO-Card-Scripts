@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -128,21 +128,21 @@ namespace DCGO.CardEffects.EX10
                 return $"[{tag}] [Once Per Turn] By trashing any 1 digivolution card of your [Bagra Army] trait Digimon, 1 of your [Bagra Army] trait Digimon gains <Blocker> and <Retaliation> until your opponent's turn ends.";
             }
 
-            bool CanSelectSource(CardSource source)
+            bool CanActivateConditionShared(Hashtable hashtable)
             {
-                return source.HasBagraArmyTraits;
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
             bool CanSelectPermanent(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
-                       CanSelectSource(permanent.TopCard);
+                       permanent.TopCard.CardTraits.Contains("Bagra Army");
             }
 
             bool CanSelectPermamentTrashDigivolution(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                    && permanent.DigivolutionCards.Exists(CanSelectSource);
+                return CanSelectPermanent(permanent);
+                    && permanent.DigivolutionCards.Count > 0;
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -284,7 +284,7 @@ namespace DCGO.CardEffects.EX10
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By trashing 1 source, 1 digimon gains Blocker, Retaliation", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), 1, true, SharedEffectDiscription("On Play"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), 1, true, SharedEffectDiscription("On Play"));
                 activateClass.SetHashString("OPWDWA_EX10_045");
                 cardEffects.Add(activateClass);
 
@@ -292,11 +292,6 @@ namespace DCGO.CardEffects.EX10
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
             }
 
@@ -308,7 +303,7 @@ namespace DCGO.CardEffects.EX10
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By trashing 1 source, 1 digimon gains Blocker, Retaliation", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), 1, true, SharedEffectDiscription("When Digivolving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), 1, true, SharedEffectDiscription("When Digivolving"));
                 activateClass.SetHashString("OPWDWA_EX10_045");
                 cardEffects.Add(activateClass);
 
@@ -316,11 +311,6 @@ namespace DCGO.CardEffects.EX10
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
             }
 
@@ -332,7 +322,7 @@ namespace DCGO.CardEffects.EX10
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By trashing 1 source, 1 digimon gains Blocker, Retaliation", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), 1, true, SharedEffectDiscription("When Attacking"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), 1, true, SharedEffectDiscription("When Attacking"));
                 activateClass.SetHashString("OPWDWA_EX10_045");
                 cardEffects.Add(activateClass);
 
@@ -340,11 +330,6 @@ namespace DCGO.CardEffects.EX10
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerOnAttack(hashtable, card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
             }
 
