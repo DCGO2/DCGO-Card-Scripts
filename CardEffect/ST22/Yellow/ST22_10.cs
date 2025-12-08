@@ -150,6 +150,11 @@ namespace DCGO.CardEffects.ST22
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
+                    #region Trash Card from security
+
+                    yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(card.Owner, card, activateClass).DestroySecurity());
+
+                    #endregion
 
                     #region Prevent 1 Digimon Removal
 
