@@ -24,7 +24,7 @@ namespace DCGO.CardEffects.ST22
 				return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
 			}
 
-			IEnumerator ActivateCoroutineShared(Hashtable hashtable, ActivateClass activateClass)
+			IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
 			{
 				bool IsOpponentsDigimon(Permanent permanent)
 				{
@@ -136,7 +136,7 @@ namespace DCGO.CardEffects.ST22
 			{
 				ActivateClass activateClass = new ActivateClass();
 				activateClass.SetUpICardEffect("1 digimon gains 'cant activate [When Digivolving] effects' and -6K DP", CanUseCondition, card);
-				activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, EffectDiscriptionShared("When Digivolving"));
+				activateClass.SetUpActivateClass(CanActivateConditionShared, hash => SharedActivateCoroutine(hash, activateClass), -1, false, EffectDiscriptionShared("When Digivolving"));
 				cardEffects.Add(activateClass);
 
 				bool CanUseCondition(Hashtable hashtable)
@@ -146,8 +146,8 @@ namespace DCGO.CardEffects.ST22
 				}
 			}
 
-			#endregion
-            
+            #endregion
+
             #region When Attacking
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
@@ -156,6 +156,8 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
                 activateClass.SetHashString("ST22_04_WA");
                 cardEffects.Add(activateClass);
+
+                int totalSourceCount = 0;
 
                 string EffectDiscription()
                 {
@@ -177,7 +179,7 @@ namespace DCGO.CardEffects.ST22
 
                     return false;
                 }
-                
+
                 bool CanSelectTamerCondition(Permanent permanent)
                 {
                     if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaTamer(permanent, card))
@@ -201,11 +203,11 @@ namespace DCGO.CardEffects.ST22
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        if (CardEffectCommons.HasMatchConditionOwnersHand(CanSelectCardCondition))
+                        if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition))
                         {
                             return true;
                         }
-                        
+
                         if (CardEffectCommons.HasMatchConditionPermanent(CanSelectTamerCondition))
                         {
                             return true;
@@ -214,12 +216,12 @@ namespace DCGO.CardEffects.ST22
 
                     return false;
                 }
-                
+
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(CanSelectCardCondition);
+                    bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
                     bool canSelectTamer = CardEffectCommons.HasMatchConditionPermanent(CanSelectTamerCondition);
-                    
+
                     if (canSelectHand || canSelectTamer)
                     {
                         #region Option Selection
@@ -245,7 +247,11 @@ namespace DCGO.CardEffects.ST22
                         yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
 
                         #endregion
-                        
+
+                        bool fromHand = GManager.instance.userSelectionManager.SelectedBoolValue;
+
+                        List<CardSource> selectedCards = new List<CardSource>();
+
                         if (fromHand)
                         {
                             #region Play from Hand
@@ -257,7 +263,7 @@ namespace DCGO.CardEffects.ST22
                                 canTargetCondition: CanSelectCardCondition,
                                 canTargetCondition_ByPreSelecetedList: null,
                                 canEndSelectCondition: null,
-                                maxCount: maxCount,
+                                maxCount: 1,
                                 canNoSelect: true,
                                 canEndNotMax: false,
                                 isShowOpponent: true,
@@ -286,154 +292,153 @@ namespace DCGO.CardEffects.ST22
                                 root: SelectCardEffect.Root.Hand));
                         }
                         #endregion
-                            
-                        if (!fromHand)
+                        else
                         {
                             #region Select 1 Tamer
-							Permanent selectedPermanent = null;
-							
-							SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                            Permanent selectedPermanent = null;
 
-                                    selectPermanentEffect.SetUp(
-                                        selectPlayer: card.Owner,
-                                        canTargetCondition: CanSelectTamerCondition,
-                                        canTargetCondition_ByPreSelecetedList: null,
-                                        canEndSelectCondition: null,
-                                        maxCount: maxCount,
-                                        canNoSelect: true,
-                                        canEndNotMax: false,
-                                        selectPermanentCoroutine: SelectPermanentCoroutine,
-                                        afterSelectPermanentCoroutine: null,
-                                        mode: SelectPermanentEffect.Mode.Custom,
-                                        cardEffect: activateClass);
+                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                                    selectPermanentEffect.SetUpCustomMessage("Select a Tamer.", "The opponent is selecting a Tamer.");
+                            selectPermanentEffect.SetUp(
+                                selectPlayer: card.Owner,
+                                canTargetCondition: CanSelectTamerCondition,
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                maxCount: 1,
+                                canNoSelect: true,
+                                canEndNotMax: false,
+                                selectPermanentCoroutine: SelectPermanentCoroutine,
+                                afterSelectPermanentCoroutine: null,
+                                mode: SelectPermanentEffect.Mode.Custom,
+                                cardEffect: activateClass);
 
-                                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                            selectPermanentEffect.SetUpCustomMessage("Select a Tamer.", "The opponent is selecting a Tamer.");
 
-                                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                                    {
-                                        selectedPermanent = permanent;
-										yield return null;
-                                    }
-							#endregion
+                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-							#region Use from Tamer
-							if(selectedPermanent != null)
-							{		
-								List<CardSource> selectedCards = new list<CardSource>();
-	                            SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-	
-	                            selectCardEffect.SetUp(
-	                                canTargetCondition: CanSelectCardCondition,
-	                                canTargetCondition_ByPreSelecetedList: null,
-	                                canEndSelectCondition: null,
-	                                canNoSelect: () => true,
-	                                selectCardCoroutine: SelectCardCoroutine,
-	                                afterSelectCardCoroutine: null,
-	                                message: "Select 1 option to use.",
-	                                maxCount: 1,
-	                                canEndNotMax: false,
-	                                isShowOpponent: true,
-	                                mode: SelectCardEffect.Mode.Custom,
-	                                root: SelectCardEffect.Root.Custm,
-	                                customRootCardList: selectedPermanent.DigivolutionCards,
-	                                canLookReverseCard: true,
-	                                selectPlayer: card.Owner,
-	                                cardEffect: activateClass);
-	
-	                            selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
-	
-	                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-	
-	                            IEnumerator SelectCardCoroutine(CardSource cardSource)
-	                            {
-	                                selectedCards.Add(cardSource);
-	
-	                                yield return null;
-	                            }
-	
-	                            yield return ContinuousController.instance.StartCoroutine(
-	                                CardEffectCommons.PlayOptionCards(
-	                                cardSources: selectedCards,
-	                                activateClass: activateClass,
-	                                payCost: false,
-	                                root: SelectCardEffect.Root.Hand));
-							}
+                            IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                            {
+                                selectedPermanent = permanent;
+                                yield return null;
+                            }
+                            #endregion
+
+                            #region Use from Tamer
+                            if (selectedPermanent != null)
+                            {
+                                SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                                selectCardEffect.SetUp(
+                                    canTargetCondition: CanSelectCardCondition,
+                                    canTargetCondition_ByPreSelecetedList: null,
+                                    canEndSelectCondition: null,
+                                    canNoSelect: () => true,
+                                    selectCardCoroutine: SelectCardCoroutine,
+                                    afterSelectCardCoroutine: null,
+                                    message: "Select 1 option to use.",
+                                    maxCount: 1,
+                                    canEndNotMax: false,
+                                    isShowOpponent: true,
+                                    mode: SelectCardEffect.Mode.Custom,
+                                    root: SelectCardEffect.Root.Custom,
+                                    customRootCardList: selectedPermanent.DigivolutionCards,
+                                    canLookReverseCard: true,
+                                    selectPlayer: card.Owner,
+                                    cardEffect: activateClass);
+
+                                selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
+
+                                yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+
+                                IEnumerator SelectCardCoroutine(CardSource cardSource)
+                                {
+                                    selectedCards.Add(cardSource);
+
+                                    yield return null;
+                                }
+
+                                yield return ContinuousController.instance.StartCoroutine(
+                                    CardEffectCommons.PlayOptionCards(
+                                    cardSources: selectedCards,
+                                    activateClass: activateClass,
+                                    payCost: false,
+                                    root: SelectCardEffect.Root.Hand));
+                            }
                             #endregion
                         }
                     }
-				}
-                #endregion
-                
-                #Inherit EoA
-                if (timing == EffectTiming.OnEndAttack)
+                }
+            }
+            #endregion
+
+            #region ESS EoA
+            if (timing == EffectTiming.OnEndAttack)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Trash 1 security to unsuspend 1 Digimon", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetHashString("ST22_04_EoA");
+                cardEffects.Add(activateClass);
+
+                string EffectDiscription()
                 {
-                    ActivateClass activateClass = new ActivateClass();
-                    activateClass.SetUpICardEffect("Trash 1 security to unsuspend 1 Digimon", CanUseCondition, card);
-                    activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
-                    activateClass.SetHashString("ST22_04_EoA");
-                    cardEffects.Add(activateClass);
+                    return "[End of Attack] [Once Per Turn] By trashing your top security card, 1 of your Digimon with [Sakuyamon] in its name unsuspends.";
+                }
 
-                    string EffectDiscription()
-                    {
-                        return "[End of Attack] [Once Per Turn] By trashing your top security card, 1 of your Digimon with [Sakuyamon] in its name unsuspends.";
-                    }
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
+                           CardEffectCommons.CanTriggerOnEndAttack(hashtable, card);
+                }
 
-                    bool CanUseCondition(Hashtable hashtable)
-                    {
-                        return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
-                               CardEffectCommons.CanTriggerOnEndAttack(hashtable, card);
-                    }
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
+                           (card.Owner.SecurityCards.Count >= 1);
+                }
 
-                    bool CanActivateCondition(Hashtable hashtable)
+                bool CanSelectPermanentCondition(Permanent permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
+                           permanent.TopCard.ContainsCardName("Sakuyamon");
+                }
+
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
+                {
+                    if (card.Owner.SecurityCards.Count >= 1)
                     {
-                        return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
-                               (card.Owner.SecurityCards.Count >= 1);                                
-                    }
-                    
-                    bool CanSelectPermanentCondition(Permanent permanent)
-                    {
-                        return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
-                               permanent.TopCard.ContainsCardName("Sakuyamon");
-                    }
-                    
-                    IEnumerator ActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
-                    {
-                        if (card.Owner.SecurityCards.Count >= 1)
+                        yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
+                        player: card.Owner,
+                        destroySecurityCount: 1,
+                        cardEffect: activateClass,
+                        fromTop: true).DestroySecurity());
+
+                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                         {
-                            yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
-                            player: card.Owner,
-                            destroySecurityCount: 1,
-                            cardEffect: activateClass,
-                            fromTop: true).DestroySecurity());
-                                                
-                        	if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-	                        {
-	                            int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
-	
-	                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-	
-	                            selectPermanentEffect.SetUp(
-	                                selectPlayer: card.Owner,
-	                                canTargetCondition: CanSelectPermanentCondition,
-	                                canTargetCondition_ByPreSelecetedList: null,
-	                                canEndSelectCondition: null,
-	                                maxCount: maxCount,
-	                                canNoSelect: false,
-	                                canEndNotMax: false,
-	                                selectPermanentCoroutine: null,
-	                                afterSelectPermanentCoroutine: null,
-	                                mode: SelectPermanentEffect.Mode.UnTap,
-	                                cardEffect: activateClass);
-	
-	                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());                
-	                        }
+                            int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+
+                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                            selectPermanentEffect.SetUp(
+                                selectPlayer: card.Owner,
+                                canTargetCondition: CanSelectPermanentCondition,
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                maxCount: maxCount,
+                                canNoSelect: false,
+                                canEndNotMax: false,
+                                selectPermanentCoroutine: null,
+                                afterSelectPermanentCoroutine: null,
+                                mode: SelectPermanentEffect.Mode.UnTap,
+                                cardEffect: activateClass);
+
+                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                         }
                     }
                 }
-                #endregion
             }
+            #endregion
+
             return cardEffects;
         }
     }

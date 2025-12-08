@@ -141,7 +141,7 @@ namespace DCGO.CardEffects.EX10
 
             bool CanSelectPermamentTrashDigivolution(Permanent permanent)
             {
-                return CanSelectPermanent(permanent);
+                return CanSelectPermanent(permanent)
                     && permanent.DigivolutionCards.Count > 0;
             }
 
@@ -188,7 +188,7 @@ namespace DCGO.CardEffects.EX10
                         SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                         selectCardEffect.SetUp(
-                                    canTargetCondition: CanSelectSource,
+                                    canTargetCondition: x => true,
                                     canTargetCondition_ByPreSelecetedList: null,
                                     canEndSelectCondition: null,
                                     canNoSelect: () => false,
