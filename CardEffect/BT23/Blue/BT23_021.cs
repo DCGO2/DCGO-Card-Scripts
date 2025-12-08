@@ -332,7 +332,7 @@ namespace DCGO.CardEffects.BT23
                     canNotBeDestroyedByBattleCondition: CanNotBeDestroyedByBattleCondition,
                     effectDuration: EffectDuration.UntilOpponentTurnEnd,
                     activateClass: activateClass,
-                    effectName: "Can't be desstroyed by battle"));
+                    effectName: "Can't be destroyed by battle"));
             }
 
             #endregion
