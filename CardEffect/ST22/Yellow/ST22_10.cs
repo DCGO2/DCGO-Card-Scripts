@@ -150,7 +150,6 @@ namespace DCGO.CardEffects.ST22
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    // Implement Trash This Card From Security.
 
                     #region Prevent 1 Digimon Removal
 
