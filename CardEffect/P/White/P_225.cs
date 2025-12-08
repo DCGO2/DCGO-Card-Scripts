@@ -112,10 +112,10 @@ namespace DCGO.CardEffects.P
 
                 bool CanSelectCard(Permanent permanent)
                 {
-                    return permanent.IsDigimon
-                        && permanent.HasCSTraits
-                        && permanent.TopCard.hasLevel
-                        && permanent.level >= 4
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                        && permanent.TopCard.HasCSTraits
+                        && permanent.TopCard.HasLevel
+                        && permanent.TopCard.Level >= 4
                         && permanent.DigivolutionCards.Count >= 1;
                 }
 
@@ -129,10 +129,12 @@ namespace DCGO.CardEffects.P
 
                     IEnumerator SuccessProcess(List<Permanent> permanents)
                     {
-                        if (CardEffectCommons.HasMatchConditionPermanent(card, CanSelectCard))
+                        Permanent selectedPermanent = null;
+
+                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectCard))
                         {
                             SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                            int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(card, CanSelectCard));
+                            int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectCard));
 
                             selectPermanentEffect.SetUp(
                                 selectPlayer: card.Owner,
@@ -152,19 +154,22 @@ namespace DCGO.CardEffects.P
 
                             IEnumerator SelectPermanentCoroutine(Permanent permanent)
                             {
-                                Permanent selectedPermanent = permanent;
+                                selectedPermanent = permanent;
 
                                 yield return null;
                             }
 
-                            if (CardEffectCommons.IsExistOnBattleArea(permanent) && permanent.DigivolutionCards.Count >= 1)
+                            if(selectedPermanent != null)
                             {
-                                CardSource topCard = permanent.TopCard;
-
-                                yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(new List<CardSource>() { topCard }, activateClass));
-                                if (permanent.DigivolutionCards.Contains(topCard)) 
+                                if (CardEffectCommons.IsExistOnBattleArea(selectedPermanent.TopCard) && selectedPermanent.DigivolutionCards.Count >= 1)
                                 {
-                                    yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(2, activateClass));
+                                    CardSource topCard = selectedPermanent.TopCard;
+
+                                    yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(new List<CardSource>() { topCard }, activateClass));
+                                    if (selectedPermanent.DigivolutionCards.Contains(topCard))
+                                    {
+                                        yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(2, activateClass));
+                                    }
                                 }
                             }
                         }

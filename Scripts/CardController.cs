@@ -3964,7 +3964,7 @@ public class IDestroySecurity
                         break;
                 }
 
-                log += $"\nDiscarded From {fromString} Security Cards:";
+                log += $"\nDiscarded From {modeString} Security Cards:";
 
                 foreach (CardSource cardSource in discardedCards)
                 {

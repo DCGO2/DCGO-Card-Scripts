@@ -22,55 +22,48 @@ namespace DCGO.CardEffects.ST22
 			}
 
 			bool CanSelectCardCondition(CardSource cardSource)
-				{
-					if (cardSource.ContainsCardName("Sakuyamon")
-							|| cardSource.ContainsCardName("Kyubimon")
-							|| cardSource.ContainsCardName("Taomon")
-							|| cardSource.ContainsCardName("Sakuyamon")
-							|| cardSource.ContainsCardName("Rika Nonaka")
-							|| cardSource.EqualsTraits("Onmyōjutsu")
-							|| cardSource.EqualsTraits("Plug-In"))
-					{
-						return true;
-					}
-				}
+			{
+                return cardSource.ContainsCardName("Sakuyamon")
+                        || cardSource.ContainsCardName("Kyubimon")
+                        || cardSource.ContainsCardName("Taomon")
+                        || cardSource.ContainsCardName("Sakuyamon")
+                        || cardSource.ContainsCardName("Rika Nonaka")
+                        || cardSource.EqualsTraits("Onmyōjutsu")
+                        || cardSource.EqualsTraits("Plug-In");
+            }
 
-				bool CanActivateConditionShared(Hashtable hashtable)
-				{
-					if (CardEffectCommons.IsExistOnBattleArea(card))
-					{
-						return true;
-					}
-				}
+            IEnumerator ActivateCoroutineShared(Hashtable _hashtable, ActivateClass activateClass)
+            {
+                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
+                    revealCount: 3,
+                    simplifiedSelectCardConditions:
+                    new SimplifiedSelectCardConditionClass[]
+                    {
+                        new SimplifiedSelectCardConditionClass(
+                            canTargetCondition:CanSelectCardCondition,
+                            message: "Select 1 card with [Renamon]/[Kyubimon]/[Taomon]/[Sakuyamon]/[Rina Nanoka] in its name or the [Onmyōjutsu]/[Plug-In] trait.",
+                            mode: SelectCardEffect.Mode.AddHand,
+                            maxCount: 1,
+                            selectCardCoroutine: null),
+                    },
+                    remainingCardsPlace: RemainingCardsPlace.DeckBottom,
+                    activateClass: activateClass
+                ));
+            }
+            #endregion
 
-				IEnumerator ActivateCoroutine(Hashtable _hashtable)
-				{
-					yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
-						revealCount: 3,
-						simplifiedSelectCardConditions:
-						new SimplifiedSelectCardConditionClass[]
-						{
-						new SimplifiedSelectCardConditionClass(
-							canTargetCondition:CanSelectCardCondition,
-							message: "Select 1 card with [Renamon]/[Kyubimon]/[Taomon]/[Sakuyamon]/[Rina Nanoka] in its name or the [Onmyōjutsu]/[Plug-In] trait.",
-							mode: SelectCardEffect.Mode.AddHand,
-							maxCount: 1,
-							selectCardCoroutine: null),
-						},
-						remainingCardsPlace: RemainingCardsPlace.DeckBottom,
-						activateClass: activateClass
-					));
-				}
-			}
-			#endregion
-
-			#region When Moving
-			if (timing == EffectTiming.OnMove)
+            #region When Moving
+            if (timing == EffectTiming.OnMove)
 			{
 				ActivateClass activateClass = new ActivateClass();
 				activateClass.SetUpICardEffect("Reveal the top 3 cards of deck", CanUseCondition, card);
 				activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, false, EffectDiscriptionShared("When Moving"));
 				cardEffects.Add(activateClass);
+
+                bool PermanentCondition(Permanent permanent)
+                {
+                    return permanent == card.PermanentOfThisCard();
+                }
 
 				bool CanUseCondition(Hashtable hashtable)
 				{

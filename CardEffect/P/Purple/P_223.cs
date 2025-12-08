@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DCGO.CardEffects.P
 {
@@ -50,7 +51,7 @@ namespace DCGO.CardEffects.P
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnHand(card)
-                        && CardEffectCommons.HasMatchConditionPermanent(card.Owner.SecurityCards.Count <= 3);
+                        && CardEffectCommons.HasMatchConditionPermanent(x => card.Owner.SecurityCards.Count <= 3);
                 }
 
                 bool CardCondition(CardSource cardSource)
@@ -276,7 +277,7 @@ namespace DCGO.CardEffects.P
                 return false;
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectOptionCard);
                 bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectOptionCard);
@@ -316,14 +317,13 @@ namespace DCGO.CardEffects.P
 
                     #endregion
 
-                    List<CardSource> selectedCards = new List<CardSource>();
                     IEnumerator SelectCardCoroutine(CardSource cardSource)
                     {
-                        selectedCards.add(cardSource);
+                        selectedCards.Add(cardSource);
                         yield return null;
                     }
 
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
                     if (playFromHand)
                     {
@@ -354,6 +354,7 @@ namespace DCGO.CardEffects.P
                     }
                     if (playFromTrash)
                     {
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
                         selectCardEffect.SetUp(
                             canTargetCondition: CanSelectOptionCard,
                             canTargetCondition_ByPreSelecetedList: null,
@@ -372,7 +373,7 @@ namespace DCGO.CardEffects.P
                             selectPlayer: card.Owner,
                             cardEffect: activateClass);
 
-                        selectHandEffect.SetUpCustomMessage("Select 1 option to use", "The opponent is selecting 1 option to use");
+                        selectCardEffect.SetUpCustomMessage("Select 1 option to use", "The opponent is selecting 1 option to use");
                         selectCardEffect.SetUpCustomMessage_ShowCard("Used Card");
 
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
@@ -394,7 +395,7 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("You may use an [Onmyōjutsu] or [Plug-In] Option from hand or trash", CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, true, SharedEffectDiscription("On Play"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDiscription("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -411,7 +412,7 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("You may use an [Onmyōjutsu] or [Plug-In] Option from hand or trash", CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, true, SharedEffectDiscription("When Digivolving"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDiscription("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -480,6 +481,8 @@ namespace DCGO.CardEffects.P
             }
 
             #endregion
+
+            return cardEffects;
         }
     }
 }

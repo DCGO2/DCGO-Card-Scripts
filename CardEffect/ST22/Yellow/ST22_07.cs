@@ -5,7 +5,7 @@ using System.Linq;
 //ST22_07 Rika Nonaka
 namespace DCGO.CardEffects.ST22
 {
-    public class BT21_088 : CEntity_Effect
+    public class ST22_07 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -20,8 +20,8 @@ namespace DCGO.CardEffects.ST22
 
             bool CanSelectCardCondition(CardSource cardSource)
             {
-                return source.IsOption &&
-                       (source.EqualsTraits("Onmyōjutsu") || source.EqualsTraits("Plug-In"));
+                return cardSource.IsOption &&
+                       (cardSource.EqualsTraits("Onmyōjutsu") || cardSource.EqualsTraits("Plug-In"));
             }
 
             bool CanActivateConditionShared(Hashtable hashtable)
@@ -208,66 +208,34 @@ namespace DCGO.CardEffects.ST22
                         yield return null;
                     }
 
-                    Permanent selectedPermament = null;
-                    IEnumerator SelectPermamentCoroutine(Permanent permanent)
-                    {
-                        selectedPermament = permanent;
-                        yield return null;
-                    }
+                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
-                    var selectablePermanents = CardEffectCommons.MatchConditionOwnersPermanentCount(card, CanSelectPermanent);
-                    if (selectablePermanents == 1) selectedPermament = card.Owner.GetBattleAreaPermanents().Find(CanSelectPermanent);
-                    else
-                    {
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersPermanentCount(card, CanSelectPermanent));
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                    selectCardEffect.SetUp(
+                        canTargetCondition: SelectSourceCard,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        canNoSelect: () => true,
+                        selectCardCoroutine: SelectCardCoroutine,
+                        afterSelectCardCoroutine: null,
+                        message: "Select 1 option card to use",
+                        maxCount: 1,
+                        canEndNotMax: false,
+                        isShowOpponent: true,
+                        mode: SelectCardEffect.Mode.Custom,
+                        root: SelectCardEffect.Root.DigivolutionCards,
+                        customRootCardList: card.PermanentOfThisCard().DigivolutionCards,
+                        canLookReverseCard: true,
+                        selectPlayer: card.Owner,
+                        cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermanent,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermamentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                    }
+                    selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
+                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
-                    if (selectedPermament != null)
-                    {
-                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-
-                        selectCardEffect.SetUp(
-                            canTargetCondition: SelectSourceCard,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            canNoSelect: () => true,
-                            selectCardCoroutine: SelectCardCoroutine,
-                            afterSelectCardCoroutine: null,
-                            message: "Select 1 option card to use",
-                            maxCount: 1,
-                            canEndNotMax: false,
-                            isShowOpponent: true,
-                            mode: SelectCardEffect.Mode.Custom,
-                            root: SelectCardEffect.Root.DigivolutionCards,
-                            customRootCardList: selectedPermament.DigivolutionCards,
-                            canLookReverseCard: true,
-                            selectPlayer: card.Owner,
-                            cardEffect: activateClass);
-
-                        selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
-                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                        if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayOptionCards(
-                            cardSources: selectedCards,
-                            activateClass: activateClass,
-                            payCost: false,
-                            root: SelectCardEffect.Root.DigivolutionCards));
-                    }
+                    if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayOptionCards(
+                        cardSources: selectedCards,
+                        activateClass: activateClass,
+                        payCost: false,
+                        root: SelectCardEffect.Root.DigivolutionCards));
                 }
             }
 
