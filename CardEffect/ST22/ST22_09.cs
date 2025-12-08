@@ -242,12 +242,11 @@ namespace DCGO.CardEffects.ST22
 
             #endregion
 
-            // Requires 'CardEffectFactory.JammingSelfStaticEffect' refactor for link effects.
             #region Link ESS
 
             if (timing == EffectTiming.None)
             {
-                cardEffects.Add(CardEffectFactory.JammingSelfStaticEffect(isInheritedEffect: false, card: card, condition: null));
+                cardEffects.Add(CardEffectFactory.JammingSelfStaticEffect(isInheritedEffect: false, card: card, condition: null, isLinkedEffect: true));
             }
 
             #endregion
