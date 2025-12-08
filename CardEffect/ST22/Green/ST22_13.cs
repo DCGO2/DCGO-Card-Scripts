@@ -165,9 +165,15 @@ namespace DCGO.CardEffects.ST22
                      return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
                 }
 
+                bool OpponentsDigimon(Permanent permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
+                           !permanent.IsSuspended;
+                }
+
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return (card.Owner.Enemy.GetBattleAreaDigimons().Count((permanent) => !permanent.IsSuspended) == 0)
+                    return (CardEffectCommons.MatchConditionOpponentsPermanentCount(card,OpponentsDigimon) == 0)
                         && card.PermanentOfThisCard().TopCard.EqualsTraits("Vortex Warriors")
                         && CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }

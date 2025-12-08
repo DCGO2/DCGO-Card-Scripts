@@ -7,7 +7,7 @@ using UnityEngine;
 public partial class CardEffectFactory
 {
     #region Static effect of [Jamming] on oneself
-    public static CanNotBeDestroyedByBattleClass JammingSelfStaticEffect(bool isInheritedEffect, CardSource card, Func<bool> condition)
+    public static CanNotBeDestroyedByBattleClass JammingSelfStaticEffect(bool isInheritedEffect, CardSource card, Func<bool> condition, bool isLinkedEffect = false)
     {
         bool PermanentCondition(Permanent permanent) => permanent == card.PermanentOfThisCard();
 
@@ -24,12 +24,12 @@ public partial class CardEffectFactory
             return false;
         }
 
-        return JammingStaticEffect(permanentCondition: PermanentCondition, isInheritedEffect: isInheritedEffect, card: card, condition: CanUseCondition);
+        return JammingStaticEffect(permanentCondition: PermanentCondition, isInheritedEffect: isInheritedEffect, card: card, condition: CanUseCondition, isLinkedEffect: isLinkedEffect);
     }
     #endregion
 
     #region Static effect of [Jamming]
-    public static CanNotBeDestroyedByBattleClass JammingStaticEffect(Func<Permanent, bool> permanentCondition, bool isInheritedEffect, CardSource card, Func<bool> condition)
+    public static CanNotBeDestroyedByBattleClass JammingStaticEffect(Func<Permanent, bool> permanentCondition, bool isInheritedEffect, CardSource card, Func<bool> condition, bool isLinkedEffect = false)
     {
         string effectName = "Jamming";
 
@@ -73,7 +73,8 @@ public partial class CardEffectFactory
             isInheritedEffect: isInheritedEffect,
             card: card,
             condition: CanUseCondition,
-            effectName: effectName
+            effectName: effectName,
+            isLinkedEffect: isLinkedEffect
         );
     }
     #endregion

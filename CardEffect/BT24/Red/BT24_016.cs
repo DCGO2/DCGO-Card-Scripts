@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 // Lamiamon
 namespace DCGO.CardEffects.BT24
@@ -165,8 +166,13 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared WD/WA
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                bool CanSelectCardCondition(CardSource cardSource)
+                {
+                    return true;
+                }
+
                 CardSource selectedCard = null;
                 if (card.Owner.Enemy.HandCards.Count() >= 1)
                 {
@@ -222,12 +228,6 @@ namespace DCGO.CardEffects.BT24
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
-
-            bool CanSelectCardCondition(CardSource cardSource)
-            {
-                return true;
-            }
-
             #endregion
 
             #region When Attacking
@@ -236,7 +236,8 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Opponent places 1 card from hand in security bottom. Trash their security top", CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, 1, false, SharedEffectDiscription("When Attacking"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDiscription("When Attacking"));
+                activateClass.SetHashString("WAWD_BT24-016");
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -254,7 +255,8 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Opponent places 1 card from hand in security bottom. Trash their security top", CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, 1, false, SharedEffectDiscription("When Digivolving"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDiscription("When Digivolving"));
+                activateClass.SetHashString("WAWD_BT24-016");
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)

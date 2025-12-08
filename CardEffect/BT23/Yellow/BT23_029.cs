@@ -59,8 +59,7 @@ namespace DCGO.CardEffects.BT23
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, PermanentCondition, null);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -71,8 +70,7 @@ namespace DCGO.CardEffects.BT23
                 bool PermanentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && (permanent.TopCard.EqualsTraits("Beast") || permanent.TopCard.EqualsTraits("Beastkin") || permanent.TopCard.HasCSTraits)
-                        && permanent != card.PermanentOfThisCard();
+                        && (permanent.TopCard.EqualsTraits("Beast") || permanent.TopCard.EqualsTraits("Beastkin") || permanent.TopCard.HasCSTraits);
                 }
 
                 bool IsOpponentsDigimon(Permanent permanent)
