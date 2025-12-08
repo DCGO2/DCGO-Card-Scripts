@@ -7,7 +7,7 @@ using UnityEngine;
 public partial class CardEffectFactory
 {
     #region Static effect that can't be deleted by battle
-    public static CanNotBeDestroyedByBattleClass CanNotBeDestroyedByBattleStaticEffect(Func<Permanent, Permanent, Permanent, CardSource, bool> canNotBeDestroyedByBattleCondition, Func<Permanent, bool> permanentCondition, bool isInheritedEffect, CardSource card, Func<bool> condition, string effectName)
+    public static CanNotBeDestroyedByBattleClass CanNotBeDestroyedByBattleStaticEffect(Func<Permanent, Permanent, Permanent, CardSource, bool> canNotBeDestroyedByBattleCondition, Func<Permanent, bool> permanentCondition, bool isInheritedEffect, CardSource card, Func<bool> condition, string effectName, bool isLinkedEffect = false)
     {
         CanNotBeDestroyedByBattleClass canNotBeDestroyedByBattleClass = new CanNotBeDestroyedByBattleClass();
         canNotBeDestroyedByBattleClass.SetUpICardEffect(effectName, CanUseCondition, card);
@@ -16,6 +16,11 @@ public partial class CardEffectFactory
         if (isInheritedEffect)
         {
             canNotBeDestroyedByBattleClass.SetIsInheritedEffect(true);
+        }
+
+        if (isLinkedEffect)
+        {
+            canNotBeDestroyedByBattleClass.SetIsLinkedEffect(true);
         }
 
         bool CanUseCondition(Hashtable hashtable)
