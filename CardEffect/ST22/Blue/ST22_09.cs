@@ -70,6 +70,7 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpICardEffect("Delete opponent's lowest dp Digimon and add this card to hand", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
                 activateClass.SetIsSecurityEffect(true);
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                     => "[Security] Until your turn ends, 1 of your opponent's Digimon or Tamers can't suspend. Then, add this card to the hand.";
@@ -137,6 +138,7 @@ namespace DCGO.CardEffects.ST22
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("You may link this to 1 digimon. Then, 1 opponent digimon or tamers cant suspend until their turn ends", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                     => "[Main] You may link this card to 1 of your Digimon without paying the cost. Then, 1 of your opponent's Digimon or Tamers can't suspend until their turn ends.";
