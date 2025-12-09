@@ -26,7 +26,7 @@ namespace DCGO.CardEffects.ST22
 
             #endregion
 
-            #region OP/WD/WA Shared
+            #region OP/WD Shared
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
