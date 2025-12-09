@@ -149,7 +149,7 @@ namespace DCGO.CardEffects.ST22
             #endregion
 
             #region When Attacking
-            if (timing == EffectTiming.OnEnterFieldAnyone)
+            if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Use 1 Option with [Onmyōjutsu]/[Plug-In] trait", CanUseCondition, card);
@@ -170,7 +170,7 @@ namespace DCGO.CardEffects.ST22
                     {
                         if (cardSource.IsOption)
                         {
-                            if (cardSource.EqualsTraits("Onmyōjutsu") || cardSource.EqualsTraits("Plug-In"))
+                            if (cardSource.HasOnmyoOrPluginTraits)
                             {
                                 return true;
                             }
