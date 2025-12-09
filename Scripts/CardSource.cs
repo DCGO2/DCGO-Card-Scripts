@@ -3032,7 +3032,7 @@ public class CardSource : MonoBehaviour
     {
         if (targetPermanent != null)
         {
-            if (targetPermanent.TopCard != null)
+            if (targetPermanent.TopCard != null && !targetPermanent.TopCard.IsToken)
             {
                 if (this.CanLink(PayCost))
                 {
