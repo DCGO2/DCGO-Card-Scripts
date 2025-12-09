@@ -51,7 +51,7 @@ namespace DCGO.CardEffects.ST22
                     #endregion
 
                     if (selectedPermament != null) yield return ContinuousController.instance.StartCoroutine(
-                        CardEffectCommons.ChangeDigimonDP(selectedPermament, 98000, EffectDuration.UntilEachTurnEnd, activateClass));
+                        CardEffectCommons.ChangeDigimonDP(selectedPermament, -9000, EffectDuration.UntilEachTurnEnd, activateClass));
                 }
 
             }
@@ -95,6 +95,7 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpICardEffect("-9K DP to 1 opponent digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, hash => SharedActivateCoroutine(hash, activateClass), -1, false, EffectDiscription());
                 activateClass.SetIsSecurityEffect(true);
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                     => "[Security] 1 of your opponent's Digimon gets -9000 DP for the turn.";
@@ -118,6 +119,7 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpICardEffect("By trashing this card, 1 digimon doesnt leave", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
                 activateClass.SetIsSecurityEffect(true);
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                     => "[Security] [All Turns] When any of your Digimon with [Renamon], [Kyubimon], [Taomon] or [Sakuyamon] in their names would leave the battle area other than by battle, by trashing this card, 1 of those Digimon doesn't leave.";
@@ -209,107 +211,34 @@ namespace DCGO.CardEffects.ST22
             if (timing == EffectTiming.OptionSkill)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("You may link this to 1 digimon. Then, 1 opponent digimon or tamers cant suspend until their turn ends", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Draw 1. Then, place this card face up as the bottom security card.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
-                    => "[Main] You may link this card to 1 of your Digimon without paying the cost. Then, 1 of your opponent's Digimon or Tamers can't suspend until their turn ends.";
+                    => "[Main] <Draw 1>. Then, place this card face up as the bottom security card.";
 
                 bool CanUseCondition(Hashtable hashtable)
                     => CardEffectCommons.CanTriggerOptionMainEffect(hashtable, card);
 
-                bool CanSelectPermanentCondition(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
-                            card.CanLinkToTargetPermanent(permanent, false);
-                }
-
-                bool CanSelectOpponentPermamentCondition(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
-                        && (permanent.IsTamer || permanent.IsDigimon);
-                }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    #region Select Digimon To Link
-
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                    #region Draw 1
+                    if (card.Owner.LibraryCards.Count >= 1)
                     {
-
-
-                        Permanent selectedPermanent = null;
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermanentCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: 1,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to link.", "The opponent is selecting 1 Digimon to link.");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-                            yield return null;
-                        }
-
-
-
-                        if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddLinkCard(card, activateClass));
+                        yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
                     }
-
                     #endregion
 
-                    #region Freeze Digimon or Tamer
+                    #region Place in security
+                    yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                        card, toTop: false, faceUp: true));
 
-                    if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, CanSelectOpponentPermamentCondition))
-                    {
-                        Permanent selectedPermanent = null;
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectOpponentPermamentCondition));
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
+                        .CreateRecoveryEffect(card.Owner));
 
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectOpponentPermamentCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: false,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-                            yield return null;
-                        }
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                        if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotSuspend(
-                            targetPermanent: selectedPermanent,
-                            effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                            activateClass: activateClass,
-                            condition: null,
-                            effectName: "Can not suspend"));
-
-                    }
-
+                    yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
                     #endregion
                 }
             }
