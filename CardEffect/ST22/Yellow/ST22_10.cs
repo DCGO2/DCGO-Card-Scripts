@@ -95,6 +95,7 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpICardEffect("-9K DP to 1 opponent digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, hash => SharedActivateCoroutine(hash, activateClass), -1, false, EffectDiscription());
                 activateClass.SetIsSecurityEffect(true);
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                     => "[Security] 1 of your opponent's Digimon gets -9000 DP for the turn.";
@@ -118,6 +119,7 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpICardEffect("By trashing this card, 1 digimon doesnt leave", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
                 activateClass.SetIsSecurityEffect(true);
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                     => "[Security] [All Turns] When any of your Digimon with [Renamon], [Kyubimon], [Taomon] or [Sakuyamon] in their names would leave the battle area other than by battle, by trashing this card, 1 of those Digimon doesn't leave.";
@@ -211,6 +213,7 @@ namespace DCGO.CardEffects.ST22
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("You may link this to 1 digimon. Then, 1 opponent digimon or tamers cant suspend until their turn ends", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                     => "[Main] You may link this card to 1 of your Digimon without paying the cost. Then, 1 of your opponent's Digimon or Tamers can't suspend until their turn ends.";
