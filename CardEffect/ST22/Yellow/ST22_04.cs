@@ -378,6 +378,7 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpICardEffect("Trash 1 security to unsuspend 1 Digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
                 activateClass.SetHashString("ST22_04_EoA");
+                activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
