@@ -23,7 +23,7 @@ namespace DCGO.CardEffects.ST22
 
 			bool CanSelectCardCondition(CardSource cardSource)
 			{
-                return cardSource.ContainsCardName("Sakuyamon")
+                return cardSource.ContainsCardName("Renamon")
                         || cardSource.ContainsCardName("Kyubimon")
                         || cardSource.ContainsCardName("Taomon")
                         || cardSource.ContainsCardName("Sakuyamon")
