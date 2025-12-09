@@ -249,8 +249,7 @@ namespace DCGO.CardEffects.ST22
         {
             static bool PermanentCondition(Permanent targetPermanent)
             {
-                CardSource Top = targetPermanent.TopCard;
-                return Top.IsDigimon && Top.Level >= 3;
+                return targetPermanent.TopCard.HasLevel && targetPermanent.Level >= 3;
             }
 
             return CardEffectFactory.AddSelfLinkConditionStaticEffect(permanentCondition: PermanentCondition, linkCost: 2, card: card);
