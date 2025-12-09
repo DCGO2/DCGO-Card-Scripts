@@ -41,7 +41,7 @@ namespace DCGO.CardEffects.ST22
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Reduce play cost (5)", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
                 activateClass.SetHashString("PlayCost-5_ST22_14");
                 cardEffects.Add(activateClass);
 
@@ -294,7 +294,7 @@ namespace DCGO.CardEffects.ST22
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("If opponent has 6 or more hand cards, they trash one. Then, if they have 5 or less, delete 1 of their lowest level digimon", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
                 activateClass.SetHashString("ST22_08_EOYT");
                 cardEffects.Add(activateClass);
 
