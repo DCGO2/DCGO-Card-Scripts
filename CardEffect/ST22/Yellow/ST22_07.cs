@@ -192,7 +192,7 @@ namespace DCGO.CardEffects.ST22
                 {
                     return source.IsOption
                         && !source.CanNotPlayThisOption
-                        && (source.EqualsTraits("Onmyōjutsu") || source.EqualsTraits("Plug-In"));
+                        && source.HasOnmyoOrPluginTraits;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
