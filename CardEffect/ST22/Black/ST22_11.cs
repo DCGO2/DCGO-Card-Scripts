@@ -70,6 +70,7 @@ namespace DCGO.CardEffects.ST22
                 activateClass.SetUpICardEffect("De-Digivolve(2) 1 opponent digimon. Then, add this card to hand", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
                 activateClass.SetIsSecurityEffect(true);
+                cardEffects.add(activateClass);
 
                 string EffectDiscription()
                     => "[Security] <De-Digivolve 2> 1 of your opponent's Digimon. Then, add this card to the hand.";
@@ -139,6 +140,7 @@ namespace DCGO.CardEffects.ST22
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("You may link this to 1 digimon. Then, 1 digimon gains <Reboot> and 3K DP until their turn ends", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                cardEffects.add(activateClass);
 
                 string EffectDiscription()
                     => "[Main] You may link this card to 1 of your Digimon without paying the cost. Then, until your opponent's turn ends, 1 of your Digimon gains <Reboot> and +3000 DP.";
