@@ -120,7 +120,7 @@ namespace DCGO.CardEffects.BT20
             #endregion
 
             #region All Turns
-            if (timing == EffectTiming.WhenPermanentWouldBeDeleted)
+            if (timing == EffectTiming.WhenRemoveField)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 11 cost or lower Digimon from sources", CanUseCondition, card);
