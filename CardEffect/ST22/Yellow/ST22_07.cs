@@ -188,11 +188,14 @@ namespace DCGO.CardEffects.ST22
                            CardEffectCommons.CanActivateSuspendCostEffect(card);
                 }
 
-                bool SelectSourceCard(CardSource source)
+                bool SelectSourceCard(CardSource source, Permanent permanent)
                 {
                     return source.IsOption
                         && !source.CanNotPlayThisOption
-                        && source.HasOnmyoOrPluginTraits;
+                        && source.HasOnmyoOrPluginTraits
+                        && permanent.TopCard != null
+                        && permanent.TopCard.HasLevel
+                        && source.GetCostItself <= permanent.TopCard.Level;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -208,34 +211,43 @@ namespace DCGO.CardEffects.ST22
                         yield return null;
                     }
 
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    if (hashtable != null)
+                    {
+                        if (hashtable.ContainsKey("AttackingPermanent"))
+                        {
+                            if (hashtable["AttackingPermanent"] is Permanent AttackingPermanent)
+                            {
+                                SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
-                    selectCardEffect.SetUp(
-                        canTargetCondition: SelectSourceCard,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        canNoSelect: () => true,
-                        selectCardCoroutine: SelectCardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        message: "Select 1 option card to use",
-                        maxCount: 1,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        mode: SelectCardEffect.Mode.Custom,
-                        root: SelectCardEffect.Root.DigivolutionCards,
-                        customRootCardList: card.PermanentOfThisCard().DigivolutionCards,
-                        canLookReverseCard: true,
-                        selectPlayer: card.Owner,
-                        cardEffect: activateClass);
+                                selectCardEffect.SetUp(
+                                    canTargetCondition: (sourceCard) => SelectSourceCard(sourceCard, AttackingPermanent),
+                                    canTargetCondition_ByPreSelecetedList: null,
+                                    canEndSelectCondition: null,
+                                    canNoSelect: () => true,
+                                    selectCardCoroutine: SelectCardCoroutine,
+                                    afterSelectCardCoroutine: null,
+                                    message: "Select 1 option card to use",
+                                    maxCount: 1,
+                                    canEndNotMax: false,
+                                    isShowOpponent: true,
+                                    mode: SelectCardEffect.Mode.Custom,
+                                    root: SelectCardEffect.Root.DigivolutionCards,
+                                    customRootCardList: card.PermanentOfThisCard().DigivolutionCards,
+                                    canLookReverseCard: true,
+                                    selectPlayer: card.Owner,
+                                    cardEffect: activateClass);
 
-                    selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
-                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                                selectCardEffect.SetUpCustomMessage("Select 1 option card to use.", "The opponent is selecting 1 option card to use.");
+                                yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
-                    if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayOptionCards(
-                        cardSources: selectedCards,
-                        activateClass: activateClass,
-                        payCost: false,
-                        root: SelectCardEffect.Root.DigivolutionCards));
+                                if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayOptionCards(
+                                    cardSources: selectedCards,
+                                    activateClass: activateClass,
+                                    payCost: false,
+                                    root: SelectCardEffect.Root.DigivolutionCards));
+                            }
+                        }
+                    }
                 }
             }
 
