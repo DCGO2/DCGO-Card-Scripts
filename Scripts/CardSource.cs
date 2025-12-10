@@ -144,7 +144,14 @@ public class CardSource : MonoBehaviour
 
     #region Whether this option card's effect prevents it from being played
 
-    public bool CanNotPlayThisOption
+    /**
+    *   Checkes if effects prevent the playing of this option but does not check color requirements.
+    *   Needed for ST22_07 as a bug is preventing IgnoreColorConditions from being considered for the cards stacked under her
+    *   In that case, every option that could be used from under her has its color requirements or ignore color requirements met by virtue of the tamer
+    *   Use caution before using this function anywhere else
+    *   Extracted from CanNotPlaythisOption, which calls this now to avoid duplication
+    */
+    public bool CanNotPlaythisOptionIgnoreColor
     {
         get
         {
@@ -197,6 +204,28 @@ public class CardSource : MonoBehaviour
             }
 
             #endregion
+
+            return false;
+        }
+    }
+
+    #endregion
+
+    #region Whether a card effect or lack of color requirements prevents this option from being played
+
+    public bool CanNotPlayThisOption
+    {
+        get
+        {
+            if (!IsOption)
+            {
+                return false;
+            }
+
+            if (CanNotPlaythisOptionIgnoreColor)
+            {
+                return true;
+            }
 
             #region Whether the color requirement is met
 
