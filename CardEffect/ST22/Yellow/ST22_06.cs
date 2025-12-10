@@ -233,7 +233,7 @@ namespace DCGO.CardEffects.ST22
 
             #endregion
 
-            #region On Lose Security / On Use Option - OPT
+            #region All Turns - On Lose Security / On Use Option - OPT
 
             if (timing == EffectTiming.OnLoseSecurity || timing == EffectTiming.OnUseOption)
             {
@@ -252,8 +252,8 @@ namespace DCGO.CardEffects.ST22
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card)
-                     && CardEffectCommons.CanTriggerWhenLoseSecurity(hashtable, player => player == card.Owner)
-                     || CardEffectCommons.CanTriggerWhenOwnerUseOption(hashtable, null, null, card))
+                     && (CardEffectCommons.CanTriggerWhenLoseSecurity(hashtable, player => player == card.Owner)
+                     || CardEffectCommons.CanTriggerWhenOwnerUseOption(hashtable, null, null, card)))
                     {
                         return true;
                     }
