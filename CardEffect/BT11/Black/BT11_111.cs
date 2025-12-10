@@ -162,7 +162,6 @@ namespace DCGO.CardEffects.BT11
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Prevent this Digimon from leaving play", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
-                activateClass.SetHashString("Substitute_BT11_111");
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
