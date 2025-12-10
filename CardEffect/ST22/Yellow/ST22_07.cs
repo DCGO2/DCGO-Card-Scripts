@@ -193,7 +193,7 @@ namespace DCGO.CardEffects.ST22
                     return source.IsOption
                         && !source.CanNotPlayThisOption
                         && source.HasOnmyoOrPluginTraits
-                        && AttackingPermanent.Level >= source.UseCost;
+                        && GManager.instance.Battle.AttackingPermanent.Level >= source.UseCost;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
