@@ -60,12 +60,6 @@ namespace DCGO.CardEffects.ST22
             #region Link
             if (timing == EffectTiming.OnDeclaration)
             {
-                /// <summary>
-                /// Used to link a card
-                /// </summary>
-                /// <param name="card">Reference to this card</param>
-                /// <param name="condition">OPTIONAL - Function to check for effect conditions</param>
-                /// <author>Mike Bunch</author>
                 cardEffects.Add(CardEffectFactory.LinkEffect(card));
             }
             #endregion
@@ -195,7 +189,7 @@ namespace DCGO.CardEffects.ST22
 
                         if (selectedCard != null)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(-Mathf.Min(0,selectedCard.linkCondition.cost - 2), activateClass));
+                            yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(-Mathf.Max(0,selectedCard.linkCondition.cost - 2), activateClass));
 
                             yield return ContinuousController.instance.StartCoroutine(card.PermanentOfThisCard().AddLinkCard(selectedCard, activateClass));
                         }
