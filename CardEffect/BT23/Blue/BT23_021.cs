@@ -367,13 +367,14 @@ namespace DCGO.CardEffects.BT23
 
             #endregion
 
-            #region Link ESS - OPT
+            #region Link Effect
 
             if (timing == EffectTiming.WhenLinked)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Gain immunity from battle", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetIsLinkedEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
@@ -383,8 +384,7 @@ namespace DCGO.CardEffects.BT23
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerWhenLinking(hashtable, null, card);
+                    return CardEffectCommons.CanTriggerWhenLinking(hashtable, null, card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
