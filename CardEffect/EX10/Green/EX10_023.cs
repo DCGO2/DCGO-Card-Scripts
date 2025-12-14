@@ -39,18 +39,45 @@ namespace DCGO.CardEffects.EX10
             }
             #endregion
 
+            #region Shared OP/WD
+
+            string EffectDiscriptionShared(string tag)
+            {
+                return $"[{tag}] Suspend all other Digimon and Tamers.";
+            }
+
+            bool CanSelectPermanentCondition(Permanent permanent)
+            {
+                return (CardEffectCommons.IsPermanentExistsOnBattleArea(permanent) &&
+                        permanent != card.PermanentOfThisCard() &&
+                        !permanent.TopCard.CanNotBeAffected(activateClass) &&
+                        (permanent.IsDigimon || permanent.IsTamer))
+            }
+
+            bool CanActivateConditionShared(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            }
+
+            IEnumerator ActivateCoroutineShared(Hashtable hashtable)
+            {
+                List<Permanent> suspendTargetPermanents =
+                    GManager.instance.turnStateMachine.gameContext.Players_ForTurnPlayer
+                    .Map(player => player.GetBattleAreaPermanents().Filter(CanSelectPermanentCondition))
+                    .Flat();
+
+                yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(suspendTargetPermanents, CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
+            }
+
+            #regionend
+
             #region On Play
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Suspend all other Digimon", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, false, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[On Play] Suspend all other Digimon and Tamers.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
@@ -58,26 +85,7 @@ namespace DCGO.CardEffects.EX10
                            CardEffectCommons.CanTriggerOnPlay(hashtable, card);
                 }
 
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    #region Suspend All Digimon
-                    List<Permanent> tappedPermanents = new List<Permanent>();
-
-                    tappedPermanents.AddRange(card.Owner.GetBattleAreaPermanents());
-                    tappedPermanents.AddRange(card.Owner.Enemy.GetBattleAreaPermanents());
-
-                    tappedPermanents = tappedPermanents.Filter(x => x.IsTamer || x.IsDigimon);
-
-                    tappedPermanents.Remove(card.PermanentOfThisCard());
-
-                    yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(tappedPermanents, hashtable).Tap());
-                    #endregion
-                }
+                
             }
             #endregion
 
@@ -86,39 +94,13 @@ namespace DCGO.CardEffects.EX10
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Suspend all other Digimon", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, false, EffectDiscriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[When Digivolving] Suspend all other Digimon and Tamers.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
                            CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    #region Suspend All Digimon
-                    List<Permanent> tappedPermanents = new List<Permanent>();
-
-                    tappedPermanents.AddRange(card.Owner.GetBattleAreaPermanents());
-                    tappedPermanents.AddRange(card.Owner.Enemy.GetBattleAreaPermanents());
-
-                    tappedPermanents = tappedPermanents.Filter(x => x.IsTamer || x.IsDigimon);
-
-                    tappedPermanents.Remove(card.PermanentOfThisCard());
-
-                    yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(tappedPermanents, hashtable).Tap());
-                    #endregion
                 }
             }
             #endregion
@@ -228,39 +210,11 @@ namespace DCGO.CardEffects.EX10
                 cardEffects.Add(CardEffectFactory.CantUnsuspendStaticEffect(
                     permanentCondition: PermanentCondition,
                     isInheritedEffect: false,
-                    card: card, 
+                    card: card,
                     condition: CanUseCondition,
                     effectName: effectName));
             }
             #endregion
-
-            if (timing == EffectTiming.None)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
-                cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "";
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return true;
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return true;
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    yield return null;
-                }
-            }
 
             return cardEffects;
         }
