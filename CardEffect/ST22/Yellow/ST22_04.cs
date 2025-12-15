@@ -173,7 +173,7 @@ namespace DCGO.CardEffects.ST22
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
-                IEnumerator ActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     #region Use Option Card
 

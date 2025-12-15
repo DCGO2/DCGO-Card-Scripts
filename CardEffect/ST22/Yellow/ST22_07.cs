@@ -191,9 +191,9 @@ namespace DCGO.CardEffects.ST22
                 bool SelectSourceCard(CardSource source)
                 {
                     return source.IsOption
-                        && GManager.instance.Battle.AttackingPermanent.Level >= source.UseCost
+                        && GManager.instance.attackProcess.AttackingPermanent.Level >= source.GetCostItself
                         && source.HasOnmyoOrPluginTraits
-                        && !source.CanNotPlaythisOption;
+                        && !source.CanNotPlayThisOption;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
