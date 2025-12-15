@@ -169,10 +169,10 @@ namespace DCGO.CardEffects.ST22
                 bool AttackingPermanent(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
-                           permanent.TopCard.ContainsCardName("Renamon") ||
+                           (permanent.TopCard.ContainsCardName("Renamon") ||
                            permanent.TopCard.ContainsCardName("Kyubimon") ||
                            permanent.TopCard.ContainsCardName("Taomon") ||
-                           permanent.TopCard.ContainsCardName("Sakuyamon");
+                           permanent.TopCard.ContainsCardName("Sakuyamon"));
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -191,8 +191,9 @@ namespace DCGO.CardEffects.ST22
                 bool SelectSourceCard(CardSource source)
                 {
                     return source.IsOption
-                        && !source.CanNotPlayThisOption
-                        && source.HasOnmyoOrPluginTraits;
+                        && GManager.instance.Battle.AttackingPermanent.Level >= source.UseCost
+                        && source.HasOnmyoOrPluginTraits
+                        && !source.CanNotPlaythisOption;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
