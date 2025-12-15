@@ -120,7 +120,7 @@ namespace DCGO.CardEffects.BT20
             #endregion
 
             #region All Turns
-            if (timing == EffectTiming.WhenPermanentWouldBeDeleted)
+            if (timing == EffectTiming.WhenRemoveField)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 11 cost or lower Digimon from sources", CanUseCondition, card);
@@ -129,7 +129,7 @@ namespace DCGO.CardEffects.BT20
 
                 string EffectDiscription()
                 {
-                    return "[All Turns] When this Digimon would leave the battle are, you may play 1 play cost 11 or lower Digimon card with the [Machine] or [Cyborg] trait from this Digimon's digivolution cards without paying the cost.";
+                    return "[All Turns] When this Digimon would leave the battle area, you may play 1 play cost 11 or lower Digimon card with the [Machine] or [Cyborg] trait from this Digimon's digivolution cards without paying the cost.";
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
