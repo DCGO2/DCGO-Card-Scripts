@@ -93,7 +93,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card))
                     {
-                        if (permanent.HasLevel)
+                        if (permanent.TopCard.HasLevel)
                         {
                             if (CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy))
                             {
@@ -108,9 +108,9 @@ namespace DCGO.CardEffects.BT24
                     return false;
                 }
 
-                bool CanSelectDigimonCondition(Permament permament)
+                bool CanSelectDigimonCondition(Permanent permament)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) && permanent.HasTSTraits;
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permament, card) && permament.TopCard.HasTSTraits;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -134,10 +134,10 @@ namespace DCGO.CardEffects.BT24
 
                         if (bouncePermanents.Count >= 1)
                         {
-                            Hashtable hashtable = new Hashtable();
-                            hashtable.Add("CardEffect", activateClass);
+                            Hashtable _hashtable = new Hashtable();
+                            _hashtable.Add("CardEffect", activateClass);
 
-                            yield return ContinuousController.instance.StartCoroutine(new HandBounceClaass(bouncePermanents, hashtable).Bounce());
+                            yield return ContinuousController.instance.StartCoroutine(new HandBounceClaass(bouncePermanents, _hashtable).Bounce());
 
                             #region if returned, unsuspend
 

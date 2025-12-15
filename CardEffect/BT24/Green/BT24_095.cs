@@ -91,7 +91,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectTargetCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card) && (permanent.IsDigimon || permanent.isTamer);
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card) && (permanent.IsDigimon || permanent.IsTamer);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -123,13 +123,10 @@ namespace DCGO.CardEffects.BT24
                         {
                             foreach (Permanent selectedPermanent in permanents)
                             {
-                                if (CardEffectCommons.HasMatchConditionPermanent(PermanentCondition))
-                                {
-                                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCantUnsuspendNextActivePhase(
+                                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCantUnsuspendNextActivePhase(
                                             targetPermanent: selectedPermanent,
                                             activateClass: activateClass
                                         ));
-                                }
                             }
                             yield return null;
                         }
