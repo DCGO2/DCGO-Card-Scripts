@@ -118,7 +118,7 @@ namespace DCGO.CardEffects.BT23
                         yield return null;
                     }
 
-                    selectHandEffect.SetUpCustomMessage("Select 1 tamer to play", "The opponent is selecting 1 tamer to play");
+                    selectHandEffect.SetUpCustomMessage("Select 1 card to play", "The opponent is selecting 1 card to play");
                     selectHandEffect.SetUpCustomMessage_ShowCard("Selected card");
                     yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
