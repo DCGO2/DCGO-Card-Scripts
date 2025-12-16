@@ -181,7 +181,6 @@ namespace DCGO.CardEffects.EX6
                     CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true,
                     EffectDescription());
-                activateClass.SetHashString("TrashSecurityToPreventLeaving_EX6_030");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
