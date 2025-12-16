@@ -72,6 +72,13 @@ namespace DCGO.CardEffects.BT24
                     && permanent.TopCard.HasLevel && permanent.TopCard.Level <= 4;
             }
 
+            bool CanSelectPermanentCondition1(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
+                    && (permanent.IsDigimon
+                    || permanent.IsTamer);
+            }
+
             bool CanActivateConditionShared(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
@@ -100,6 +107,46 @@ namespace DCGO.CardEffects.BT24
                     selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to bottom deck.", "The opponent is selecting 1 Digimon to bottom deck.");
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                }
+
+                if (CardEffectCommons.IsByEffect(hashtable, null))
+                {
+                    if (CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanSelectPermanentCondition1))
+                    {
+                        Permanent selectedPermanent = null;
+                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                        selectPermanentEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: CanSelectPermanentCondition1,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: 1,
+                            canNoSelect: false,
+                            canEndNotMax: false,
+                            selectPermanentCoroutine: SelectPermanentCoroutine,
+                            afterSelectPermanentCoroutine: null,
+                            mode: SelectPermanentEffect.Mode.Custom,
+                            cardEffect: activateClass);
+
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimom or Tamer to stun", "The opponent is selecting 1 Digimom or tamer to stun");
+                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                        {
+                            selectedPermanent = permanent;
+                            yield return null;
+                        }
+
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotSuspendPlayerEffect(
+                                permanentCondition: (permanent) => permanent == selectedPermanent,
+                                effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                                activateClass: activateClass,
+                                isOnlyActivePhase: false,
+                                effectName: "Can't Suspend"
+                            ));
+
+                    }
                 }
             }
 
