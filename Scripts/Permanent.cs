@@ -1488,22 +1488,6 @@ public class Permanent
                         {
                             if (cardEffect != null)
                             {
-                                #region Always active on card effects
-
-                                if (cardEffect is IIgnoreColorConditionEffect)
-                                {
-                                    _EffectList.Add(cardEffect);
-                                    continue;
-                                }
-
-                                if (cardEffect is IChangeCardNamesEffect)
-                                {
-                                    _EffectList.Add(cardEffect);
-                                    continue;
-                                }
-
-                                #endregion
-
                                 #region Entity, Inherited and Link effects
 
                                 if (cardEffect.IsInheritedEffect && !isTopCard)
