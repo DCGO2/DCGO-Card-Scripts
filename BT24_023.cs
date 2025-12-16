@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+// Calmaramon
 namespace DCGO.CardEffects.BT24
 {
     public class BT24_023 : CEntity_Effect
