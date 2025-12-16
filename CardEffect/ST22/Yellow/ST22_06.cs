@@ -278,7 +278,7 @@ namespace DCGO.CardEffects.ST22
                         {
                             if (!permanent.TopCard.CanNotBeAffected(activateClass))
                             {
-                                if (CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy)) ;
+                                if (CardEffectCommon.IsMinDP(permanent, card.Owner.Enemy))
                                 {
                                     return true;
                                 }
