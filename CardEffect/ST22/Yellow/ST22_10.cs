@@ -116,7 +116,7 @@ namespace DCGO.CardEffects.ST22
                 List<Permanent> removedPermanents = new List<Permanent>();
 
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("By trashing this card, 1 digimon doesnt leave", CanUseCondition, card);
+                activateClass.SetUpICardEffect("By trashing this card, 1 digimon doesn't leave", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
                 activateClass.SetIsSecurityEffect(true);
                 cardEffects.Add(activateClass);
@@ -162,11 +162,11 @@ namespace DCGO.CardEffects.ST22
 
                     Permanent selectedPermanent = null;
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermament));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermamentCondition));
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermament,
+                        canTargetCondition: CanSelectPermamentCondition,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: maxCount,
@@ -194,7 +194,6 @@ namespace DCGO.CardEffects.ST22
                         selectedPermanent.HideWillRemoveFieldEffect();
 
                         selectedPermanent.DestroyingEffect = null;
-                        selectedPermanent.IsDestroyedByBattle = false;
                         selectedPermanent.HandBounceEffect = null;
                         selectedPermanent.LibraryBounceEffect = null;
                         selectedPermanent.willBeRemoveField = false;
