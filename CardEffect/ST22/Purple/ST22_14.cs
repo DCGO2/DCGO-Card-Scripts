@@ -59,7 +59,7 @@ namespace DCGO.CardEffects.ST22
                     if (card.Owner.Enemy.HandCards.Count >= 10 || card.Owner.Enemy.TrashCards.Count >= 10)
                     {
                         return true;
-                    }    
+                    }
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -108,6 +108,57 @@ namespace DCGO.CardEffects.ST22
                     {
                         return true;
                     }
+                }
+            }
+
+            #endregion
+
+            #region Reduce Play Cost - Not Shown
+
+            if (timing == EffectTiming.None)
+            {
+                ChangeCostClass changeCostClass = new ChangeCostClass();
+                changeCostClass.SetUpICardEffect("Play Cost -5", CanUseCondition, card);
+                changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => true, isChangePayingCost: () => true);
+                changeCostClass.SetNotShowUI(true);
+                cardEffects.Add(changeCostClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {                    
+                     return card.Owner.Enemy.HandCards.Count >= 10 || card.Owner.Enemy.TrashCards.Count >= 10
+                }
+
+                int ChangeCost(CardSource cardSource, int cost, SelectCardEffect.Root root,
+                        List<Permanent> targetPermanents)
+                {
+                    if (CardSourceCondition(cardSource) &&
+                        RootCondition(root) &&
+                        PermanentsCondition(targetPermanents))
+                    {
+                        cost -= 5;
+                    }
+
+                    return cost;
+                }
+
+                bool PermanentsCondition(List<Permanent> targetPermanents)
+                {
+                    return targetPermanents == null || targetPermanents.Count(targetPermanent => targetPermanent != null) == 0;
+                }
+
+                bool CardSourceCondition(CardSource cardSource)
+                {
+                    return cardSource == card;
+                }
+
+                bool RootCondition(SelectCardEffect.Root root)
+                {
+                    return true;
+                }
+
+                bool isUpDown()
+                {
+                    return true;
                 }
             }
 
