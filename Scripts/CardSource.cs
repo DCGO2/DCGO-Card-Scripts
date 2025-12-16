@@ -255,15 +255,12 @@ public class CardSource : MonoBehaviour
 
                 #region the effects of itself
 
-                if (PermanentOfThisCard() == null)
+                if (EffectList(EffectTiming.None)
+                        .Some(cardEffect => cardEffect is IIgnoreColorConditionEffect
+                            && cardEffect.CanUse(null)
+                            && ((IIgnoreColorConditionEffect)cardEffect).IgnoreColorCondition(this)))
                 {
-                    if (EffectList(EffectTiming.None)
-                            .Some(cardEffect => cardEffect is IIgnoreColorConditionEffect
-                                && cardEffect.CanUse(null)
-                                && ((IIgnoreColorConditionEffect)cardEffect).IgnoreColorCondition(this)))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 #endregion
