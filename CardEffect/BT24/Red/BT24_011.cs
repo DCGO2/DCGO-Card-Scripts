@@ -1,7 +1,12 @@
-namespace DCGO.CardEffects.BT11
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DCGO.CardEffects.BT24
 {
     // Cyclonemon
-    public class BT11_012 : CEntity_Effect
+    public class BT24_011 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {

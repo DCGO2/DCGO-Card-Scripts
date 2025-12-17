@@ -31,7 +31,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By trashing 1 card, draw 2", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription("On Play"));
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -62,7 +62,7 @@ namespace DCGO.CardEffects.BT24
                     return card.EqualsTraits("Demon") || card.EqualsTraits("Shaman") || card.EqualsTraits("Titan");
                 }
 
-                IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
+                IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
                     if (card.Owner.HandCards.Count >= 1)
                     {
@@ -136,15 +136,15 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, cardSource => cardSource.Owner == card.Owner) && 
-                        (cardSource.PermanentOfThisCard().TopCard.EqualsTraits("Demon") || 
-                            cardSource.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
+                        (card.PermanentOfThisCard().TopCard.EqualsTraits("Demon") || 
+                            card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card) &&
                         CardEffectCommons.IsOwnerTurn(card) &&
-                        CardEffectCommons.HasMatchConditionOwnersCardInTrash(CanSelectCardCondition);
+                        CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)

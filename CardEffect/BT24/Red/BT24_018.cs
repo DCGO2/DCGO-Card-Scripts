@@ -1,3 +1,8 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
 // Styracomon
 namespace DCGO.CardEffects.BT24
 {
@@ -89,7 +94,7 @@ namespace DCGO.CardEffects.BT24
 
                     #region Unsuspend
 
-                    if (card.PermanentOfThisCard().IsSuspended())
+                    if (card.PermanentOfThisCard().IsSuspended)
                     {
                         List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
                         {
@@ -107,7 +112,9 @@ namespace DCGO.CardEffects.BT24
 
                         if (selectedOption)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() }, activateClass));
+                            yield return ContinuousController.instance.StartCoroutine(
+                        new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() },
+                            activateClass).Unsuspend());
                         }
                     }
 
@@ -144,7 +151,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent);
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

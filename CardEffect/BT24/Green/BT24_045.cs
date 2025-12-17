@@ -41,7 +41,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnTrashSelfHand(hashtable, SkillCondition, card);
+                    return CardEffectCommons.CanTriggerOnTrashSelfHand(hashtable, null, card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -89,7 +89,7 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent);
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
@@ -139,7 +139,7 @@ namespace DCGO.CardEffects.BT24
                             canTargetCondition: CanSelectPermanentCondition,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
-                            maxCount: maxCount,
+                            maxCount: 1,
                             canNoSelect: false,
                             canEndNotMax: false,
                             selectPermanentCoroutine: null,
@@ -153,7 +153,7 @@ namespace DCGO.CardEffects.BT24
                         {
                             foreach (Permanent selectedPermanent in permanents)
                             {
-                                if (CardEffectCommons.HasMatchConditionPermanent(PermanentCondition))
+                                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                                 {
                                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCantUnsuspendNextActivePhase(
                                             targetPermanent: selectedPermanent,
@@ -176,7 +176,7 @@ namespace DCGO.CardEffects.BT24
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDescription("On Play"));
-                activateClass.SetHashString = SharedHash();
+                activateClass.SetHashString(SharedHash());
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -194,7 +194,7 @@ namespace DCGO.CardEffects.BT24
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDescription("When Attacking"));
-                activateClass.SetHashString = SharedHash();
+                activateClass.SetHashString(SharedHash());
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -202,8 +202,6 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
                 }
             }
-
-            #endregion
 
             #endregion
 
@@ -233,15 +231,15 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, cardSource => cardSource.Owner == card.Owner) && 
-                        (cardSource.PermanentOfThisCard().TopCard.EqualsTraits("Demon") || 
-                            cardSource.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
+                        (card.PermanentOfThisCard().TopCard.EqualsTraits("Demon") || 
+                            card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card) &&
                         CardEffectCommons.IsOwnerTurn(card) &&
-                        CardEffectCommons.HasMatchConditionOwnersCardInTrash(CanSelectCardCondition);
+                        CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)

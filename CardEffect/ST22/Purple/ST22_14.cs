@@ -56,10 +56,8 @@ namespace DCGO.CardEffects.ST22
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (card.Owner.Enemy.HandCards.Count >= 10 || card.Owner.Enemy.TrashCards.Count >= 10)
-                    {
-                        return true;
-                    }
+                    return card.Owner.Enemy.HandCards.Count >= 10 ||
+                           card.Owner.Enemy.TrashCards.Count >= 10;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -74,7 +72,7 @@ namespace DCGO.CardEffects.ST22
                     changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
                     card.Owner.UntilCalculateFixedCostEffect.Add(_ => changeCostClass);
 
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(hashtable));
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(_hashtable));
 
                     int ChangeCost(CardSource cardSource, int cost, SelectCardEffect.Root root,
                         List<Permanent> targetPermanents)
@@ -124,8 +122,8 @@ namespace DCGO.CardEffects.ST22
                 cardEffects.Add(changeCostClass);
 
                 bool CanUseCondition(Hashtable hashtable)
-                {                    
-                     return card.Owner.Enemy.HandCards.Count >= 10 || card.Owner.Enemy.TrashCards.Count >= 10
+                {
+                    return card.Owner.Enemy.HandCards.Count >= 10 || card.Owner.Enemy.TrashCards.Count >= 10;
                 }
 
                 int ChangeCost(CardSource cardSource, int cost, SelectCardEffect.Root root,

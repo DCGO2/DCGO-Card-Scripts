@@ -1,3 +1,8 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
 // Medusamon
 namespace DCGO.CardEffects.BT24
 {
@@ -50,7 +55,7 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
-                bool CanDeleteCondition(Permament permanent)
+                bool CanDeleteCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy);
                 }       
@@ -83,7 +88,7 @@ namespace DCGO.CardEffects.BT24
 
                     #region Conditional Effects
 
-                    if (card.Owner.Enemy.TrashCards >= 2)
+                    if (card.Owner.Enemy.TrashCards.Count >= 2)
                     {
                         List<CardSource> selectedCards = new List<CardSource>();
                         

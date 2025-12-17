@@ -1,3 +1,8 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
 // Submarimon
 namespace DCGO.CardEffects.BT24
 {
@@ -50,24 +55,23 @@ namespace DCGO.CardEffects.BT24
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card) &&
-                        CardEffectCommons.HasMatchConditionOwnersHand(CanPlayTamerCondition);
+                        CardEffectCommons.HasMatchConditionOwnersHand(card, CanPlayTamerCondition);
                 }
 
                 bool CanPlayTamerCondition(CardSource cardSource)
                 {
-                    return cardSource.IsTamer() && 
-                        cardSource.HasTSTraits() &&
+                    return cardSource.IsTamer && 
+                        cardSource.HasTSTraits &&
                         CardEffectCommons.CanPlayAsNewPermanent(
                             cardSource: cardSource, 
-                            payCost: true, 
-                            cardEffect: activateClass, 
-                            fixedCost: Math.Max(0,cardSource.BasePlayCostFromEntity - 2)
+                            payCost: false, 
+                            cardEffect: activateClass
                         );
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    if (CardEffectCommons.HasMatchConditionOwnersHand(CanPlayTamerCondition))
+                    if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanPlayTamerCondition))
                     {
                         List<CardSource> selectedCards = new List<CardSource>();
 
@@ -101,15 +105,107 @@ namespace DCGO.CardEffects.BT24
                             yield return null;
                         }
 
+                        #region reduce play cost
+
+                        ChangeCostClass changeCostClass = new ChangeCostClass();
+                        changeCostClass.SetUpICardEffect("Play Cost -2", CanUseCondition1, card);
+                        changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
+                        Func<EffectTiming, ICardEffect> getCardEffect = GetCardEffect;
+                        card.Owner.UntilCalculateFixedCostEffect.Add(getCardEffect);
+
+                        ICardEffect GetCardEffect(EffectTiming _timing)
+                        {
+                            if (_timing == EffectTiming.None)
+                            {
+                                return changeCostClass;
+                            }
+
+                            return null;
+                        }
+
+                        bool CanUseCondition1(Hashtable hashtable)
+                        {
+                            return true;
+                        }
+
+                        int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                        {
+                            if (CardSourceCondition(cardSource))
+                            {
+                                if (RootCondition(root))
+                                {
+                                    if (PermanentsCondition(targetPermanents))
+                                    {
+                                        Cost -= 2;
+                                    }
+                                }
+                            }
+
+                            return Cost;
+                        }
+
+                        bool PermanentsCondition(List<Permanent> targetPermanents)
+                        {
+                            if (targetPermanents == null)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
+                                {
+                                    return true;
+                                }
+                            }
+
+                            return false;
+                        }
+
+                        bool CardSourceCondition(CardSource cardSource)
+                        {
+                            if (cardSource != null)
+                            {
+                                if (cardSource.Owner == card.Owner)
+                                {
+                                    if (cardSource.IsTamer)
+                                    {
+                                        if (cardSource.HasTSTraits)
+                                        {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            return false;
+                        }
+
+                        bool RootCondition(SelectCardEffect.Root root)
+                        {
+                            return true;
+                        }
+
+                        bool isUpDown()
+                        {
+                            return true;
+                        }
+
+                        #endregion
+
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
                             cardSources: selectedCards,
                             activateClass: activateClass,
                             payCost: true,
                             isTapped: false,
                             root: SelectCardEffect.Root.Hand,
-                            activateETB: true,
-                            fixedCost: Math.Max(0,cardSource.BasePlayCostFromEntity - 2)
+                            activateETB: true
                         ));
+
+                        #region release reducing play cost
+
+                        card.Owner.UntilCalculateFixedCostEffect.Remove(getCardEffect);
+
+                        #endregion
                     }
                 }
             }

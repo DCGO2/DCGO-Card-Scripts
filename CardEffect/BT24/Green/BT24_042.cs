@@ -88,15 +88,15 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, cardSource => cardSource.Owner == card.Owner) && 
-                        (cardSource.PermanentOfThisCard().TopCard.EqualsTraits("Demon") || 
-                            cardSource.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
+                        (card.PermanentOfThisCard().TopCard.EqualsTraits("Demon") || 
+                            card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card) &&
                         CardEffectCommons.IsOwnerTurn(card) &&
-                        CardEffectCommons.HasMatchConditionOwnersCardInTrash(CanSelectCardCondition);
+                        CardEffectCommons.HasMatchConditionOwnersCardInTrash(card,CanSelectCardCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)

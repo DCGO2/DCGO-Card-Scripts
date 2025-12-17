@@ -202,7 +202,7 @@ namespace DCGO.CardEffects.ST22
 
                     #region Select Digimon to gain <Reboot> & 3K DP
 
-                    if (CardEffectCommons.HasMatchConditionPermanent(card, CanSelectDigimonPermamentCondition))
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectDigimonPermamentCondition, card))
                     {
                         Permanent selectedPermanent = null;
                         int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectDigimonPermamentCondition));

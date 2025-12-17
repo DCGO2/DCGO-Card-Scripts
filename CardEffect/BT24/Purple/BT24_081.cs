@@ -63,11 +63,11 @@ namespace DCGO.CardEffects.BT24
 
                         bool CanTargetCondition_ByPreSelecetedList(List<CardSource> cardSources, CardSource cardSource)
                         {
-                            if (cardSources.Count() == 0)
+                            if (cardSources.Count == 0)
                             {
                                 return cardSource.EqualsCardName("Titamon");//If no cards selected yet, force to select a Titamon first
                             }
-                            if (cardSources.Count() == 1)
+                            if (cardSources.Count == 1)
                             {
                                 return cardSource.EqualsCardName("SkullBaluchimon");//If 1 card (Titamon) chosen, force to select a SkullBaluchimon next
                             }
@@ -159,8 +159,8 @@ namespace DCGO.CardEffects.BT24
 
                     if (discarded && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                     {
-                        List<Permanent> deleteTargetPermanents = card.Owner.Enemy.GetBattleAreaDigimons().Filter(PermanentCondition);
-                        yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(destroyTargetPermanents, CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
+                        List<Permanent> deleteTargetPermanents = card.Owner.Enemy.GetBattleAreaDigimons().Filter(CanSelectPermanentCondition);
+                        yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(deleteTargetPermanents, CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
                     }
                 }
             }
@@ -171,7 +171,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 
@@ -186,7 +186,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 
@@ -201,7 +201,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Attacking"));
                 cardEffects.Add(activateClass);
 
@@ -233,7 +233,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(card) && CardEffectCommons.HasMatchConditionOwnersCardInTrash(HasCorrectTrait);
+                    return CardEffectCommons.CanActivateOnDeletion(card) && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, HasCorrectTrait);
                 }
 
                 bool HasCorrectTrait(CardSource cardSource)
