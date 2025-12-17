@@ -114,6 +114,8 @@ namespace DCGO.CardEffects.BT24
 
                     #endregion
 
+                    #region Select Digimon to gain effect
+
                     if (selectedCard != null)
                     {
                         Permanent selectedPermanent = card.PermanentOfThisCard();
@@ -159,6 +161,9 @@ namespace DCGO.CardEffects.BT24
                             }
                         }
                     }
+
+                    #endregion
+                    
                 }
             }
             
