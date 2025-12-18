@@ -2,12 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.XR;
 
 //Torajiro Asuka
 namespace DCGO.CardEffects.P
 {
-    public class P-218 : CEntity_Effect
+    public class P_218 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
     {
