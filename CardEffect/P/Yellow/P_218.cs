@@ -17,8 +17,8 @@ namespace DCGO.CardEffects.P
         if (timing == EffectTiming.OnPlay)
         {
             ActivateClass activateClass = new ActivateClass();
-            activateClass.SetUpICardEffect("Reveal 3, add 2, bot deck rest", null, card);
-            activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+            activateClass.SetUpICardEffect("Reveal 3, add 2, bot deck rest", CanUseCondition, card);
+            activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
             cardEffects.Add(activateClass);
 
             string EffectDiscription()
