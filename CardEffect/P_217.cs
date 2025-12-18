@@ -82,7 +82,7 @@ namespace DCGO.CardEffects.P
             if (timing == EffectTiming.WhenLinked)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Draw 1, then you may app fuse", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Suspend to gain 1 memory", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
                 cardEffects.Add(activateClass);
 
