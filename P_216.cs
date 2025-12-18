@@ -21,7 +21,7 @@ namespace DCGO.CardEffects.P
 
             #endregion
 
-            #region On Play - Place a card under this Digimon to gain effects.
+            #region On Play
 
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
@@ -94,6 +94,30 @@ namespace DCGO.CardEffects.P
                             root: SelectCardEffect.Root.Security,
                             activateETB: true));
 
+                        #region Can't Digivolve
+                        
+                        CanNotDigivolveClass canNotEvolveClass = new CanNotDigivolveClass();
+                        canNotEvolveClass.SetUpICardEffect("Can't digivolve", CanUseCantEvoCondition, card);
+                        canNotEvolveClass.SetUpCanNotEvolveClass(permanentCondition: PermanentCondition, cardCondition: CardCondition);
+                        playedDigimon.PermanentEffects.Add((_timing) => canNotEvolveClass);
+
+                        bool CanUseCantEvoCondition(Hashtable hashtable)
+                        {
+                            return CardEffectCommons.IsPermanentExistsOnBattleArea(playedDigimon);
+                        }
+
+                        bool PermanentCondition(Permanent permanent)
+                        {
+                            return permanent == playedDigimon;
+                        }
+
+                        bool CardCondition(CardSource cardSource)
+                        {
+                            return true;
+                        }
+                        
+                        #endregion
+                        
                         #region Delete Played Digimon
                         Permanent selectedPermanent = selectedCards[0].PermanentOfThisCard();
 
@@ -111,7 +135,6 @@ namespace DCGO.CardEffects.P
                         bool CanActivateCondition1(Hashtable hashtable)
                         {
                             return selectedPermanent.TopCard != null
-                                && selectedPermanent.TopCard.IsDigimon
                                 && selectedPermanent.CanBeDestroyedBySkill(activateClass1)
                                 && !selectedPermanent.TopCard.CanNotBeAffected(activateClass1)
                         }
@@ -222,7 +245,6 @@ namespace DCGO.CardEffects.P
                         bool CanActivateCondition1(Hashtable hashtable)
                         {
                             return selectedPermanent.TopCard != null
-                                && selectedPermanent.TopCard.IsDigimon
                                 && selectedPermanent.CanBeDestroyedBySkill(activateClass1)
                                 && !selectedPermanent.TopCard.CanNotBeAffected(activateClass1)
                         }
