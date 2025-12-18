@@ -95,7 +95,7 @@ namespace DCGO.CardEffects.P
             {
                 return CardEffectCommons.IsExistOnBattleArea(card)
                     && CardEffectCommons.IsOwnerTurn(card))
-                        && CardEffectCommons.CanTriggerWhenLinked(hashtable, null, LinkCardCondition); ;
+                    && CardEffectCommons.CanTriggerWhenLinked(hashtable, null, LinkCardCondition); ;
             }
 
             bool CanActivateCondition(Hashtable hashtable)
@@ -106,7 +106,7 @@ namespace DCGO.CardEffects.P
 
             bool LinkCardCondition(Permanent permanent)
             {
-                return cardSource.EqualsTraits("Awakening")
+                return cardSource.EqualsTraits("Entertainment")
                     || cardSource.EqualsTraits("Tool")
                     || cardSource.EqualsTraits("Navi");
             }
