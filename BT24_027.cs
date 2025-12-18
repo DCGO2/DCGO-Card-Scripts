@@ -69,8 +69,7 @@ namespace DCGO.CardEffects.BT24
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && permanent.TopCard.EqualsTraits("TS")
-                    && permanent.TopCard.CardColors.Contains(CardColor.Blue)
-                    && permanent.IsDigimon;
+                    && permanent.TopCard.CardColors.Contains(CardColor.Blue);
             }
 
             bool CanActivateConditionShared(Hashtable hashtable)
@@ -79,9 +78,9 @@ namespace DCGO.CardEffects.BT24
                     && CardEffectCommons.CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
             }
 
-            IEnumerator ActivatePlayCoroutineShared(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition)
+                if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition))
                 {
                     #region Select Hand Card
 
@@ -137,7 +136,7 @@ namespace DCGO.CardEffects.BT24
                                 selectPermanentCoroutine: SelectPermanentCoroutine,
                                 afterSelectPermanentCoroutine: null,
                                 mode: SelectPermanentEffect.Mode.Custom,
-                                cardEffect: activatePlayClass);
+                                cardEffect: activateClass);
 
                             selectPermanentEffect.SetUpCustomMessage(
                                 "Select 1 Digimon that will get effects.",
@@ -151,7 +150,7 @@ namespace DCGO.CardEffects.BT24
                                     targetPermanent: permanent,
                                     canNotBeDestroyedByBattleCondition: CanNotBeDestroyedByBattleCondition,
                                     effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                                    activateClass: activatePlayClass,
+                                    activateClass: activateClass,
                                     effectName: "Can't be deleted in battle"));
 
                                 bool CanNotBeDestroyedByBattleCondition(Permanent permanent1, Permanent attackingPermanent, Permanent defendingPermanent, CardSource defendingCard)
@@ -163,10 +162,10 @@ namespace DCGO.CardEffects.BT24
                     }
 
                     #endregion
-                    
+
                 }
             }
-            
+
             #endregion
 
             #region On Play
@@ -175,7 +174,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By tucking, 1 digimon can't be deleted by battle", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => SharedActivateCoroutine(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -193,7 +192,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By tucking, 1 digimon can't be deleted by battle", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("When Digivolving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => SharedActivateCoroutine(hash, activateClass), -1, true, EffectDiscriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
