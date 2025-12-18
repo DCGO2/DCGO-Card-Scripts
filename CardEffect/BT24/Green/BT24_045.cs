@@ -167,41 +167,15 @@ namespace DCGO.CardEffects.BT24
                 }
             }
 
-            #endregion
-
-            #region On Play
-
-            if (timing == EffectTiming.OnEnterFieldAnyone)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDescription("On Play"));
-                activateClass.SetHashString(SharedHash());
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-            }
-
-            #endregion
-
-            #region When Attacking
-
-            if (timing == EffectTiming.OnAllyAttack)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDescription("When Attacking"));
-                activateClass.SetHashString(SharedHash());
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
-                }
-            }
+            CardEffectFactory.AddSharedEffects(cardEffects, timing, card, 
+                                                SharedEffectName(),
+                                                SharedCanActivateCondition,
+                                                SharedActivateCoroutine,
+                                                SharedEffectDescription,
+                                                maxCountPerTurn: 1,
+                                                hashValue: SharedHash(),
+                                                onPlay: true,
+                                                whenAttacking: true);
 
             #endregion
 
