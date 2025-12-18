@@ -278,7 +278,7 @@ namespace DCGO.CardEffects.BT16
                     {
                         if (permanent != null)
                         {
-                            if (!permanent.TopCard.CanNotBeAffected(activateClass))
+                            if (!permanent.TopCard.CanNotBeAffected(activateClass) && !permanent.ImmuneFromDeDigivolve())
                             {
                                 yield return ContinuousController.instance.StartCoroutine(new IDegeneration(
                                     permanent: permanent,
