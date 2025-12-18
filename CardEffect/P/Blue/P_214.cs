@@ -1,12 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 
 // Betamon (X Antibody)
 namespace DCGO.CardEffects.P
 {
-    public class P_215 : CEntity_Effect
+    public class P_214 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -49,13 +49,20 @@ namespace DCGO.CardEffects.P
 
             #region Shared OP / WD
 
+            string SharedEffectName() => "By placing this digimon as bottom source, bottom deck 1 Digimon";
+
+            string SharedEffectDescription(string tag)
+            {
+                return $"[{tag}] By placing this Digimon as the bottom digivolution card of any of your other Digimon with [Seadramon] in its text, return 1 of your opponent's Digimon with as high or lower a level as 1 of your Digimon with [Seadramon] in its text to the bottom of the deck.";
+            }
+
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleArea(card) &&
                     CardEffectCommons.HasMatchConditionPermanent(CanTuckTargetCondition);
             }
 
-            bool CanTuckTargetCondition(Permament permanent)
+            bool CanTuckTargetCondition(Permanent permanent)
             {
                 return CanSelectOwnSeadramonInName(permanent) &&
                     permanent != card.PermanentOfThisCard();
@@ -63,13 +70,13 @@ namespace DCGO.CardEffects.P
 
             bool CanSelectOwnSeadramonInName(Permanent permanent)
             {
-                return permanent.Owner == card.Owner &&
+                return CardEffectCommons.IsOwnerPermanent(permanent, card) &&
                     permanent.TopCard.HasText("Seadramon");
             }
 
             bool CanSelectEnemyDigimon(Permanent permanent, int level)
             {
-                return permanent.Owner == card.Owner.Enemy &&
+                return !CardEffectCommons.IsOwnerPermanent(permanent, card) &&
                     permanent.IsDigimon &&
                     permanent.TopCard.HasLevel &&
                     permanent.TopCard.Level <= level;
@@ -83,7 +90,7 @@ namespace DCGO.CardEffects.P
 
                 if (CardEffectCommons.HasMatchConditionPermanent(CanTuckTargetCondition))
                 {
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanTuckTargetCondition));
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -160,6 +167,8 @@ namespace DCGO.CardEffects.P
                         {
                            level = selectedPermanent.TopCard.Level;
                         }
+
+                        yield return null;
                     }
                 }
 
@@ -192,7 +201,7 @@ namespace DCGO.CardEffects.P
 
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(new DeckBottomBounceClass(new List<Permanent>() { permanent }, CardEffectHashtable(activateClass)));                         
+                        yield return ContinuousController.instance.StartCoroutine(new DeckBottomBounceClass(new List<Permanent>() { permanent }, hashtable).DeckBounce());                         
                     }
                 }
 
@@ -205,7 +214,7 @@ namespace DCGO.CardEffects.P
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 
@@ -220,7 +229,7 @@ namespace DCGO.CardEffects.P
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 

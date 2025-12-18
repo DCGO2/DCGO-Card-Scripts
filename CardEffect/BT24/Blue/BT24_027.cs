@@ -57,12 +57,12 @@ namespace DCGO.CardEffects.BT24
                 return $"[{tag}] By placing 1 level 4 or lower blue [TS] trait Digimon card from your hand as this Digimon's bottom digivolution card, 1 of your blue [TS] trait Digimon can't be deleted in battle until your opponent's turn ends.";
             }
 
-            bool CanSelectCardCondition(Permanent permanent)
+            bool CanSelectCardCondition(CardSource source)
             {
-                return cardSource.IsDigimon
-                    && cardSource.EqualsTraits("TS")
-                    && cardSource.HasLevel && cardSource.Level <= 4
-                    && cardSource.CardColors.Contains(CardColor.Blue);
+                return source.IsDigimon
+                    && source.EqualsTraits("TS")
+                    && source.HasLevel && source.Level <= 4
+                    && source.CardColors.Contains(CardColor.Blue);
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -75,7 +75,7 @@ namespace DCGO.CardEffects.BT24
             bool CanActivateConditionShared(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                    && CardEffectCommons.CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
+                    && CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -228,7 +228,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && card.Owner.HandCards.Count <= 7
+                        && card.Owner.HandCards.Count <= 7;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)

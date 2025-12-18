@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 //WaruMonzaemon
 namespace DCGO.CardEffects.P
@@ -87,12 +88,18 @@ namespace DCGO.CardEffects.P
                     if (selectCard != null)
                     {
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                            cardSources: selectedCards,
+                            cardSources: new List<CardSource> { selectCard },
                             activateClass: activateClass,
                             payCost: false,
                             isTapped: false,
                             root: SelectCardEffect.Root.Security,
                             activateETB: true));
+
+                        Permanent playedDigimon = null;
+
+                        yield return new WaitForSeconds(0.2f);
+
+                        playedDigimon = selectCard.PermanentOfThisCard();
 
                         #region Can't Digivolve
                         
@@ -119,7 +126,7 @@ namespace DCGO.CardEffects.P
                         #endregion
                         
                         #region Delete Played Digimon
-                        Permanent selectedPermanent = selectedCards[0].PermanentOfThisCard();
+                        Permanent selectedPermanent = selectCard.PermanentOfThisCard();
 
                         ActivateClass activateClass1 = new ActivateClass();
                         activateClass1.SetUpICardEffect("Delete this Digimon", CanUseCondition2, card);
@@ -136,7 +143,7 @@ namespace DCGO.CardEffects.P
                         {
                             return selectedPermanent.TopCard != null
                                 && selectedPermanent.CanBeDestroyedBySkill(activateClass1)
-                                && !selectedPermanent.TopCard.CanNotBeAffected(activateClass1)
+                                && !selectedPermanent.TopCard.CanNotBeAffected(activateClass1);
                         }
 
                         IEnumerator ActivateCoroutine1(Hashtable _hashtable1)
@@ -246,7 +253,7 @@ namespace DCGO.CardEffects.P
                         {
                             return selectedPermanent.TopCard != null
                                 && selectedPermanent.CanBeDestroyedBySkill(activateClass1)
-                                && !selectedPermanent.TopCard.CanNotBeAffected(activateClass1)
+                                && !selectedPermanent.TopCard.CanNotBeAffected(activateClass1);
                         }
 
                         IEnumerator ActivateCoroutine1(Hashtable _hashtable1)
