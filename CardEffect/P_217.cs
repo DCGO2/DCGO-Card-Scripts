@@ -10,53 +10,53 @@ namespace DCGO.CardEffects.P
     public class P-217 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
+    {
+        List<ICardEffect> cardEffects = new List<ICardEffect>();
+
+        #region On Play
+
+        if (timing == EffectTiming.OnPlay)
         {
-            List<ICardEffect> cardEffects = new List<ICardEffect>();
+            ActivateClass activateClass = new ActivateClass();
+            activateClass.SetUpICardEffect("Reveal 3, add 2, bot deck rest", null, card);
+            activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+            cardEffects.Add(activateClass);
 
-            #region On Play
-
-            if (timing == EffectTiming.OnPlay)
+            string EffectDiscription()
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Reveal 3, add 2, bot deck rest", null, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
-                cardEffects.Add(activateClass);
-                
-                string EffectDiscription()
-                {
-                    return "[On Play] Reveal the top 3 cards of your deck, Add 1 [Social] trait card and 1 [Creation], [Navi] or [Tool] trait card among them to the hand. Return the rest to the bottom of the deck.";
-                }
+                return "[On Play] Reveal the top 3 cards of your deck, Add 1 [Social] trait card and 1 [Creation], [Navi] or [Tool] trait card among them to the hand. Return the rest to the bottom of the deck.";
+            }
 
-                bool CanSelectCardCondition(CardSource cardSource)
-                {
-                    return cardSource.EqualsTraits("Social");
-                }
+            bool CanSelectCardCondition(CardSource cardSource)
+            {
+                return cardSource.EqualsTraits("Social");
+            }
 
-                bool CanSelectCardCondition1(CardSource cardSource)
-                {
-                    return cardSource.EqualsTraits("Creation")
-                        || cardSource.EqualsTraits("Navi")
-                        || cardSource.EqualsTraits("Tool");
-                }
+            bool CanSelectCardCondition1(CardSource cardSource)
+            {
+                return cardSource.EqualsTraits("Creation")
+                    || cardSource.EqualsTraits("Navi")
+                    || cardSource.EqualsTraits("Tool");
+            }
 
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
+            bool CanUseCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card)
+                    && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+            }
 
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card);
-                }
+            bool CanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card);
+            }
 
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
-                        revealCount: 3,
-                        simplifiedSelectCardConditions:
-                        new SimplifiedSelectCardConditionClass[]
-                        {
+            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            {
+                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
+                    revealCount: 3,
+                    simplifiedSelectCardConditions:
+                    new SimplifiedSelectCardConditionClass[]
+                    {
                         new SimplifiedSelectCardConditionClass(
                             canTargetCondition:CanSelectCardCondition,
                             message: "Select 1 card with the [Social] trait.",
@@ -69,65 +69,67 @@ namespace DCGO.CardEffects.P
                             mode: SelectCardEffect.Mode.AddHand,
                             maxCount: 1,
                             selectCardCoroutine: null),
-                        },
-                        remainingCardsPlace: RemainingCardsPlace.DeckBottom,
-                        activateClass: activateClass
-                    ));
-                }
+                    },
+                    remainingCardsPlace: RemainingCardsPlace.DeckBottom,
+                    activateClass: activateClass
+                ));
             }
-
-            #endregion
-
-            #region Your Turn - When Linked
-            if (timing == EffectTiming.WhenLinked)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Suspend to gain 1 memory", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
-                cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[Your Turn] When any of your Digimon get linked to a [Social], [Navi], or [Tool] trait card, by suspending this Tamer, gain 1 memory.";
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.IsOwnerTurn(card))
-                        && ;
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanActivateSuspendCostEffect(card));
-                }
-
-                bool LinkPermanentCondition(Permanent permanent)
-                {
-                    return ;
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent>() { card.PermanentOfThisCard() }, CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
-                    if (card.Owner.CanAddMemory(activateClass))
-                        yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
-                }
-            }
-            #endregion
-
-            #region Security
-
-            if (timing == EffectTiming.SecuritySkill)
-            {
-                cardEffects.Add(CardEffectFactory.PlaySelfTamerSecurityEffect(card));
-            }
-
-            #endregion
-
-            return cardEffects;
         }
+
+        #endregion
+
+        #region Your Turn - When Linked
+        if (timing == EffectTiming.WhenLinked)
+        {
+            ActivateClass activateClass = new ActivateClass();
+            activateClass.SetUpICardEffect("Suspend to gain 1 memory", CanUseCondition, card);
+            activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+            cardEffects.Add(activateClass);
+
+            string EffectDiscription()
+            {
+                return "[Your Turn] When any of your Digimon get linked to a [Social], [Navi], or [Tool] trait card, by suspending this Tamer, gain 1 memory.";
+            }
+
+            bool CanUseCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card)
+                    && CardEffectCommons.IsOwnerTurn(card))
+                    && CardEffectCommons.CanTriggerWhenLinked(hashtable, null, LinkCardCondition); ;
+            }
+
+            bool CanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card)
+                    && CardEffectCommons.CanActivateSuspendCostEffect(card));
+            }
+
+            bool LinkCardCondition(Permanent permanent)
+            {
+                return cardSource.EqualsTraits("Creation")
+                    || cardSource.EqualsTraits("Navi")
+                    || cardSource.EqualsTraits("Tool");
+            }
+
+            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            {
+                yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent>() { card.PermanentOfThisCard() }, CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
+                if (card.Owner.CanAddMemory(activateClass))
+                    yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
+            }
+        }
+        #endregion
+
+        #region Security
+
+        if (timing == EffectTiming.SecuritySkill)
+        {
+            cardEffects.Add(CardEffectFactory.PlaySelfTamerSecurityEffect(card));
+        }
+
+        #endregion
+
+        return cardEffects;
     }
+}
 }
