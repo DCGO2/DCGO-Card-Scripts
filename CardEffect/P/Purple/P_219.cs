@@ -5,6 +5,7 @@ using System.Linq;
 using Photon;
 using System;
 using Photon.Pun;
+using System.Linq.Expressions;
 
 // Flame Inferno
 namespace DCGO.CardEffects.P
@@ -32,7 +33,9 @@ namespace DCGO.CardEffects.P
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     if (CardEffectCommons.CanTriggerWhenPermanentWouldPlay(hashtable, cardSource => cardSource == card))
-                        return card.Owner.Enemy.TrashCards.Count => 10;
+                        return card.Owner.Enemy.TrashCards.Count >= 10;
+
+                    return false;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -121,7 +124,7 @@ namespace DCGO.CardEffects.P
             if (timing == EffectTiming.OptionSkill)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Delete opponent's Digimon. Delete 1 of your own to play [Creepymon] from Trash", CanUseCondition, card));
+                activateClass.SetUpICardEffect("Delete opponent's Digimon. Delete 1 of your own to play [Creepymon] from Trash", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
@@ -185,7 +188,7 @@ namespace DCGO.CardEffects.P
                     #endregion
 
                     #region By Deleting 1, Play Creepy
-
+                    List<CardSource> selectedTrashCard = new List<CardSource>();
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition1))
                     {
                         List<Permanent> deleteTargetPermanents = new List<Permanent>();
@@ -223,7 +226,7 @@ namespace DCGO.CardEffects.P
                     {
                         if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition))
                         {
-                            CardSource selectedTrashCard = null;
+                            
                             SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                             selectCardEffect.SetUp(
@@ -246,7 +249,7 @@ namespace DCGO.CardEffects.P
 
                             IEnumerator SelectCardCoroutine(CardSource cardSource)
                             {
-                                selectedTrashCard = cardSource;
+                                selectedTrashCard.Add(cardSource);
                                 yield return null;
                             }
 
@@ -264,33 +267,32 @@ namespace DCGO.CardEffects.P
                                     root: SelectCardEffect.Root.Trash,
                                     activateETB: true));
                             }
-
-                            #endregion
-
-                            #region Give Rush and Blocker
-
-                            foreach (CardSource cardSource in selectedTrashCard)
-                            {
-                                if (CardEffectCommons.IsExistOnBattleArea(cardSource))
-                                {
-                                    Permanent selectedPermanent = cardSource.PermanentOfThisCard();
-
-                                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainRush(
-                                        targetPermanent: selectedPermanent,
-                                        effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                                        activateClass: activateClass));
-
-                                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(
-                                        targetPermanent: selectedPermanent,
-                                        effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                                        activateClass: activateClass));
-                                }
-                            }
-
-                            #endregion
-
                         }
                     }
+
+                    #endregion
+
+                    #region Give Rush and Blocker
+
+                    foreach (CardSource cardSource in selectedTrashCard)
+                    {
+                        if (CardEffectCommons.IsExistOnBattleArea(cardSource))
+                        {
+                            Permanent selectedPermanent = cardSource.PermanentOfThisCard();
+
+                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainRush(
+                                targetPermanent: selectedPermanent,
+                                effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                                activateClass: activateClass));
+
+                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(
+                                targetPermanent: selectedPermanent,
+                                effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                                activateClass: activateClass));
+                        }
+                    }
+
+                    #endregion
                 }
             }
 
