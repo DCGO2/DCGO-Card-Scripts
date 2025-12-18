@@ -59,7 +59,7 @@ namespace DCGO.CardEffects.P
 
             bool PermanentSelectCondition(Permanent permanent)
             {
-                return CardEffectcommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent) &&
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
                     (permanent.TopCard.EqualsTraits("Ice-Snow") || 
                         permanent.TopCard.HasRockMineralTraits);
             }
@@ -106,7 +106,7 @@ namespace DCGO.CardEffects.P
                             selectedCards,
                             activateClass));
 
-                        if (CardEffectCommons.HasMatchConditionOwnersPermanent(PermanentSelectCondition))
+                        if (CardEffectCommons.HasMatchConditionOwnersPermanent(card, PermanentSelectCondition))
                         {
                             var selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -121,7 +121,7 @@ namespace DCGO.CardEffects.P
                                 selectPermanentCoroutine: SelectPermanentCoroutine,
                                 afterSelectPermanentCoroutine: null,
                                 mode: SelectPermanentEffect.Mode.Custom,
-                                cardEffect: activatePlayClass);
+                                cardEffect: activateClass);
 
                             selectPermanentEffect.SetUpCustomMessage(
                                 "Select 1 Digimon that will get effects.",
@@ -129,24 +129,24 @@ namespace DCGO.CardEffects.P
 
                             yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                            IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                            IEnumerator SelectPermanentCoroutine(Permanent selectedPermanent)
                             {
                                 yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotReturnToHand(
-                                    targetPermanent: permanent,
+                                    targetPermanent: selectedPermanent,
                                     cardEffectCondition: CardEffectCondition,
                                     effectDuration: EffectDuration.UntilOpponentTurnEnd,
                                     activateClass: activateClass,
                                     effectName: "Can't return to hand by opponent's effects"));
 
                                 yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotReturnToDeck(
-                                    targetPermanent: permanent,
+                                    targetPermanent: selectedPermanent,
                                     cardEffectCondition: CardEffectCondition,
                                     effectDuration: EffectDuration.UntilOpponentTurnEnd,
                                     activateClass: activateClass,
                                     effectName: "Can't return to deck by opponent's effects"));
 
                                 ImmuneFromDeDigivolveClass immuneFromDeDigivolveClass = new ImmuneFromDeDigivolveClass();
-                                immuneFromDeDigivolveClass.SetUpICardEffect("Isn't affected by <De-Digivolve>", CanUseCondition1, permanent.TopCard);
+                                immuneFromDeDigivolveClass.SetUpICardEffect("Isn't affected by <De-Digivolve>", CanUseCondition1, selectedPermanent.TopCard);
                                 immuneFromDeDigivolveClass.SetUpImmuneFromDeDigivolveClass(PermanentCondition: PermanentCondition);
                                 selectedPermanent.UntilOpponentTurnEndEffects.Add((_timing) => immuneFromDeDigivolveClass);
 

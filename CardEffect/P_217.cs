@@ -7,7 +7,7 @@ using UnityEngine.XR;
 //Haru Shinkai
 namespace DCGO.CardEffects.P
 {
-    public class P-217 : CEntity_Effect
+    public class P_217 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -15,7 +15,7 @@ namespace DCGO.CardEffects.P
 
             #region On Play
 
-            if (timing == EffectTiming.OnPlay)
+            if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Reveal 3, add 2, bot deck rest", null, card);
@@ -94,14 +94,14 @@ namespace DCGO.CardEffects.P
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.IsOwnerTurn(card))
-                        && CardEffectCommons.CanTriggerWhenLinked(hashtable, LinkPermanentCondition, LinkCardCondition); ;
+                        && CardEffectCommons.IsOwnerTurn(card)
+                        && CardEffectCommons.CanTriggerWhenLinked(hashtable, LinkPermanentCondition, LinkCardCondition);
                 }
     
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanActivateSuspendCostEffect(card));
+                        && CardEffectCommons.CanActivateSuspendCostEffect(card);
                 }
     
                 bool LinkPermanentCondition(Permanent permanent)
@@ -109,11 +109,11 @@ namespace DCGO.CardEffects.P
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
                 }
 
-                bool LinkCardCondition(Permanent permanent)
+                bool LinkCardCondition(CardSource source)
                 {
-                    return cardSource.EqualsTraits("Creation")
-                        || cardSource.EqualsTraits("Navi")
-                        || cardSource.EqualsTraits("Tool");
+                    return source.EqualsTraits("Creation")
+                        || source.EqualsTraits("Navi")
+                        || source.EqualsTraits("Tool");
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
