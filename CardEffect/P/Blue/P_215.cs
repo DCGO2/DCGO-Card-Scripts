@@ -180,62 +180,15 @@ namespace DCGO.CardEffects.P
                 }
             }
 
-            #endregion
-
-            #region When Moving
-
-            if (timing == EffectTiming.OnMove)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashTable) => SharedActivateCoroutine(hashTable, activateClass), -1, true, SharedEffectDescription("When Moving"));
-                cardEffects.Add(activateClass);
-
-                bool PermanentCondition(Permanent permanent)
-                {
-                    return permanent == card.PermanentOfThisCard();
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
-                           CardEffectCommons.CanTriggerOnMove(hashtable, PermanentCondition);
-                }
-            }
-
-            #endregion
-
-            #region On Play
-
-            if (timing == EffectTiming.OnEnterFieldAnyone)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashTable) => SharedActivateCoroutine(hashTable, activateClass), -1, true, SharedEffectDescription("On Play"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-            }
-
-            #endregion
-
-            #region When Digivolving
-
-            if (timing == EffectTiming.OnEnterFieldAnyone)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashTable) => SharedActivateCoroutine(hashTable, activateClass), -1, true, SharedEffectDescription("when Digivolving"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
-                }
-            }
+            CardEffectFactory.AddSharedEffects(cardEffects, timing, card, 
+                                                SharedEffectName(),
+                                                SharedCanActivateCondition,
+                                                SharedActivateCoroutine,
+                                                SharedEffectDescription,
+                                                optional: true,
+                                                whenMoving: true,
+                                                onPlay: true,
+                                                whenDigivolving: true);
 
             #endregion
 
