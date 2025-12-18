@@ -95,7 +95,7 @@ namespace DCGO.CardEffects.P
             {
                 return CardEffectCommons.IsExistOnBattleArea(card)
                     && CardEffectCommons.IsOwnerTurn(card))
-                        && ;
+                    && ;
             }
 
             bool CanActivateCondition(Hashtable hashtable)
