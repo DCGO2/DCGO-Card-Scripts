@@ -283,6 +283,24 @@ namespace DCGO.CardEffects.P
 
                     #region Give Rush and Blocker
 
+                    foreach (CardSource cardSource in selectedCards)
+                    {
+                        if (CardEffectCommons.IsExistOnBattleArea(cardSource))
+                        {
+                            Permanent selectedPermanent = cardSource.PermanentOfThisCard();
+
+                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainRush(
+                                targetPermanent: selectedPermanent,
+                                effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                                activateClass: activateClass));
+
+                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(
+                                targetPermanent: selectedPermanent,
+                                effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                                activateClass: activateClass));
+                        }
+                    }
+
                     #endregion
 
                 }
