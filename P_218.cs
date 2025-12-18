@@ -95,13 +95,18 @@ namespace DCGO.CardEffects.P
             {
                 return CardEffectCommons.IsExistOnBattleArea(card)
                     && CardEffectCommons.IsOwnerTurn(card))
-                    && CardEffectCommons.CanTriggerWhenLinked(hashtable, null, LinkCardCondition); ;
+                    && CardEffectCommons.CanTriggerWhenLinked(hashtable, LinkPermanentCondition, LinkCardCondition); ;
             }
 
             bool CanActivateCondition(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleArea(card)
                     && CardEffectCommons.CanActivateSuspendCostEffect(card));
+            }
+
+            bool LinkPermanentCondition(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
             }
 
             bool LinkCardCondition(Permanent permanent)
