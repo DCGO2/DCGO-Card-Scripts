@@ -330,7 +330,7 @@ namespace DCGO.CardEffects.BT23
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 1 level 4- [Yellow]/[Black]/[CS] trait digimon from digivolution sources", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, true, EffectDiscription());
                 activateClass.SetHashString("BT23_032_AT");
                 cardEffects.Add(activateClass);
 
