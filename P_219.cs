@@ -269,7 +269,7 @@ namespace DCGO.CardEffects.P
 
                             #region Give Rush and Blocker
 
-                            foreach (CardSource cardSource in selectedCards)
+                            foreach (CardSource cardSource in selectedTrashCard)
                             {
                                 if (CardEffectCommons.IsExistOnBattleArea(cardSource))
                                 {
