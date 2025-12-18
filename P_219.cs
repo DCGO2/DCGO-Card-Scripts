@@ -146,7 +146,7 @@ namespace DCGO.CardEffects.P
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.ContainsCardName("Creepymon")
+                    return cardSource.EqualsCardName("Creepymon")
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
@@ -186,123 +186,111 @@ namespace DCGO.CardEffects.P
 
                     #region By Deleting 1, Play Creepy
 
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DeletePeremanentAndProcessAccordingToResult(
-                       targetPermanents: new List<Permanent>() { card.PermanentOfThisCard() },
-                       activateClass: activateClass,
-                       successProcess: permanents => DeleteOptionSuccessProcess(),
-                       failureProcess: null)
-                       );
-
-                    IEnumerator DeleteOptionSuccessProcess()
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition1))
                     {
-                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition1))
+                        List<Permanent> deleteTargetPermanents = new List<Permanent>();
+
+                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                        selectPermanentEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: CanSelectPermanentCondition1,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: 1,
+                            canNoSelect: false,
+                            canEndNotMax: false,
+                            selectPermanentCoroutine: null,
+                            afterSelectPermanentCoroutine: AfterSelectPermanentCoroutine,
+                            mode: SelectPermanentEffect.Mode.Custom,
+                            cardEffect: activateClass);
+
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to delete.", "The opponent is selecting 1 Digimon to delete.");
+
+                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                        IEnumerator AfterSelectPermanentCoroutine(List<Permanent> permanents)
                         {
-                            Permanent selectedPermanent = null;
-                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                            int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition1));
-                            selectPermanentEffect.SetUp(
-                                selectPlayer: card.Owner,
-                                canTargetCondition: CanSelectPermanentCondition1,
+                            deleteTargetPermanents = permanents.Clone();
+
+                            yield return null;
+                        }
+
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DeletePeremanentAndProcessAccordingToResult(targetPermanents: deleteTargetPermanents, activateClass: activateClass, successProcess: SuccessProcess, failureProcess: null));
+                    }
+
+                    IEnumerator SuccessProcess(List<Permanent> permanents)
+                    {
+                        if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition))
+                        {
+                            CardSource selectedTrashCard = null;
+                            SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                            selectCardEffect.SetUp(
+                                canTargetCondition: CanSelectCardCondition,
                                 canTargetCondition_ByPreSelecetedList: null,
                                 canEndSelectCondition: null,
-                                maxCount: maxCount,
-                                canNoSelect: true,
+                                canNoSelect: () => true,
+                                selectCardCoroutine: SelectCardCoroutine,
+                                afterSelectCardCoroutine: null,
+                                message: "Select 1 [Creepymon] to play",
+                                maxCount: 1,
                                 canEndNotMax: false,
-                                selectPermanentCoroutine: SelectPermanentCoroutine,
-                                afterSelectPermanentCoroutine: null,
-                                mode: SelectPermanentEffect.Mode.Custom,
+                                isShowOpponent: true,
+                                mode: SelectCardEffect.Mode.Custom,
+                                root: SelectCardEffect.Root.Trash,
+                                customRootCardList: null,
+                                canLookReverseCard: true,
+                                selectPlayer: card.Owner,
                                 cardEffect: activateClass);
 
-                            IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                            IEnumerator SelectCardCoroutine(CardSource cardSource)
                             {
-                                selectedPermanent = permanent;
+                                selectedTrashCard = cardSource;
                                 yield return null;
                             }
 
-                            selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to delete", "The opponent is selecting 1 Digimon to delete");
-                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                            selectCardEffect.SetUpCustomMessage("Select 1 [Creepymon] to play", "The opponent is selecting 1 [Creepymon] to play");
+                            selectCardEffect.SetUpCustomMessage_ShowCard("Selected Card");
+                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
-                            if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DeletePeremanentAndProcessAccordingToResult(
-                                targetPermanents: new List<Permanent>() { selectedPermanent },
-                                activateClass: activateClass,
-                                successProcess: permanents => DeleteDigimonSuccessProcess(),
-                                failureProcess: null)
-                            );
-
-                            IEnumerator DeleteDigimonSuccessProcess()
+                            if (selectedTrashCard != null)
                             {
-                                if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition))
+                                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                                    cardSources: selectedTrashCard,
+                                    activateClass: activateClass,
+                                    payCost: false,
+                                    isTapped: false,
+                                    root: SelectCardEffect.Root.Trash,
+                                    activateETB: true));
+                            }
+
+                            #endregion
+
+                            #region Give Rush and Blocker
+
+                            foreach (CardSource cardSource in selectedCards)
+                            {
+                                if (CardEffectCommons.IsExistOnBattleArea(cardSource))
                                 {
-                                    CardSource selectedTrashCard = null;
-                                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                                    Permanent selectedPermanent = cardSource.PermanentOfThisCard();
 
-                                    selectCardEffect.SetUp(
-                                        canTargetCondition: CanSelectCardCondition,
-                                        canTargetCondition_ByPreSelecetedList: null,
-                                        canEndSelectCondition: null,
-                                        canNoSelect: () => true,
-                                        selectCardCoroutine: SelectCardCoroutine,
-                                        afterSelectCardCoroutine: null,
-                                        message: "Select 1 [Creepymon] to play",
-                                        maxCount: 1,
-                                        canEndNotMax: false,
-                                        isShowOpponent: true,
-                                        mode: SelectCardEffect.Mode.Custom,
-                                        root: SelectCardEffect.Root.Trash,
-                                        customRootCardList: null,
-                                        canLookReverseCard: true,
-                                        selectPlayer: card.Owner,
-                                        cardEffect: activateClass);
+                                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainRush(
+                                        targetPermanent: selectedPermanent,
+                                        effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                                        activateClass: activateClass));
 
-                                    IEnumerator SelectCardCoroutine(CardSource cardSource)
-                                    {
-                                        selectedTrashCard = cardSource;
-                                        yield return null;
-                                    }
-
-                                    selectCardEffect.SetUpCustomMessage("Select 1 [Creepymon] to play", "The opponent is selecting 1 [Creepymon] to play");
-                                    selectCardEffect.SetUpCustomMessage_ShowCard("Selected Card");
-                                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                                    if (selectedTrashCard != null)
-                                    {
-                                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                                            cardSources: selectedTrashCard,
-                                            activateClass: activateClass,
-                                            payCost: false,
-                                            isTapped: false,
-                                            root: SelectCardEffect.Root.Trash,
-                                            activateETB: true));
-                                    }
+                                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(
+                                        targetPermanent: selectedPermanent,
+                                        effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                                        activateClass: activateClass));
                                 }
                             }
+
+                            #endregion
+
                         }
                     }
-
-                    #endregion
-
-                    #region Give Rush and Blocker
-
-                    foreach (CardSource cardSource in selectedCards)
-                    {
-                        if (CardEffectCommons.IsExistOnBattleArea(cardSource))
-                        {
-                            Permanent selectedPermanent = cardSource.PermanentOfThisCard();
-
-                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainRush(
-                                targetPermanent: selectedPermanent,
-                                effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                                activateClass: activateClass));
-
-                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(
-                                targetPermanent: selectedPermanent,
-                                effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                                activateClass: activateClass));
-                        }
-                    }
-
-                    #endregion
-
                 }
             }
 
