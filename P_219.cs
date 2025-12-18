@@ -36,7 +36,7 @@ namespace DCGO.CardEffects.P
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
-                { 
+                {
                     if (card.Owner.CanReduceCost(null, card))
                     {
                         ContinuousController.instance.PlaySE(GManager.instance.GetComponent<Effects>().BuffSE);
@@ -121,7 +121,7 @@ namespace DCGO.CardEffects.P
             if (timing == EffectTiming.OptionSkill)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(card.BaseENGCardNameFromEntity, CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete opponent's Digimon. Delete 1 of your own to play [Creepymon] from Trash", CanUseCondition, card));
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
@@ -140,13 +140,13 @@ namespace DCGO.CardEffects.P
                 bool CanSelectPermanentCondition1(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && permanent.TopCard.HasPlayCost && permanent.TopCard.BasePlayCostFromEntity <= 7;
+                        && (permanent.TopCard.EqualsTraits("Evil")
+                        || permanent.TopCard.EqualsTraits("Fallen Angel"));
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.IsDigimon
-                        && cardSource.ContainsCardName("Kimeramon") || cardSource.ContainsCardName("Millenniummon")
+                    return cardSource.ContainsCardName("Creepymon")
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
@@ -315,7 +315,7 @@ namespace DCGO.CardEffects.P
                 CardEffectCommons.AddActivateMainOptionSecurityEffect(
                     card: card,
                     cardEffects: ref cardEffects,
-                    effectName: $"Activate Main effect");
+                    effectName: $"Delete opponent's Digimon. Delete 1 of your own to play [Creepymon] from Trash");
             }
 
             #endregion
