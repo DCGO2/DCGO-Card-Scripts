@@ -29,10 +29,13 @@ namespace DCGO.CardEffects.BT24
 
             if (timing == EffectTiming.OnDiscardHand)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("If you have 5 or less cards, draw 1", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
-                cardEffects.Add(activateClass);
+                cardEffects.Add(CardEffectFactory.ActivateClass(card,
+                                                                "If you have 5 or less cards, draw 1",
+                                                                CanUseCondition,
+                                                                CanActivateCondition,
+                                                                ActivateCoroutine,
+                                                                EffectDescription(),
+                                                                false));
 
                 string EffectDescription()
                 {
@@ -149,6 +152,7 @@ namespace DCGO.CardEffects.BT24
                                                                 "Trash a card to give one of your digimon Jamming and Blocker.",
                                                                 SharedActivateCoroutine,
                                                                 SharedEffectDescription,
+                                                                optional: false,
                                                                 maxCountPerTurn: 1,
                                                                 hashValue: "OP_WA_BT24_026",
                                                                 onPlay: true,
