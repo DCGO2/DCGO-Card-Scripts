@@ -156,6 +156,7 @@ namespace DCGO.CardEffects.BT24
                                                                 "Trash a card to delete all opponent's lowest digimon.",
                                                                 SharedActivateCoroutine,
                                                                 SharedEffectDescription,
+                                                                optional: false,
                                                                 onPlay: true,
                                                                 whenDigivolving: true,
                                                                 whenAttacking: true,
@@ -167,10 +168,12 @@ namespace DCGO.CardEffects.BT24
 
             if (timing == EffectTiming.OnDestroyedAnyone)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("You may play 1 Titamon or level 5 or lower Titan Digimon", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
-                cardEffects.Add(activateClass);
+                cardEffects.Add(CardEffectFactory.OnDeletionClass(card,
+                                                                    "You may play 1 Titamon or level 5 or lower Titan Digimon",
+                                                                    ActivateCoroutine,
+                                                                    EffectDescription(),
+                                                                    false,
+                                                                    additionalActivateCondition: AdditionalActivateCondition));
 
                 string EffectDescription()
                 {
@@ -182,9 +185,9 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.CanTriggerOnDeletion(hashtable, card);
                 }
 
-                bool CanActivateCondition(Hashtable hashtable)
+                bool AdditionalActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(card) && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, HasCorrectTrait);
+                    return CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, HasCorrectTrait);
                 }
 
                 bool HasCorrectTrait(CardSource cardSource)
