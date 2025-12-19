@@ -576,26 +576,26 @@ public partial class CardEffectFactory
     {
         if (whenMoving && timing == EffectTiming.OnMove)
         {
-            cardEffects.Add(WhenMovingClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue));
+            cardEffects.Add(WhenMovingClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue, false));
         }
 
         if (onPlay && timing == EffectTiming.OnEnterFieldAnyone)
         {
-            cardEffects.Add(OnPlayClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue));
+            cardEffects.Add(OnPlayClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue, false));
         }
 
         if (whenDigivolving && timing == EffectTiming.OnEnterFieldAnyone)
         {
-            cardEffects.Add(WhenDigivolvingClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue));
+            cardEffects.Add(WhenDigivolvingClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue, false));
         }
 
         if (whenAttacking && timing == EffectTiming.OnAllyAttack)
         {
-            cardEffects.Add(WhenAttackingClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue));
+            cardEffects.Add(WhenAttackingClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue, false));
         }
         if (onDeletion && timing == EffectTiming.OnDestroyedAnyone)
         {
-            cardEffects.Add(OnDeletionClassClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue));
+            cardEffects.Add(OnDeletionClassClass(card, effectName, activateCoroutine, effectDescription, optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, hashValue, false));
         }
         
         return cardEffects;
@@ -613,13 +613,17 @@ public partial class CardEffectFactory
                                                 string effectDescription,
                                                 bool optional,
                                                 int maxCountPerTurn = -1,
-                                                string hashValue = null
+                                                string hashValue = null,
+                                                bool isInheritedEffect = false,
+                                                bool isSecurityEffect = false
                                                 )
     {
         ActivateClass activateClass = new ActivateClass();
         activateClass.SetUpICardEffect(effectName, canUseCondition, card);
         activateClass.SetUpActivateClass(canActivateCondition, activateCoroutine, maxCountPerTurn, optional, effectDescription);
         activateClass.SetHashString(hashValue);
+        activateClass.SetIsInheritedEffect(isInheritedEffect);
+        activateClass.SetIsSecurityEffect(isSecurityEffect);
         return activateClass;
     }
 
@@ -635,9 +639,10 @@ public partial class CardEffectFactory
                                                 Func<Hashtable, bool> additionalUseCondition = null,
                                                 Func<Hashtable, bool> additionalActivateCondition = null,
                                                 int maxCountPerTurn = -1,
-                                                string hashValue = null)
+                                                string hashValue = null,
+                                                bool isInherited = false)
     {
-        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue);
+        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue, isInherited, false);
 
         bool PermanentCondition(Permanent permanent)
         {
@@ -670,9 +675,10 @@ public partial class CardEffectFactory
                                             Func<Hashtable, bool> additionalUseCondition = null,
                                             Func<Hashtable, bool> additionalActivateCondition = null,
                                             int maxCountPerTurn = -1,
-                                            string hashValue = null)
+                                            string hashValue = null,
+                                            bool isInherited = false)
     {
-        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue);
+        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue, isInherited, false);
 
         bool CanUseCondition(Hashtable hashtable)
         {
@@ -699,9 +705,10 @@ public partial class CardEffectFactory
                                                         Func<Hashtable, bool> additionalUseCondition = null,
                                                         Func<Hashtable, bool> additionalActivateCondition = null,
                                                         int maxCountPerTurn = -1,
-                                                        string hashValue = null)
+                                                        string hashValue = null,
+                                                        bool isInherited = false)
     {
-        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue);
+        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue, isInherited, false);
 
         bool CanUseCondition(Hashtable hashtable)
         {
@@ -727,9 +734,10 @@ public partial class CardEffectFactory
                                                     Func<Hashtable, bool> additionalUseCondition = null,
                                                     Func<Hashtable, bool> additionalActivateCondition = null,
                                                     int maxCountPerTurn = -1,
-                                                    string hashValue = null)
+                                                    string hashValue = null,
+                                                    bool isInherited = false)
     {
-        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue);
+        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue, isInherited, false);
 
         bool CanUseCondition(Hashtable hashtable)
         {
@@ -756,9 +764,10 @@ public partial class CardEffectFactory
                                                 Func<Hashtable, bool> additionalUseCondition = null,
                                                 Func<Hashtable, bool> additionalActivateCondition = null,
                                                 int maxCountPerTurn = -1,
-                                                string hashValue = null)
+                                                string hashValue = null,
+                                                bool isInherited = false)
     {
-        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue);
+        return ActivateClass(card, effectName, CanUseCondition, CanActivateCondition, activateCoroutine, effectDescription, optional, maxCountPerTurn, hashvalue, isInherited, false);
 
         bool CanUseCondition(Hashtable hashtable)
         {
