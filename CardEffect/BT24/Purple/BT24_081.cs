@@ -91,27 +91,14 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared OP WD WA
 
-            string SharedEffectName()
-            {
-                return "Trash a card to delete all opponent's lowest digimon.";
-            }
-
             string SharedEffectDescription(string tag)
             {
                 return $"[{tag}] By trashing 1 card in your hand, delete all of your opponent's Digimon with the lowest level.";
             }
 
-            bool SharedCanActivateCondition(Hashtable hashtable)
+            bool AdditionalActivateCondition(Hashtable hashtable)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (card.Owner.HandCards.Count >= 1)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return card.Owner.HandCards.Count >= 1;
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -165,14 +152,14 @@ namespace DCGO.CardEffects.BT24
                 }
             }
 
-            CardEffectFactory.AddSharedEffects(cardEffects, timing, card, 
-                                                SharedEffectName(),
-                                                SharedCanActivateCondition,
-                                                SharedActivateCoroutine,
-                                                SharedEffectDescription,
-                                                onPlay: true,
-                                                whenDigivolving: true,
-                                                whenAttacking: true);
+            CardEffectFactory.ActivateClassesForSharedEffects(cardEffects, timing, card, 
+                                                                "Trash a card to delete all opponent's lowest digimon.",
+                                                                SharedActivateCoroutine,
+                                                                SharedEffectDescription,
+                                                                onPlay: true,
+                                                                whenDigivolving: true,
+                                                                whenAttacking: true,
+                                                                additionalActivateCondition: AdditionalActivateCondition);
 
             #endregion
 

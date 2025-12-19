@@ -34,18 +34,14 @@ namespace DCGO.CardEffects.P
 
             #region Shared WM / OP / WD
 
-            string SharedEffectName()
-                => "By placing 1 [Ice-Snow], [Mineral] or [Rock] Digimon from hand or trash under this, 1 such digimon cannot be returned to deck or de-digivolved.";
-
             string SharedEffectDescription(string tag)
             {
                 return $"[{tag}] By placing 1 level 4 or lower [Ice-Snow], [Mineral] or [Rock] trait card from your hand or trash as this Digimon's bottom digivolution card, until your opponent's turn ends, their effects can't return 1 of your [Ice-Snow], [Mineral] or [Rock] trait Digimon to hands or decks or affect it with <De-Digivolve> effects.";
             }
 
-            bool SharedCanActivateCondition(Hashtable hashtable)
+            bool AdditionalActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleArea(card) &&
-                    CardEffectCommons.HasMatchConditionOwnersHand(card, CardSelectCondition);
+                return CardEffectCommons.HasMatchConditionOwnersHand(card, CardSelectCondition);
             }
 
             bool CardSelectCondition(CardSource cardSource)
@@ -180,15 +176,15 @@ namespace DCGO.CardEffects.P
                 }
             }
 
-            CardEffectFactory.AddSharedEffects(cardEffects, timing, card, 
-                                                SharedEffectName(),
-                                                SharedCanActivateCondition,
+            CardEffectFactory.ActivateClassesForSharedEffects(cardEffects, timing, card, 
+                                                "By placing 1 [Ice-Snow], [Mineral] or [Rock] Digimon from hand or trash under this, 1 such digimon cannot be returned to deck or de-digivolved.",
                                                 SharedActivateCoroutine,
                                                 SharedEffectDescription,
                                                 optional: true,
                                                 whenMoving: true,
                                                 onPlay: true,
-                                                whenDigivolving: true);
+                                                whenDigivolving: true,
+                                                additionalActivateCondition: AdditionalActivateCondition);
 
             #endregion
 
