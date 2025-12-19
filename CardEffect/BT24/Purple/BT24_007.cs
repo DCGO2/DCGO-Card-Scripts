@@ -18,6 +18,7 @@ namespace DCGO.CardEffects.BT24
                 activateClass.SetUpICardEffect("Play 1 Level 4 or higher [Demon]/[Titan] Digimon trashed from hand", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
                 activateClass.SetHashString("BT24_007_YT");
+                activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
