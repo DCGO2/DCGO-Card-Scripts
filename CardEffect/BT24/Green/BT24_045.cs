@@ -59,32 +59,14 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared OP/WA
 
-            string SharedHash()
-            {
-                return "OP_WA_BT24_045";
-            }
-
-            string SharedEffectName()
-            {
-                return "Trash a card to stun an opponent's digimon.";
-            }
-
             string SharedEffectDescription(string tag)
             {
                 return $"[{tag}] [Once Per Turn] By trashing 1 card in your hand, suspend 1 of your opponent's Digimon. It can't unsuspend in their next Unsuspend Phase.";
             }
 
-            bool SharedCanActivateCondition(Hashtable hashtable)
+            bool AdditionalActivateCondition(Hashtable hashtable)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (card.Owner.HandCards.Count >= 1)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return card.Owner.HandCards.Count >= 1;
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -167,15 +149,15 @@ namespace DCGO.CardEffects.BT24
                 }
             }
 
-            CardEffectFactory.AddSharedEffects(cardEffects, timing, card, 
-                                                SharedEffectName(),
-                                                SharedCanActivateCondition,
-                                                SharedActivateCoroutine,
-                                                SharedEffectDescription,
-                                                maxCountPerTurn: 1,
-                                                hashValue: SharedHash(),
-                                                onPlay: true,
-                                                whenAttacking: true);
+            CardEffectFactory.ActivateClassesForSharedEffects(cardEffects, timing, card, 
+                                                                "Trash a card to stun an opponent's digimon.",
+                                                                SharedActivateCoroutine,
+                                                                SharedEffectDescription,
+                                                                maxCountPerTurn: 1,
+                                                                hashValue: "OP_WA_BT24_045",
+                                                                onPlay: true,
+                                                                whenAttacking: true,
+                                                                additionalActivateCondition: AdditionalActivateCondition);
 
             #endregion
 

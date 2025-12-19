@@ -562,27 +562,29 @@ public partial class CardEffectFactory
 
     #region Shared Effect Condition Creators
 
-    public static List<ICardEffect> AddSharedEffects(ref List<ICardEffect> cardEffects,
-                                                        EffectTiming timing, 
-                                                        CardSource card,
-                                                        string effectName, 
-                                                        Func<Hashtable, bool> canActivateCondition, 
-                                                        Func<Hashtable, IEnumerator> activateCoroutine, 
-                                                        Func<string, string> effectDescription,
-                                                        int maxCountPerTurn = -1,
-                                                        bool optional = false,
-                                                        string hashValue = null,
-                                                        bool whenMoving = false,
-                                                        bool onPlay = false,
-                                                        bool whenDigivolving = false,
-                                                        bool whenAttacking = false)
+    public static List<ICardEffect> ActivateClassesForSharedEffects(ref List<ICardEffect> cardEffects,
+                                                                    EffectTiming timing, 
+                                                                    CardSource card,
+                                                                    string effectName, 
+                                                                    Func<Hashtable, ActivateClass, IEnumerator> activateCoroutine, 
+                                                                    Func<string, string> effectDescription,
+                                                                    Func<Hashtable, bool> additionalUseCondition = null,
+                                                                    Func<Hashtable, bool> additionalActivateCondition = null, 
+                                                                    bool optional = false,
+                                                                    int maxCountPerTurn = -1,
+                                                                    string hashValue = null,
+                                                                    bool whenMoving = false,
+                                                                    bool onPlay = false,
+                                                                    bool whenDigivolving = false,
+                                                                    bool whenAttacking = false,
+                                                                    bool onDeletion = false)
     {
         #region When Moving
         if (whenMoving && timing == EffectTiming.OnMove)
         {
             ActivateClass activateClass = new ActivateClass();
             activateClass.SetUpICardEffect(sharedEffectName, CanUseCondition, card);
-            activateClass.SetUpActivateClass(canActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("When Moving"));
+            activateClass.SetUpActivateClass(CanActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("When Moving"));
             activateClass.SetHashString(hashValue);
             cardEffects.Add(activateClass);
 
@@ -594,7 +596,14 @@ public partial class CardEffectFactory
             bool CanUseCondition(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
-                        CardEffectCommons.CanTriggerOnMove(hashtable, PermanentCondition);
+                        CardEffectCommons.CanTriggerOnMove(hashtable, PermanentCondition) && 
+                        (additionalUseCondition == null || additionalUseCondition);
+            }
+
+            bool CanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card) && 
+                    (additionalActivateCondition == null || additionalActivateCondition);
             }
         }
         #endregion
@@ -604,13 +613,20 @@ public partial class CardEffectFactory
         {
             ActivateClass activateClass = new ActivateClass();
             activateClass.SetUpICardEffect(sharedEffectName, CanUseCondition, card);
-            activateClass.SetUpActivateClass(canActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("On Play"));
+            activateClass.SetUpActivateClass(CanActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("On Play"));
             activateClass.SetHashString(hashValue);
             cardEffects.Add(activateClass);
 
             bool CanUseCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+                return CardEffectCommons.CanTriggerOnPlay(hashtable, card) && 
+                    (additionalUseCondition == null || additionalUseCondition);
+            }
+
+            bool CanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card) && 
+                    (additionalActivateCondition == null || additionalActivateCondition);
             }
         }
         #endregion
@@ -620,13 +636,20 @@ public partial class CardEffectFactory
         {
             ActivateClass activateClass = new ActivateClass();
             activateClass.SetUpICardEffect(sharedEffectName, CanUseCondition, card);
-            activateClass.SetUpActivateClass(canActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("When Digivolving"));
+            activateClass.SetUpActivateClass(CanActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("When Digivolving"));
             activateClass.SetHashString(hashValue);
             cardEffects.Add(activateClass);
 
             bool CanUseCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card) && 
+                    (additionalUseCondition == null || additionalUseCondition);
+            }
+
+            bool CanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card) && 
+                    (additionalActivateCondition == null || additionalActivateCondition);
             }
         }
         #endregion
@@ -636,13 +659,43 @@ public partial class CardEffectFactory
         {
             ActivateClass activateClass = new ActivateClass();
             activateClass.SetUpICardEffect(sharedEffectName, CanUseCondition, card);
-            activateClass.SetUpActivateClass(canActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("When Attacking"));
+            activateClass.SetUpActivateClass(CanActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("When Attacking"));
             activateClass.SetHashString(hashValue);
             cardEffects.Add(activateClass);
 
             bool CanUseCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
+                return CardEffectCommons.CanTriggerOnAttack(hashtable, card) && 
+                    (additionalUseCondition == null || additionalUseCondition);
+            }
+
+            bool CanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card) && 
+                    (additionalActivateCondition == null || additionalActivateCondition);
+            }
+        }
+        #endregion
+
+        #region On Deletion
+        if (onDeletion && timing == EffectTiming.OnDestroyedAnyone)
+        {
+            ActivateClass activateClass = new ActivateClass();
+            activateClass.SetUpICardEffect(sharedEffectName, CanUseCondition, card);
+            activateClass.SetUpActivateClass(CanActivateCondition, (hashTable) => activateCoroutine(hashTable, activateClass), maxCountPerTurn, optional, effectDescription("On Deletion"));
+            activateClass.SetHashString(hashValue);
+            cardEffects.Add(activateClass);
+
+            bool CanUseCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.CanTriggerOnDeletion(hashtable, card) && 
+                    (additionalUseCondition == null || additionalUseCondition);
+            }
+
+            bool CanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.CanActivateOnDeletion(card) && 
+                    (additionalActivateCondition == null || additionalActivateCondition);
             }
         }
         #endregion
