@@ -11,8 +11,8 @@ namespace DCGO.CardEffects.BT24
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-         
-             #region Digivolution Condition
+
+            #region Digivolution Condition
             if (timing == EffectTiming.None)
             {
                 static bool PermanentCondition(Permanent targetPermanent)
@@ -38,12 +38,12 @@ namespace DCGO.CardEffects.BT24
             {
                 int count()
                 {
-                int total = card.Owner.Enemy.GetBattleAreaPermanents().Count((permanent) => permanent.IsDigimon) + card.Owner.GetBattleAreaPermanents().Count((permanent) => permanent.IsDigimon);
-                
-                 if (total >= 3)
-                 return 5;
-                 else
-                    return 0;
+                    int total = card.Owner.Enemy.GetBattleAreaPermanents().Count((permanent) => permanent.IsDigimon) + card.Owner.GetBattleAreaPermanents().Count((permanent) => permanent.IsDigimon);
+
+                    if (total >= 3)
+                        return 5;
+                    else
+                        return 0;
                 }
 
                 ChangeCostClass changeCostClass = new ChangeCostClass();
@@ -61,7 +61,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (CardSourceCondition(cardSource) && RootCondition(root) && PermanentsCondition(targetPermanents))
                     {
-                        Cost -= count(); 
+                        Cost -= count();
                     }
 
                     return Cost;
@@ -91,207 +91,145 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
-             #region On Play
+            #region OP/WD Shared
 
-            if (timing == EffectTiming.OnEnterFieldAnyone)
+            string SharedEffectName()
+                => "Suspend 2, then 1 Digimon may gain 5k DP and attack.";
+
+            string SharedEffectDescription(string tag)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Suspend 2 Digimon or Tamers and 1 of your Digimon gets +5000 DP and attack your opponent's Digimon.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutine, -1, false, EffectDescription());
-                cardEffects.Add(activateClass);
+                return $"[{tag}] Suspend 2 of your opponent's Digimon or Tamers. Then, 1 of your Digimon may get +5000 DP for the turn and attack your opponent's Digimon.";
+            }
 
-                string EffectDescription()
+            bool SharedCanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card);
+            }
+
+            bool CanSelectOpponentPermanentCondition(CardSource cardSource)
+            {
+                return (cardSource.IsDigimon
+                    || cardSource.IsTamer);
+            }
+
+            bool CanSelectOwnerPermanentCondition(CardSource cardSource)
+            {
+                return cardSource.IsDigimon
+                    && ;
+            }
+
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            {
+                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOpponentPermanentCondition))
                 {
-                    return
-                        "[On Play] Suspend 2 of your opponent's Digimon or Tamers. Then, 1 of your Digimon may get +5000 DP for the turn and attack your opponent's Digimon.";
+                    int maxCount = Math.Min(2,
+                        CardEffectCommons.MatchConditionPermanentCount(CanSelectOpponentPermanentCondition));
+
+                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                    selectPermanentEffect.SetUp(
+                        selectPlayer: card.Owner,
+                        canTargetCondition: CanSelectOpponentPermanentCondition,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        maxCount: maxCount,
+                        canNoSelect: false,
+                        canEndNotMax: false,
+                        selectPermanentCoroutine: null,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.Tap,
+                        cardEffect: activateClass);
+
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                 }
 
-                bool CanUseCondition(Hashtable hashtable)
+                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOwnerPermanentCondition))
                 {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
+                    Permanent selectedPermanent = null;
 
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOpponentPermanentConditionShared))
+                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                    selectPermanentEffect.SetUp(
+                        selectPlayer: card.Owner,
+                        canTargetCondition: CanSelectOwnerPermanentCondition,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        maxCount: 1,
+                        canNoSelect: true,
+                        canEndNotMax: false,
+                        selectPermanentCoroutine: SelectPermanentCoroutine,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.Custom,
+                        cardEffect: activateClass);
+
+                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that may get +5000 DP and attack.",
+                        "The opponent is selecting 1 Digimon that may get +500 DP and attack.");
+
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        int maxCount = Math.Min(2,
-                            CardEffectCommons.MatchConditionPermanentCount(CanSelectOpponentPermanentConditionShared));
+                        selectedPermanent = permanent;
 
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectOpponentPermanentConditionShared,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: false,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: null,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Tap,
-                            cardEffect: activateClass);
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                        yield return null;
                     }
 
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOwnerPermanentConditionShared))
+                    if (selectedPermanent != null && selectedPermanent.CanAttack(activateClass))
                     {
-                        Permanent selectedPermanent = null;
+                        // Give +5000 DP until end of turn
+                        ContinuousController.instance.StartCoroutine(
+                            new IChangePermanentDP(
+                                targetPermanents: new List<Permanent>() { selectedPermanent },
+                                dpChange: 5000,
+                                durationType: IChangePermanentDP.DurationType.UntilEndOfTurn,
+                                activateClass: activateClass).ChangeDP());
 
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                        SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
 
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectOwnerPermanentConditionShared,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: 1,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
+                        selectAttackEffect.SetUp(
+                            attacker: selectedPermanent,
+                            canAttackPlayerCondition: () => false,
+                            defenderCondition: _ => true,
                             cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will attack.",
-                            "The opponent is selecting 1 Digimon that will attack.");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-
-                            yield return null;
-                        }
-
-                        if (selectedPermanent != null && selectedPermanent.CanAttack(activateClass))
-                        {
-                            // Give +5000 DP until end of turn
-                            ContinuousController.instance.StartCoroutine(
-                                new IChangePermanentDP(
-                                    targetPermanents: new List<Permanent>() { selectedPermanent },
-                                    dpChange: 5000,
-                                    durationType: IChangePermanentDP.DurationType.UntilEndOfTurn,
-                                    activateClass: activateClass).ChangeDP());
-
-                            SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
-
-                            selectAttackEffect.SetUp(
-                                attacker: selectedPermanent,
-                                canAttackPlayerCondition: () => false,
-                                defenderCondition: _ => true,
-                                cardEffect: activateClass);
-
-                            yield return ContinuousController.instance.StartCoroutine(selectAttackEffect.Activate());
-                        }
-                  
+                        yield return ContinuousController.instance.StartCoroutine(selectAttackEffect.Activate());
                     }
                 }
             }
 
             #endregion
 
-             #region When Digivolving
+            #region On Play
 
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Suspend 2 Digimon or Tamers and 1 of your Digimon gets +5000 DP and attack your opponent's Digimon.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutine, -1, false, EffectDescription());
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
-
-                string EffectDescription()
-                {
-                    return
-                        "[When Digivolving] Suspend 2 of your opponent's Digimon or Tamers. Then, 1 of your Digimon may get +5000 DP for the turn and attack your opponent's Digimon.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                   return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
                 }
+            }
 
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
+            #endregion
+
+            #region When Digivolving 1
+
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, false, SharedEffectDescription("When Digivolving"));
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOpponentPermanentConditionShared))
-                    {
-                        int maxCount = Math.Min(2,
-                            CardEffectCommons.MatchConditionPermanentCount(CanSelectOpponentPermanentConditionShared));
-
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectOpponentPermanentConditionShared,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: false,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: null,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Tap,
-                            cardEffect: activateClass);
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                    }
-
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOwnerPermanentConditionShared))
-                    {
-                        Permanent selectedPermanent = null;
-
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectOwnerPermanentConditionShared,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: 1,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will attack.",
-                            "The opponent is selecting 1 Digimon that will attack.");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-
-                            yield return null;
-                        }
-
-                        if (selectedPermanent != null && selectedPermanent.CanAttack(activateClass))
-                        {
-                            // Give +5000 DP until end of turn
-                            ContinuousController.instance.StartCoroutine(
-                                new IChangePermanentDP(
-                                    targetPermanents: new List<Permanent>() { selectedPermanent },
-                                    dpChange: 5000,
-                                    durationType: IChangePermanentDP.DurationType.UntilEndOfTurn,
-                                    activateClass: activateClass).ChangeDP());
-
-                            SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
-
-                            selectAttackEffect.SetUp(
-                                attacker: selectedPermanent,
-                                canAttackPlayerCondition: () => false,
-                                defenderCondition: _ => true,
-                                cardEffect: activateClass);
-
-                            yield return ContinuousController.instance.StartCoroutine(selectAttackEffect.Activate());
-                        }
-                  
-                    }
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
                 }
             }
 
@@ -300,18 +238,18 @@ namespace DCGO.CardEffects.BT24
             #region Your Turn
             if (timing == EffectTiming.None)
             {
-             bool CanUseCondition()
-            {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
+                bool CanUseCondition()
                 {
-                    if (CardEffectCommons.IsOwnerTurn(card))
+                    if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        return true;
+                        if (CardEffectCommons.IsOwnerTurn(card))
+                        {
+                            return true;
+                        }
                     }
-                }
 
-                return false;
-            }
+                    return false;
+                }
 
                 bool PermanentCondition(Permanent permanent)
                 {
