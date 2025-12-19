@@ -201,7 +201,7 @@ namespace DCGO.CardEffects.P
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: 1,
-                            canNoSelect: false,
+                            canNoSelect: true,
                             canEndNotMax: false,
                             selectPermanentCoroutine: null,
                             afterSelectPermanentCoroutine: AfterSelectPermanentCoroutine,
@@ -218,8 +218,10 @@ namespace DCGO.CardEffects.P
 
                             yield return null;
                         }
-
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DeletePeremanentAndProcessAccordingToResult(targetPermanents: deleteTargetPermanents, activateClass: activateClass, successProcess: SuccessProcess, failureProcess: null));
+                        if (deleteTargetPermanents?.Any() == true)
+                        {
+                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DeletePeremanentAndProcessAccordingToResult(targetPermanents: deleteTargetPermanents, activateClass: activateClass, successProcess: SuccessProcess, failureProcess: null));
+                        }
                     }
 
                     IEnumerator SuccessProcess(List<Permanent> permanents)
