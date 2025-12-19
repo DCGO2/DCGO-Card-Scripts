@@ -65,7 +65,6 @@ namespace DCGO.CardEffects.ST22
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("-9K DP to 1 opponent digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, EffectDiscription());
-                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
