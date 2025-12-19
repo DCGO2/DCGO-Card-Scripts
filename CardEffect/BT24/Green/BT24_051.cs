@@ -302,13 +302,83 @@ namespace DCGO.CardEffects.BT24
 
             #region WD/WA Shared
 
+            string SharedEffectName1()
+                => "Unsuspend 1 Digimon";
+
+            string SharedEffectDescription1(string tag)
+            {
+                return $"[{tag}] [Once Per Turn] 1 of your Digimon may unsuspend.";
+            }
+
+            bool CanSelectPermanentCondition1(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
+            }
+
+            bool SharedCanActivateCondition1(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleArea(card);
+            }
+
+            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            {
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                selectPermanentEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: CanSelectPermanentCondition1,
+                    canTargetCondition_ByPreSelecetedList: null,
+                    canEndSelectCondition: null,
+                    maxCount: 1,
+                    canNoSelect: false,
+                    canEndNotMax: false,
+                    selectPermanentCoroutine: null,
+                    afterSelectPermanentCoroutine: null,
+                    mode: SelectPermanentEffect.Mode.UnTap,
+                    cardEffect: activateClass);
+
+                selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to unsuspend.", "The opponent is selecting 1 Digimon to unsuspend.");
+
+                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+            }
+
             #endregion
 
             #region When Digivolving 2
 
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName1(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, ActivateCoroutine, 1, true, SharedEffectDescription1("When Digivolving"));
+                activateClass.SetHashString("BT24_051_WD_WA");
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                }
+            }
+
             #endregion
 
             #region When Attacking
+
+            if (timing == EffectTiming.OnAllyAttack)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName1(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, ActivateCoroutine, 1, true, SharedEffectDescription1("When Attacking"));
+                activateClass.SetHashString("BT24_051_WD_WA");
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerOnAttack(hashtable, card);
+                }
+            }
 
             #endregion
 
