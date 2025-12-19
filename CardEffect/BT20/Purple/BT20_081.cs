@@ -202,6 +202,7 @@ namespace DCGO.CardEffects.BT20
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("2 Digimon get -10000DP, then delete 1 with 10000DP or less", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
