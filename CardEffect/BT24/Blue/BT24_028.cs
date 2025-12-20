@@ -255,7 +255,8 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    if (card.PermanentOfThisCard().DigivolutionCards.Filter(CardCondition).Count >= 1)
+                    var hasValidSourceCards = card.PermanentOfThisCard().DigivolutionCards.Exists(CardCondition);
+                    if (hasValidSourceCards)
                     {
                         CardSource selectedCard = null;
 
