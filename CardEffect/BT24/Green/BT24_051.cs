@@ -171,16 +171,16 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleArea(card);
             }
 
-            bool CanSelectOpponentPermanentCondition(CardSource cardSource)
+            bool CanSelectOpponentPermanentCondition(Permanent permanent)
             {
-                return (cardSource.IsDigimon
+                return CardEffectsCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
+                    && (cardSource.IsDigimon
                     || cardSource.IsTamer);
             }
 
-            bool CanSelectOwnerPermanentCondition(CardSource cardSource)
+            bool CanSelectOwnerPermanentCondition(Permanent permanent)
             {
-                return cardSource.IsDigimon
-                    && ;
+                return CardEffectsCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable)
