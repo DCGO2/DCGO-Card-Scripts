@@ -33,7 +33,7 @@ namespace DCGO.CardEffects.BT24
                 bool CardCondition(CardSource card)
                 {
                     return card.IsDigimon
-                        && card.Level <= 5
+                        && card.HasLevel && card.Level <= 5
                         && card.CardColors.Contains(CardColor.Blue)
                         && card.HasTSTraits;
                 }
@@ -249,7 +249,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsDigimon
                         && cardSource.CardColors.Contains(CardColor.Blue)
-                        && cardSource.Level <= 4
+                        && cardSource.HasLevel && cardSource.Level <= 4
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass, root: SelectCardEffect.Root.DigivolutionCards);
                 }
 
