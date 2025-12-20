@@ -9,7 +9,7 @@ public class CEntity_Base : ScriptableObject
 {
     public int CardIndex = 0;
     public List<CardColor> cardColors = new List<CardColor>();
-    public int PlayCost = 0;
+    public int PlayCost = -1;
     public List<EvoCost> EvoCosts = new List<EvoCost>();
     public int Level = 0;
     public string CardName_JPN = "";
@@ -216,7 +216,7 @@ public class CEntity_Base : ScriptableObject
     }
     #endregion
 
-    #region ƒZƒbƒgID
+    #region ï¿½Zï¿½bï¿½gID
     public string SetID
     {
         get
@@ -235,7 +235,7 @@ public class CEntity_Base : ScriptableObject
     public bool IsPermanent => cardKind == CardKind.Digimon || cardKind == CardKind.Tamer || cardKind == CardKind.DigiEgg;
     #endregion
 
-    #region ƒJ[ƒhIndex‚ğƒfƒbƒLƒR[ƒh‚É—p‚¢‚é•¶š—ñ‚É•ÏŠ·(256i”)
+    #region ï¿½Jï¿½[ï¿½hIndexï¿½ï¿½ï¿½fï¿½bï¿½Lï¿½Rï¿½[ï¿½hï¿½É—pï¿½ï¿½ï¿½é•¶ï¿½ï¿½ï¿½ï¿½É•ÏŠï¿½(256ï¿½iï¿½ï¿½)
     public string CardIndex_String
     {
         get
@@ -252,7 +252,7 @@ public class CEntity_Base : ScriptableObject
     }
     #endregion
 
-    #region ƒJ[ƒh‰æ‘œ–¼‚ğƒAƒ“ƒ_[ƒo[‚Å‹æØ‚è
+    #region ï¿½Jï¿½[ï¿½hï¿½æ‘œï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½_ï¿½[ï¿½oï¿½[ï¿½Å‹ï¿½Ø‚ï¿½
     public static string[] GetParseByUnderBar(string CardImageName)
     {
         string[] parseByUnderBar = new string[] { CardImageName };
@@ -266,7 +266,7 @@ public class CEntity_Base : ScriptableObject
     }
     #endregion
 
-    #region ƒJ[ƒh‰æ‘œ–¼‚ğƒnƒCƒtƒ“‚Å‹æØ‚è
+    #region ï¿½Jï¿½[ï¿½hï¿½æ‘œï¿½ï¿½ï¿½ï¿½ï¿½nï¿½Cï¿½tï¿½ï¿½ï¿½Å‹ï¿½Ø‚ï¿½
     public static string[] GetParseByHyphen(string CardImageName)
     {
         string[] parseByHyphen = new string[] { CardImageName };
@@ -280,14 +280,14 @@ public class CEntity_Base : ScriptableObject
     }
     #endregion
 
-    #region ƒfƒbƒL‚É‚±‚ê‚Æ“¯ƒJ[ƒhID‚ÌƒJ[ƒh‚ª“ü‚Á‚Ä‚¢‚é–‡”
+    #region ï¿½fï¿½bï¿½Lï¿½É‚ï¿½ï¿½ï¿½Æ“ï¿½ï¿½Jï¿½[ï¿½hIDï¿½ÌƒJï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é–‡ï¿½ï¿½
     public int SameCardIDCount(List<CEntity_Base> DeckCards)
     {
         return DeckCards.Count((cEntity_Base) => cEntity_Base.CardID == CardID);
     }
     #endregion
 
-    #region ƒpƒ‰ƒŒƒ‹‚©
+    #region ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public bool isParallel
     {
         get
@@ -310,7 +310,7 @@ public class CEntity_Base : ScriptableObject
     }
     #endregion
 
-    #region ƒŒƒxƒ‹‚ğ‚Â‚©
+    #region ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½
     public bool HasLevel
     {
         get
@@ -330,7 +330,7 @@ public class CEntity_Base : ScriptableObject
     }
     #endregion
 
-    #region ƒRƒXƒg‚ğ‚Â‚©
+    #region ï¿½Rï¿½Xï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½
     public bool HasCost => cardKind != CardKind.DigiEgg && PlayCost >= 0;
     #endregion
 
