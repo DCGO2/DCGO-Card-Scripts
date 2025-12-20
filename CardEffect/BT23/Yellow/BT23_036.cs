@@ -286,7 +286,7 @@ namespace DCGO.CardEffects.BT23
                     {
                         return cardSource.IsDigimon
                             && cardSource.HasLevel && cardSource.Level <= 6
-                            && cardSource.ContainsCardName("Leomon") || cardSource.HasCSTraits
+                            && (cardSource.ContainsCardName("Leomon") || cardSource.HasCSTraits)
                             && cardSource.CanPlayCardTargetFrame(selectedPermament.PermanentFrame, false, activateClass);
                     }
 
