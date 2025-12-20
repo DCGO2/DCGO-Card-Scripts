@@ -140,7 +140,7 @@ public class DetailCard_DeckEditor : MonoBehaviour
         cardID_RarityText.text = $"{cEntity_Base.CardID} {cEntity_Base.rarity}";
 
         //プレイコスト
-        if (cEntity_Base.cardKind != CardKind.DigiEgg)
+        if (cEntity_Base.PlayCost >= 0)
         {
             playCostText.transform.parent.parent.gameObject.SetActive(true);
             playCostText.transform.parent.gameObject.SetActive(true);
