@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Divermon 
 namespace DCGO.CardEffects.BT24
@@ -261,7 +262,7 @@ namespace DCGO.CardEffects.BT24
                         CardSource selectedCard = null;
 
                         SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-                        int maxCount = Math.Min(1, card.PermanentOfThisCard().DigivolutionCards.Filter(CardCondition).Count);
+                        int maxCount = Math.Min(1, card.PermanentOfThisCard().DigivolutionCards.Count(CardCondition));
 
                         selectCardEffect.SetUp(
                             canTargetCondition: CardCondition,
