@@ -174,8 +174,8 @@ namespace DCGO.CardEffects.BT24
             bool CanSelectOpponentPermanentCondition(Permanent permanent)
             {
                 return CardEffectsCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
-                    && (cardSource.IsDigimon
-                    || cardSource.IsTamer);
+                    && (permanent.IsDigimon
+                    || permanent.IsTamer);
             }
 
             bool CanSelectOwnerPermanentCondition(Permanent permanent)
@@ -228,7 +228,7 @@ namespace DCGO.CardEffects.BT24
                         cardEffect: activateClass);
 
                     selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that may get +5000 DP and attack.",
-                        "The opponent is selecting 1 Digimon that may get +500 DP and attack.");
+                        "The opponent is selecting 1 Digimon that may get +5000 DP and attack.");
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
