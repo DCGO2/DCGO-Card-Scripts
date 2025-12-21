@@ -11,6 +11,8 @@ namespace DCGO.CardEffects.P
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
+            #region Static Effects
+
             #region Alternate Digivolution
 
             if (timing == EffectTiming.None)
@@ -27,6 +29,230 @@ namespace DCGO.CardEffects.P
                     card: card,
                     condition: null));
             }
+
+            #endregion
+
+            #region Reduce Play Cost
+            bool HasWingGuardiansCondition(CardSource cardSource)
+            {
+                return CardEffectCommons.IsExistInSecurity(cardSource) &&
+                        cardSource.EqualsCardName("Wing Guardians");
+            }
+
+            #endregion
+
+            #region Before Pay Cost - Condition Effect
+
+            if (timing == EffectTiming.BeforePayCost)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("If [Wing Guardians] is in your face up security cards get Play Cost -4", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                cardEffects.Add(activateClass);
+
+                string EffectDiscription()
+                {
+                    return "When this card would be played, if you have a face-up [Wing Guardians] security card, reduce the play cost by 4.";
+                }
+
+                bool CardCondition(CardSource cardSource)
+                {
+                    if (cardSource == card)
+                    {
+                        if (CardEffectCommons.IsExistOnHand(cardSource))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanTriggerWhenPermanentWouldPlay(hashtable, CardCondition);
+                }
+
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    if (CardEffectCommons.IsExistOnHand(card))
+                    {
+                        if (CardEffectCommons.HasMatchConditionOwnersSecurity(card, HasWingGuardiansCondition, false))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                IEnumerator ActivateCoroutine(Hashtable _hashtable)
+                {
+                    if (card.Owner.CanReduceCost(null, card))
+                    {
+                        ContinuousController.instance.PlaySE(GManager.instance.GetComponent<Effects>().BuffSE);
+                    }
+
+                    ChangeCostClass changeCostClass = new ChangeCostClass();
+                    changeCostClass.SetUpICardEffect("Play Cost -4", CanUseCondition1, card);
+                    changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
+                    card.Owner.UntilCalculateFixedCostEffect.Add((_timing) => changeCostClass);
+
+                    bool CanUseCondition1(Hashtable hashtable)
+                    {
+                        return true;
+                    }
+
+                    int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                    {
+                        if (CardSourceCondition(cardSource))
+                        {
+                            if (RootCondition(root))
+                            {
+                                if (PermanentsCondition(targetPermanents))
+                                {
+                                    int targetCost = 0;
+
+                                    if (CardEffectCommons.HasMatchConditionOwnersSecurity(card, HasWingGuardiansCondition, false))
+                                        targetCost += 4;
+
+                                    Cost -= targetCost;
+                                }
+                            }
+                        }
+
+                        return Cost;
+                    }
+
+                    bool PermanentsCondition(List<Permanent> targetPermanents)
+                    {
+                        if (targetPermanents == null)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
+                            {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    bool CardSourceCondition(CardSource cardSource)
+                    {
+                        return cardSource == card;
+                    }
+
+                    bool RootCondition(SelectCardEffect.Root root)
+                    {
+                        return true;
+                    }
+
+                    bool isUpDown()
+                    {
+                        return true;
+                    }
+
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(_hashtable));
+                }
+            }
+
+            #endregion
+
+            #region Reduce Play Cost - Not Shown
+
+            if (timing == EffectTiming.None)
+            {
+                ChangeCostClass changeCostClass = new ChangeCostClass();
+                changeCostClass.SetUpICardEffect("Play Cost -4", CanUseCondition, card);
+                changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => true, isChangePayingCost: () => true);
+                changeCostClass.SetNotShowUI(true);
+                cardEffects.Add(changeCostClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    if (card.Owner.HandCards.Contains(card))
+                    {
+                        ICardEffect activateClass = card.EffectList(EffectTiming.BeforePayCost).Find(cardEffect => cardEffect.EffectName == "If [Wing Guardians] is in your face up security cards get Play Cost -4");
+
+                        if (activateClass != null)
+                        {
+                            if (CardEffectCommons.HasMatchConditionOwnersSecurity(card, HasWingGuardiansCondition, false))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+
+                int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                {
+                    if (CardSourceCondition(cardSource))
+                    {
+                        if (RootCondition(root))
+                        {
+                            if (PermanentsCondition(targetPermanents))
+                            {
+                                int targetCount = 0;
+
+                                if (CardEffectCommons.HasMatchConditionOwnersSecurity(card, HasWingGuardiansCondition, false))
+                                    targetCount += 4;
+
+                                Cost -= targetCount;
+                            }
+                        }
+                    }
+
+                    return Cost;
+                }
+
+                bool PermanentsCondition(List<Permanent> targetPermanents)
+                {
+                    if (targetPermanents == null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                bool CardSourceCondition(CardSource cardSource)
+                {
+                    if (cardSource != null)
+                    {
+                        if (cardSource == card)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                bool RootCondition(SelectCardEffect.Root root)
+                {
+                    return true;
+                }
+
+                bool isUpDown()
+                {
+                    return true;
+                }
+            }
+
+            #endregion
 
             #endregion
 
