@@ -132,7 +132,7 @@ namespace DCGO.CardEffects.P
                         activateClass1.SetUpICardEffect("Delete this Digimon", CanUseCondition2, card);
                         activateClass1.SetUpActivateClass(CanActivateCondition1, ActivateCoroutine1, -1, false, "");
                         activateClass1.SetEffectSourcePermanent(selectedPermanent);
-                        CardEffectCommons.AddEffectToPlayer(effectDuration: EffectDuration.UntilOwnerTurnEnd, card: card, cardEffect: activateClass1, timing: EffectTiming.OnEndTurn);
+                        CardEffectCommons.AddEffectToPlayer(effectDuration: EffectDuration.UntilEachTurnEnd, card: card, cardEffect: activateClass1, timing: EffectTiming.OnEndTurn);
 
                         bool CanUseCondition2(Hashtable hashtable)
                         {
