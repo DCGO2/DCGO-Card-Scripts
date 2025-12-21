@@ -29,13 +29,14 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, CardCondition);
+                        && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, CardCondition)
+                        && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.IsOwnerTurn(card);
+                    return CardEffectCommons.IsExistOnBattleArea(card);
+                        
                 }
 
                 bool CardCondition(CardSource card)
