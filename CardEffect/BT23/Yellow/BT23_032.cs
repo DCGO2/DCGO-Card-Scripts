@@ -289,7 +289,7 @@ namespace DCGO.CardEffects.BT23
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
-                IEnumerator ActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     bool CanSelectCardCondition(CardSource cardSource)
                     {
@@ -384,7 +384,7 @@ namespace DCGO.CardEffects.BT23
                         && permanent == card.PermanentOfThisCard().TopCard.PermanentOfThisCard();
                 }
 
-                IEnumerator ActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     bool CanSelectCardCondition(CardSource cardSource)
                     {
