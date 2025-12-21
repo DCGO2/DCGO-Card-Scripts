@@ -196,7 +196,7 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, true, EffectDiscriptionShared("Start of Your Main Phase"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, true, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
