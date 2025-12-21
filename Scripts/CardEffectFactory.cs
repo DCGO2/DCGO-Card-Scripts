@@ -295,6 +295,10 @@ public partial class CardEffectFactory
                                     return "[End of Opponents Turn] Delete this Digimon.";
                                 }
 
+                                if (deleteDigimon == EffectDuration.UntilEachTurnEnd)
+                                {
+                                    return "[End of Turn] Delete this Digimon.";
+                                    
                                 return "";
                             }
 
@@ -310,6 +314,12 @@ public partial class CardEffectFactory
                                     if (deleteDigimon == EffectDuration.UntilOpponentTurnEnd)
                                     {
                                         return CardEffectCommons.IsOpponentTurn(card);
+                                    }
+
+                                    if (deleteDigimon == EffectDuration.UntilEachTurnEnd)
+                                    {
+                                        return CardEffectCommons.IsOwnerTurn(card)
+                                            || CardEffectCommons.IsOpponentTurn(card);
                                     }
                                 }
 
