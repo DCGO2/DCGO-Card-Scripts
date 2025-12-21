@@ -24,7 +24,7 @@ namespace DCGO.CardEffects.P
             bool CanSelectCardCondition(CardSource card)
             {
                 return card.IsDigimon
-                    && (card.EqualsTraits("Xros Heart") || card.EqualsTraits("Twilight"))
+                    && (card.EqualsTraits("Xros Heart") || card.EqualsTraits("Twilight"));
             }
 
             bool CanActivateConditionShared(Hashtable hashtable)
