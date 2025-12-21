@@ -76,8 +76,7 @@ namespace DCGO.CardEffects.P
 
             bool CanSelectEnemyDigimon(Permanent permanent, int level)
             {
-                return !CardEffectCommons.IsOwnerPermanent(permanent, card) &&
-                    permanent.IsDigimon &&
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
                     permanent.TopCard.HasLevel &&
                     permanent.TopCard.Level <= level;
             }
@@ -226,11 +225,11 @@ namespace DCGO.CardEffects.P
             #endregion
 
             #region When Digivolving
-            if (timing == EffectTiming.OnAllyAttack)
+            if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDescription("On Play"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDescription("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
