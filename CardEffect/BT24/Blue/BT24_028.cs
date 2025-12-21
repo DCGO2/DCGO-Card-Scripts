@@ -45,25 +45,21 @@ namespace DCGO.CardEffects.BT24
                 {
                     CardSource selectedCard = null;
 
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
                     int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersCardCountInHand(card, CardCondition));
 
-                    selectCardEffect.SetUp(
+                    selectHandEffect.SetUp(
+                        selectPlayer: card.Owner,
                         canTargetCondition: CardCondition,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
-                        canNoSelect: () => true,
-                        selectCardCoroutine: SelectCardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        message: "Select 1 card to place as digivolution source.",
                         maxCount: maxCount,
+                        canNoSelect: true,
                         canEndNotMax: false,
                         isShowOpponent: true,
-                        mode: SelectCardEffect.Mode.Custom,
-                        root: SelectCardEffect.Root.Hand,
-                        customRootCardList: null,
-                        canLookReverseCard: true,
-                        selectPlayer: card.Owner,
+                        selectCardCoroutine: SelectCardCoroutine,
+                        afterSelectCardCoroutine: null,
+                        mode: SelectHandEffect.Mode.Custom,
                         cardEffect: activateClass);
 
                     IEnumerator SelectCardCoroutine(CardSource cardSource)
@@ -72,10 +68,10 @@ namespace DCGO.CardEffects.BT24
                         yield return null;
                     }
 
-                    selectCardEffect.SetUpCustomMessage("Select 1 card to place as digivolution source.", "The opponent is selecting 1 card to place as digivolution source.");
-                    selectCardEffect.SetUpCustomMessage_ShowCard("Selected Card");
+                    selectHandEffect.SetUpCustomMessage("Select 1 card to place as digivolution source.", "The opponent is selecting 1 card to place as digivolution source.");
+                    selectHandEffect.SetUpCustomMessage_ShowCard("Selected Card");
 
-                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
                     if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(card.PermanentOfThisCard().AddDigivolutionCardsBottom(
                         addedDigivolutionCards: new List<CardSource>() { selectedCard },
