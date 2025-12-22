@@ -14,6 +14,7 @@ public abstract class ICardEffect
     {
         SetEffectSourceCard(card);
         SetEffectSourcePermanent(null);
+        SetAddedSourceCard(null);
         SetMaxCountPerTurn(-1);
         SetEffectName(effectName);
         SetEffectDiscription("");
@@ -91,6 +92,28 @@ public abstract class ICardEffect
     }
 
     #endregion
+
+    #region Alternative Source card if this is an Added effect
+
+    private CardSource _addedSourceCard = null;
+
+    public CardSource AddedSourceCard
+    {
+        get { return _addedSourceCard; }
+        private set { _addedSourceCard = value; }
+    }
+
+    public void SetAddedSourceCard(CardSource cardSource)
+    {
+        AddedSourceCard = cardSource;
+    }
+
+    #endregion
+
+    public CardSource GetOriginalEffectSource()
+    {
+        return AddedSourceCard ?? EffectSourceCard;
+    }
 
     #region Maximum number of times this effect can be used in a turn
 
@@ -776,11 +799,14 @@ public abstract class ICardEffect
                 return true;
             }
 
-            if (cardEffect.EffectSourceCard != null)
+            CardSource otherSourceCard = cardEffect.GetOriginalEffectSource();
+            CardSource thisSourceCard = this.GetOriginalEffectSource();
+
+            if (otherSourceCard != null)
             {
-                if (this.EffectSourceCard != null)
+                if (thisSourceCard != null)
                 {
-                    if (cardEffect.EffectSourceCard == this.EffectSourceCard)
+                    if (otherSourceCard == thisSourceCard)
                     {
                         if (HasSameHashString() && HasSameRootCardEffect())
                         {

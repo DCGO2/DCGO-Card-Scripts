@@ -16,6 +16,11 @@ public class AddSkillClass : ICardEffect, IAddSkillEffect
     {
         if (_cardSourceCondition(card))
         {
+            List<ICardEffect> effects = _getEffects(card, getCardEffect, timing);
+            foreach(ICardEffect effect in effects)
+            {
+                effect.SetAddedSourceCard(card);
+            }
             getCardEffect = _getEffects(card, getCardEffect, timing);
         }
 
