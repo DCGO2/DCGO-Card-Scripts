@@ -136,7 +136,7 @@ namespace DCGO.CardEffects.P
 
                         bool CanUseCondition2(Hashtable hashtable)
                         {
-                            return CardEffectCommons.IsOwnerTurn(card);
+                            return true;
                         }
 
                         bool CanActivateCondition1(Hashtable hashtable)
