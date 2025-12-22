@@ -31,7 +31,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsDigimon
                         && cardSource.EqualsTraits("Shaman")
-                        && cardSource.CanPlayCardTargetFrame(thisPermament.PermanentFrame, true, activateClass);
+                        && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, true, activateClass);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)

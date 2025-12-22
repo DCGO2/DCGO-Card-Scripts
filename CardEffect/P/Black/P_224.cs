@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Kotone Amano
 namespace DCGO.CardEffects.P
@@ -21,7 +22,7 @@ namespace DCGO.CardEffects.P
                 return $"[{tag}] By placing 1 [Xros Heart] or [Twilight] trait Digimon card from your hand or trash under this Tamer, if you have 7 or fewer cards in your hand, <Draw 1>.";
             }
 
-            bool CanSelectCardCondition(CardSource card)
+            bool CanSelectSharedCardCondition(CardSource card)
             {
                 return card.IsDigimon
                     && (card.EqualsTraits("Xros Heart") || card.EqualsTraits("Twilight"));
@@ -30,14 +31,14 @@ namespace DCGO.CardEffects.P
             bool CanActivateConditionShared(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleArea(card)
-                    && (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition)
-                    || CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition));
+                    && (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectSharedCardCondition)
+                    || CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectSharedCardCondition));
             }
 
-            IEnumerator ActivateCoroutineShared(Hashtable hashtable)
+            IEnumerator ActivateCoroutineShared(Hashtable hashtable, ActivateClass activateClass)
             {
-                bool canSelectHand = card.Owner.HandCards.Count(CanSelectCardCondition) >= 1;
-                bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition);
+                bool canSelectHand = card.Owner.HandCards.Count(CanSelectSharedCardCondition) >= 1;
+                bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectSharedCardCondition);
 
                 if (canSelectHand || canSelectTrash)
                 {
@@ -81,7 +82,7 @@ namespace DCGO.CardEffects.P
 
                         selectHandEffect.SetUp(
                             selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectCardCondition,
+                            canTargetCondition: CanSelectSharedCardCondition,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: maxCount,
@@ -106,7 +107,7 @@ namespace DCGO.CardEffects.P
                         SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                         selectCardEffect.SetUp(
-                            canTargetCondition: CanSelectCardCondition,
+                            canTargetCondition: CanSelectSharedCardCondition,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             canNoSelect: () => true,
@@ -131,39 +132,15 @@ namespace DCGO.CardEffects.P
 
                     if (selectedCards.Count >= 1)
                     {
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                        Permanent selectedPermanent = card.PermanentOfThisCard();
 
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermanentCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get a digivolution card.", "The opponent is selecting 1 Digimon that will get a digivolution card.");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                        if (selectedPermanent != null)
                         {
-                            Permanent selectedPermanent = permanent;
+                            yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(new List<CardSource>() { selectedCards[0] }, activateClass));
 
-                            if (selectedPermanent != null)
+                            if (card.Owner.HandCards.Count <= 7)
                             {
-                                yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(new List<CardSource>() { selectedCards[0] }, activateClass));
-
-                                if (CardEffectCommons.GetOwnerHandCount(card) <= 7)
-                                {
-                                    yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
-                                }
+                                yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
                             }
                         }
                     }
@@ -178,7 +155,7 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, true, EffectDiscriptionShared("Start of Your Main Phase"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("Start of Your Main Phase"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -196,7 +173,7 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, true, EffectDiscriptionShared("On Play"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -241,7 +218,7 @@ namespace DCGO.CardEffects.P
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanSuspend(card);
+                        && card.PermanentOfThisCard().CanSuspend;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -310,7 +287,7 @@ namespace DCGO.CardEffects.P
 
                         int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
                         {
-                            if (CardSourceCondition(cardSource))
+                            if (CanSelectCardCondition(cardSource))
                             {
                                 if (RootCondition(root))
                                 {
@@ -359,7 +336,7 @@ namespace DCGO.CardEffects.P
                         SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                         selectCardEffect.SetUp(
-                                    canTargetCondition: CanSelectPermanentCondition,
+                                    canTargetCondition: CanSelectCardCondition,
                                     canTargetCondition_ByPreSelecetedList: null,
                                     canEndSelectCondition: null,
                                     canNoSelect: () => true,

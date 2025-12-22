@@ -213,12 +213,7 @@ public partial class CardEffectFactory
 
         bool CanActivateCondition(Hashtable hashtable)
         {
-            if (CardEffectCommons.IsExistOnExecutingArea(card))
-            {
-                return true;
-            }
-
-            return false;
+            return CardEffectCommons.IsExistOnExecutingArea(card);
         }
 
         IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -298,7 +293,7 @@ public partial class CardEffectFactory
                                 if (deleteDigimon == EffectDuration.UntilEachTurnEnd)
                                 {
                                     return "[End of Turn] Delete this Digimon.";
-                                    
+                                }
                                 return "";
                             }
 

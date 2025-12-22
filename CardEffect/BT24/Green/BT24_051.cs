@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 //Merukimon
 namespace DCGO.CardEffects.BT24
@@ -64,7 +65,7 @@ namespace DCGO.CardEffects.BT24
                     changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
                     card.Owner.UntilCalculateFixedCostEffect.Add(_ => changeCostClass);
 
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(hashtable));
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(_hashtable));
 
                     int ChangeCost(CardSource cardSource, int cost, SelectCardEffect.Root root,
                         List<Permanent> targetPermanents)
@@ -173,17 +174,17 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectOpponentPermanentCondition(Permanent permanent)
             {
-                return CardEffectsCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && (permanent.IsDigimon
                     || permanent.IsTamer);
             }
 
             bool CanSelectOwnerPermanentCondition(Permanent permanent)
             {
-                return CardEffectsCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOpponentPermanentCondition))
                 {
@@ -242,12 +243,11 @@ namespace DCGO.CardEffects.BT24
                     if (selectedPermanent != null && selectedPermanent.CanAttack(activateClass))
                     {
                         // Give +5000 DP until end of turn
-                        ContinuousController.instance.StartCoroutine(
-                            new IChangePermanentDP(
-                                targetPermanents: new List<Permanent>() { selectedPermanent },
-                                dpChange: 5000,
-                                durationType: IChangePermanentDP.DurationType.UntilEndOfTurn,
-                                activateClass: activateClass).ChangeDP());
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
+                           targetPermanent: selectedPermanent,
+                           changeValue: 5000,
+                           effectDuration: EffectDuration.UntilEachTurnEnd,
+                           activateClass: activateClass));
 
                         SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
 
@@ -270,7 +270,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, false, SharedEffectDescription("On Play"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -288,7 +288,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, false, SharedEffectDescription("When Digivolving"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -320,7 +320,7 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleArea(card);
             }
 
-            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            IEnumerator WDWASharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -350,7 +350,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName1(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition1, ActivateCoroutine, 1, true, SharedEffectDescription1("When Digivolving"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, hash => WDWASharedActivateCoroutine(hash, activateClass), 1, true, SharedEffectDescription1("When Digivolving"));
                 activateClass.SetHashString("BT24_051_WD_WA");
                 cardEffects.Add(activateClass);
 
@@ -369,7 +369,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName1(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition1, ActivateCoroutine, 1, true, SharedEffectDescription1("When Attacking"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, hash => WDWASharedActivateCoroutine(hash, activateClass), 1, true, SharedEffectDescription1("When Attacking"));
                 activateClass.SetHashString("BT24_051_WD_WA");
                 cardEffects.Add(activateClass);
 
@@ -403,8 +403,7 @@ namespace DCGO.CardEffects.BT24
                     card: card,
                     condition: CanUseCondition));
 
-                cardEffects.Add(CardEffectFactory.PierceStaticEffect(
-                    permanentCondition: PermanentCondition,
+                cardEffects.Add(CardEffectFactory.PierceSelfEffect(
                     isInheritedEffect: false,
                     card: card,
                     condition: CanUseCondition));

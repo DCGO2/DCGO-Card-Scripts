@@ -118,8 +118,8 @@ namespace DCGO.CardEffects.P
 
                         bool CardCondition(CardSource cardSource)
                         {
-                            return CardEffectCommons.IsPermanentExistsOnBattleArea(selectedPermanent))
-                                && cardSource == selectedPermanent.TopCard)
+                            return CardEffectCommons.IsPermanentExistsOnBattleArea(selectedPermanent)
+                                && cardSource == selectedPermanent.TopCard;
                         }
 
                         bool SkillCondition(ICardEffect cardEffect)
@@ -129,6 +129,8 @@ namespace DCGO.CardEffects.P
                                 && cardEffect.EffectSourceCard.Owner == card.Owner.Enemy;
                         }
                     }
+
+                    yield return null;
                 }
             }
 
@@ -154,19 +156,18 @@ namespace DCGO.CardEffects.P
                 return CardEffectCommons.IsExistOnBattleArea(card);
             }
 
-            IEnumerator ActivateCoroutineShared(Hashtable hashtable)
+            IEnumerator ActivateCoroutineShared(Hashtable hashtable, ActivateClass activateClass)
             {
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                 {
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                    maxCount = Math.min (1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition))
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
                         canTargetCondition: CanSelectPermanentCondition,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
-                        maxCount: maxCount,
+                        maxCount: 1,
                         canNoSelect: false,
                         canEndNotMax: false,
                         selectPermanentCoroutine: SelectPermanentCoroutine,
@@ -197,7 +198,7 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, true, EffectDiscriptionShared("On Play"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -215,13 +216,13 @@ namespace DCGO.CardEffects.P
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutineShared, -1, true, EffectDiscriptionShared("When Digivolving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerWhenDigivolve(hashtable, card);
+                        && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
                 }
             }
 
