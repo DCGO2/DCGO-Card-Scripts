@@ -669,13 +669,13 @@ public partial class CardEffectFactory
         {
             return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
                     CardEffectCommons.CanTriggerOnMove(hashtable, PermanentCondition) && 
-                    (additionalUseCondition == null || additionalUseCondition);
+                    (additionalUseCondition == null || additionalUseCondition(hashtable));
         }
 
         bool CanActivateCondition(Hashtable hashtable)
         {
             return CardEffectCommons.IsExistOnBattleArea(card) && 
-                (additionalActivateCondition == null || additionalActivateCondition);
+                (additionalActivateCondition == null || additionalActivateCondition(hashtable));
         }
     }
         
@@ -698,14 +698,15 @@ public partial class CardEffectFactory
 
         bool CanUseCondition(Hashtable hashtable)
         {
-            return CardEffectCommons.CanTriggerOnPlay(hashtable, card) && 
-                (additionalUseCondition == null || additionalUseCondition);
+            return CardEffectCommons.IsExistOnBattleArea(card) &&
+                CardEffectCommons.CanTriggerOnPlay(hashtable, card) && 
+                (additionalUseCondition == null || additionalUseCondition(hashtable));
         }
 
         bool CanActivateCondition(Hashtable hashtable)
         {
             return CardEffectCommons.IsExistOnBattleArea(card) && 
-                (additionalActivateCondition == null || additionalActivateCondition);
+                (additionalActivateCondition == null || additionalActivateCondition(hashtable));
         }
     }
     
@@ -729,14 +730,15 @@ public partial class CardEffectFactory
 
         bool CanUseCondition(Hashtable hashtable)
         {
-            return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card) && 
-                (additionalUseCondition == null || additionalUseCondition);
+            return CardEffectCommons.IsExistOnBattleArea(card) &&
+                CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card) && 
+                (additionalUseCondition == null || additionalUseCondition(hashtable));
         }
 
         bool CanActivateCondition(Hashtable hashtable)
         {
             return CardEffectCommons.IsExistOnBattleArea(card) && 
-                (additionalActivateCondition == null || additionalActivateCondition);
+                (additionalActivateCondition == null || additionalActivateCondition(hashtable));
         }
     }
         
@@ -759,14 +761,15 @@ public partial class CardEffectFactory
 
         bool CanUseCondition(Hashtable hashtable)
         {
-            return CardEffectCommons.CanTriggerOnAttack(hashtable, card) && 
-                (additionalUseCondition == null || additionalUseCondition);
+            return CardEffectCommons.IsExistOnBattleArea(card) &&
+                CardEffectCommons.CanTriggerOnAttack(hashtable, card) && 
+                (additionalUseCondition == null || additionalUseCondition(hashtable));
         }
 
         bool CanActivateCondition(Hashtable hashtable)
         {
             return CardEffectCommons.IsExistOnBattleArea(card) && 
-                (additionalActivateCondition == null || additionalActivateCondition);
+                (additionalActivateCondition == null || additionalActivateCondition(hashtable));
         }
     }
         
@@ -791,13 +794,13 @@ public partial class CardEffectFactory
         bool CanUseCondition(Hashtable hashtable)
         {
             return CardEffectCommons.CanTriggerOnDeletion(hashtable, card) && 
-                (additionalUseCondition == null || additionalUseCondition);
+                (additionalUseCondition == null || additionalUseCondition(hashtable));
         }
 
         bool CanActivateCondition(Hashtable hashtable)
         {
             return CardEffectCommons.CanActivateOnDeletion(card) && 
-                (additionalActivateCondition == null || additionalActivateCondition);
+                (additionalActivateCondition == null || additionalActivateCondition(hashtable));
         }
     }
         
@@ -824,13 +827,13 @@ public partial class CardEffectFactory
         {
             return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
                 CardEffectCommons.CanTriggerWhenLinking(hashtable, null, card) &&
-                (additionalUseCondition == null || additionalUseCondition);
+                (additionalUseCondition == null || additionalUseCondition(hashtable));
         }
 
         bool CanActivateCondition(Hashtable hashtable)
         {
             return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
-                (additionalActivateCondition == null || additionalActivateCondition);
+                (additionalActivateCondition == null || additionalActivateCondition(hashtable));
         }
     }
 
@@ -851,7 +854,7 @@ public partial class CardEffectFactory
         bool CanUseCondition(Hashtable hashtable)
         {
             return CardEffectCommons.CanTriggerSecurityEffect(hashtable, card) &&
-                (additionalUseCondition == null || additionalUseCondition);
+                (additionalUseCondition == null || additionalUseCondition(hashtable));
         }
     }
 
