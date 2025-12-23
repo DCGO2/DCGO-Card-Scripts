@@ -388,7 +388,7 @@ namespace DCGO.CardEffects.P
 
                         selectCardEffect.SetUp(
                             canTargetCondition: CardSelectCondition,
-                            canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
+                            canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             canNoSelect: () => true,
                             selectCardCoroutine: SelectCardCoroutine,
@@ -429,7 +429,7 @@ namespace DCGO.CardEffects.P
 
                                 selectCardEffect1.SetUp(
                                     canTargetCondition: CardSelectCondition1,
-                                    canTargetCondition_ByPreSelecetedList: null,
+                                    canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
                                     canEndSelectCondition: null,
                                     canNoSelect: () => true,
                                     selectCardCoroutine: SelectCardCoroutine1,
