@@ -17,7 +17,7 @@ namespace DCGO.CardEffects.P
                 bool PermanentCondition(Permanent targetPermanent)
                 {
                     return targetPermanent.TopCard.IsLevel3 &&
-                        (targetPermanent.TopCard.EqualsTraits("Ice-Snow") || 
+                        (targetPermanent.TopCard.EqualsTraits("Ice-Snow") ||
                         targetPermanent.TopCard.HasRockMineralTraits);
                 }
 
@@ -44,8 +44,9 @@ namespace DCGO.CardEffects.P
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleArea(card) &&
-                    CardEffectCommons.HasMatchConditionOwnersHand(card, CardSelectCondition);
+                return CardEffectCommons.IsExistOnBattleArea(card)
+                    && (CardEffectCommons.HasMatchConditionOwnersHand(card, CardSelectCondition)
+                    || CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CardSelectCondition));
             }
 
             bool CardSelectCondition(CardSource cardSource)
@@ -53,45 +54,109 @@ namespace DCGO.CardEffects.P
                 return cardSource.IsDigimon &&
                     cardSource.HasLevel &&
                     cardSource.Level <= 4 &&
-                    (cardSource.EqualsTraits("Ice-Snow") || 
-                        cardSource.HasRockMineralTraits);
+                    (cardSource.EqualsTraits("Ice-Snow")
+                    || cardSource.HasRockMineralTraits);
             }
 
             bool PermanentSelectCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
-                    (permanent.TopCard.EqualsTraits("Ice-Snow") || 
-                        permanent.TopCard.HasRockMineralTraits);
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                   && (permanent.TopCard.EqualsTraits("Ice-Snow")
+                   || permanent.TopCard.HasRockMineralTraits);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionOwnersHand(card, CardSelectCondition))
+                Permanent thisPermament = card.PermanentOfThisCard();
+
+                bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, CardSelectCondition);
+                bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CardSelectCondition);
+
+                if (canSelectHand || canSelectTrash)
                 {
-                    List<CardSource> selectedCards = new List<CardSource>();
+                    if (canSelectHand && canSelectTrash)
+                    {
+                        List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
+                        {
+                            new SelectionElement<bool>(message: $"From hand", value : true, spriteIndex: 0),
+                            new SelectionElement<bool>(message: $"From trash", value : false, spriteIndex: 1),
+                        };
 
-                    int maxCount = 1;
+                        string selectPlayerMessage = "From which area do you select a card?";
+                        string notSelectPlayerMessage = "The opponent is choosing from which area to select a card.";
 
-                    SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
+                    }
+                    else
+                    {
+                        GManager.instance.userSelectionManager.SetBool(canSelectHand);
+                    }
 
-                    selectHandEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CardSelectCondition,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: maxCount,
-                        canNoSelect: true,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        selectCardCoroutine: SelectCardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        mode: SelectHandEffect.Mode.Custom,
-                        cardEffect: activateClass);
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
 
-                    selectHandEffect.SetUpCustomMessage("Select 1 card to place on bottom of digivolution cards.", "The opponent is selecting 1 card to place on bottom of digivolution cards.");
-                    selectHandEffect.SetUpCustomMessage_ShowCard("Digivolution Card");
+                    bool fromHand = GManager.instance.userSelectionManager.SelectedBoolValue;
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
+                    CardSource selectedCard = null;
+
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    {
+                        selectedCard = cardSource;
+                        yield return null;
+                    }
+
+                    if (fromHand)
+                    {
+                        int maxCount = 1;
+
+                        SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+
+                        selectHandEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: CardSelectCondition,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: maxCount,
+                            canNoSelect: true,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            selectCardCoroutine: SelectCardCoroutine,
+                            afterSelectCardCoroutine: null,
+                            mode: SelectHandEffect.Mode.Custom,
+                            cardEffect: activateClass);
+
+                        selectHandEffect.SetUpCustomMessage("Select 1 card to place on bottom of digivolution cards.", "The opponent is selecting 1 card to place on bottom of digivolution cards.");
+                        selectHandEffect.SetUpCustomMessage_ShowCard("Digivolution Card");
+
+                        yield return StartCoroutine(selectHandEffect.Activate());
+                    }
+                    else
+                    {
+                        int maxCount = Math.Min(1, card.Owner.TrashCards.Count(CardSelectCondition));
+
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                        selectCardEffect.SetUp(
+                            canTargetCondition: CardSelectCondition,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            canNoSelect: () => false,
+                            selectCardCoroutine: null,
+                            afterSelectCardCoroutine: SelectCardCoroutine,
+                            maxCount: maxCount,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            mode: SelectCardEffect.Mode.AddHand,
+                            root: SelectCardEffect.Root.Trash,
+                            customRootCardList: null,
+                            canLookReverseCard: true,
+                            selectPlayer: card.Owner,
+                            cardEffect: activateClass);
+
+                        selectCardEffect.SetUpCustomMessage("Select 1 card to place on bottom of digivolution cards.", "The opponent is selecting 1 card to place on bottom of digivolution cards.");
+                        selectCardEffect.SetUpCustomMessage_ShowCard("Digivolution Card");
+
+                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                    }
 
                     IEnumerator SelectCardCoroutine(CardSource cardSource)
                     {
@@ -240,6 +305,7 @@ namespace DCGO.CardEffects.P
             #endregion
 
             #region ESS
+
             if (timing == EffectTiming.None)
             {
                 cardEffects.Add(CardEffectFactory.BlockerSelfStaticEffect(
@@ -247,6 +313,7 @@ namespace DCGO.CardEffects.P
                     card: card,
                     condition: null));
             }
+
             #endregion
 
             return cardEffects;
