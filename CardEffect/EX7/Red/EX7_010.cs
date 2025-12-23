@@ -24,84 +24,27 @@ namespace DCGO.CardEffects.EX7
             }
             #endregion
 
-            #region When Digivolving
-            if (timing == EffectTiming.OnEnterFieldAnyone)
+            #region Shared WD / WA
+
+            string EffectDescription(string tag)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Trash 1 Option from the digivolution cards", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
-                activateClass.SetHashString("TrashOption_EX7_010");
-                cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[When Digivolving] [Once Per Turn] You may trash 1 Option card in 1 Digimon's digivolution cards.";
-                }
-
-                bool CanSelectCardCondition(CardSource cardSource)
-                {
-                    if(!cardSource.CanNotTrashFromDigivolutionCards(activateClass))
-                    {
-                        if (cardSource.IsOption)
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-
-                bool CanSelectPermanentCondition(Permanent permanent)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
-                    {
-                        if(CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
-                {                      
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
-                        permanentCondition: CanSelectPermanentCondition,
-                        cardCondition: CanSelectCardCondition,
-                        maxCount: 1,
-                        canNoTrash: false,
-                        isFromOnly1Permanent: true,
-                        activateClass: activateClass
-                    ));
-                }
+                return $"[{tag}] [Once Per Turn] You may trash 1 Option card in 1 Digimon's digivolution cards.";
             }
-            #endregion
 
-            #region When Attacking
-            if (timing == EffectTiming.OnAllyAttack)
+            
+
+            bool CanSelectPermanentCondition(Permanent permanent)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Trash 1 Option from the digivolution cards", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
-                activateClass.SetHashString("TrashOption_EX7_010");
-                cardEffects.Add(activateClass);
+                return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent);
+            }
 
-                string EffectDiscription()
-                {
-                    return "[When Attacking] [Once Per Turn] You may trash 1 Option card in 1 Digimon's digivolution cards.";
-                }
+            bool CanActivateConditionShared(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            }
 
+            IEnumerator ActivateCoroutineShared(Hashtable _hashtable, ActivateClass activateClass)
+            {
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     if (!cardSource.CanNotTrashFromDigivolutionCards(activateClass))
@@ -115,10 +58,50 @@ namespace DCGO.CardEffects.EX7
                     return false;
                 }
 
-                bool CanSelectPermanentCondition(Permanent permanent)
+                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
+                    permanentCondition: CanSelectPermanentCondition,
+                    cardCondition: CanSelectCardCondition,
+                    maxCount: 1,
+                    canNoTrash: false,
+                    isFromOnly1Permanent: true,
+                    activateClass: activateClass
+                ));
+            }
+
+            #endregion
+
+            #region When Digivolving
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Trash 1 Option from the digivolution cards", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateConditionShared, (hashtable) => ActivateCoroutineShared(hashtable, activateClass), 1, true, EffectDescription("When Digivolving"));
+                activateClass.SetHashString("TrashOption_EX7_010");
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
+                    {
+                        if(CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
                 }
+            }
+            #endregion
+
+            #region When Attacking
+            if (timing == EffectTiming.OnAllyAttack)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Trash 1 Option from the digivolution cards", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateConditionShared, (hashtable) => ActivateCoroutineShared(hashtable, activateClass), 1, true, EffectDescription("When Attacking"));
+                activateClass.SetHashString("TrashOption_EX7_010");
+                cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
@@ -133,23 +116,6 @@ namespace DCGO.CardEffects.EX7
                     return false;
                 }
 
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
-                {
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
-                        permanentCondition: CanSelectPermanentCondition,
-                        cardCondition: CanSelectCardCondition,
-                        maxCount: 1,
-                        canNoTrash: true,
-                        isFromOnly1Permanent: false,
-                        activateClass: activateClass,
-                        selectString: "Option"
-                    ));
-                }
             }
             #endregion
 

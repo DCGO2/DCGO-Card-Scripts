@@ -132,7 +132,7 @@ namespace DCGO.CardEffects.ST22
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Place 1 Option under this Tamer from hand to Draw 1 and gain 1 mem", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => SharedActivateCoroutine(hash, activateClass), -1, true, EffectDiscriptionShared("Start of Your Main Phase"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => SharedActivateCoroutine(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)

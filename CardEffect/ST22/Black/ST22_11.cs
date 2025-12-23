@@ -230,7 +230,7 @@ namespace DCGO.CardEffects.ST22
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                        if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(
+                        if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainReboot(
                             targetPermanent: selectedPermanent,
                             effectDuration: EffectDuration.UntilOpponentTurnEnd,
                             activateClass: activateClass));

@@ -152,7 +152,7 @@ namespace DCGO.CardEffects.BT23
                             {
                                 _jogressEvoRootsFrameIDs = new int[0];
 
-                                yield return GManager.instance.photonWaitController.StartWait("Angemon_BT23_027");
+                                yield return GManager.instance.photonWaitController.StartWait("Ankylomon_BT23_050");
 
                                 if (card.Owner.isYou || GManager.instance.IsAI)
                                 {

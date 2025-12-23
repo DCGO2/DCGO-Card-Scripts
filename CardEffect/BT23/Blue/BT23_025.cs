@@ -261,7 +261,7 @@ namespace DCGO.CardEffects.BT23
             #region Security Effect
             if (timing == EffectTiming.SecuritySkill)
             {
-                cardEffects.Add(CardEffectFactory.PlaySelfDigimonAfterBattleSecurityEffect(card: card, EffectDuration.UntilOpponentTurnEnd));
+                cardEffects.Add(CardEffectFactory.PlaySelfDigimonAfterBattleSecurityEffect(card: card, EffectDuration.UntilEachTurnEnd));
             }
             #endregion
 

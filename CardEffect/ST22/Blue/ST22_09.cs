@@ -119,7 +119,7 @@ namespace DCGO.CardEffects.ST22
 
                         if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotSuspend(
                             targetPermanent: selectedPermanent,
-                            effectDuration: EffectDuration.UntilEachTurnEnd,
+                            effectDuration: EffectDuration.UntilOwnerTurnEnd,
                             activateClass: activateClass,
                             condition: null,
                             effectName: "Can not suspend"));
