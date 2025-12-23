@@ -111,7 +111,7 @@ namespace DCGO.CardEffects.P
 
                 bool LinkCardCondition(CardSource source)
                 {
-                    return source.EqualsTraits("Creation")
+                    return source.EqualsTraits("Social")
                         || source.EqualsTraits("Navi")
                         || source.EqualsTraits("Tool");
                 }
