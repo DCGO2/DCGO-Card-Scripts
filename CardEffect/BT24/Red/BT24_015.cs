@@ -20,6 +20,69 @@ namespace DCGO.CardEffects.BT24
             }
             #endregion
 
+            #region Alternative Digivolution Condition
+
+            if (timing == EffectTiming.None)
+            {
+                bool PermanentCondition(Permanent targetPermanent)
+                {
+                    return targetPermanent.TopCard.HasLevel && 
+                        targetPermanent.TopCard.IsLevel4 &&
+                        (targetPermanent.Topcard.ContainsCardName("Greymon") ||
+                            targetPermanent.TopCard.HasTSTraits);
+                }
+
+                cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(
+                    permanentCondition: PermanentCondition,
+                    digivolutionCost: 3,
+                    ignoreDigivolutionRequirement: false,
+                    card: card,
+                    condition: null)
+                );
+            }
+
+            #endregion
+
+            #region Security
+            if (timing == EffectTiming.SecuritySkill)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Play this card without battling", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetIsSecurityEffect(true);
+                cardEffects.Add(activateClass);
+
+                string EffectDiscription()
+                {
+                    return "[Security] If your opponent has a level 6 or higher Digimon, play this card without battling and without paying the cost.";
+                }
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanTriggerSecurityEffect(hashtable, card);
+                }
+
+                bool PermamentCondition(Permanent permanent)
+                {
+                    return permanent.IsDigimon &&
+                        permanent.HasLevel && 
+                        permanent.Level >= 6;
+                }
+
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    return card.Owner.ExecutingCards.Contains(card) &&
+                        CardEffectCommons.HasMatchConditionOpponentsPermanent(PermamentCondition) &&
+                        CardEffectCommons.CanPlayAsNewPermanent(cardSource: card, payCost: false, cardEffect: activateClass);
+                }
+
+                IEnumerator ActivateCoroutine(Hashtable _hashtable)
+                {
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(cardSources: new List<CardSource>() { card }, activateClass: activateClass, payCost: false, isTapped: false, root: SelectCardEffect.Root.Execution, activateETB: true));
+                }
+            }
+            #endregion
+
             #region All Turns
 
             if (timing == EffectTiming.OnAttackTargetChanged)
