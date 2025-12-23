@@ -17,7 +17,8 @@ namespace DCGO.CardEffects.BT24
             {
                 bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.EqualsTraits("TS");
+                    return targetPermanent.TopCard.EqualsTraits("TS")
+                        && targetPermanent.TopCard.IsLevel2;
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 0, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -45,7 +46,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool HasTS(CardSource source)
                 {
-                    return source.EqualsTraits("LIBERATOR");
+                    return source.EqualsTraits("TS");
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
