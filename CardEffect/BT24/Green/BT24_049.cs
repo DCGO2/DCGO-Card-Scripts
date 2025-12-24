@@ -55,19 +55,6 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy, OpponentsTappedDigimon);
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
-            {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    return permanent.StackCards
-                           .Filter(x => !x.IsFlipped)
-                           .GroupBy(x => x.Level)
-                           .Any(g => g.Count() >= 2);
-                }
-
-                return false;
-            }
-
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
@@ -105,7 +92,7 @@ namespace DCGO.CardEffects.BT24
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: maxCount,
-                            canNoSelect: false,
+                            canNoSelect: true,
                             canEndNotMax: false,
                             selectPermanentCoroutine: null,
                             afterSelectPermanentCoroutine: null,
