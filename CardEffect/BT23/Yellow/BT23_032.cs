@@ -264,6 +264,15 @@ namespace DCGO.CardEffects.BT23
 
             #region All Turns Shared
 
+            string SharedEffectName() => "Play 1 level 4- [Yellow]/[Black]/[CS] trait digimon from digivolution sources";
+
+            string SharedEffectDiscription(string tag) => $"[{tag}] [Once Per Turn] When this Digimon would leave the battle area other than by your effects, you may play 1 level 4 or lower yellow, black or [CS] trait Digimon card from its digivolution cards without paying the cost.";
+
+            bool SharedCanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            }
+
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 bool CanSelectCardCondition(CardSource cardSource)
@@ -329,31 +338,16 @@ namespace DCGO.CardEffects.BT23
             if (timing == EffectTiming.WhenRemoveField)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Play 1 level 4- [Yellow]/[Black]/[CS] trait digimon from digivolution sources", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass, false), 1, true, EffectDiscription());
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass, true), 1, true, SharedEffectDiscription("All Turns"));
                 activateClass.SetHashString("BT23_032_AT");
                 cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[All Turns] [Once Per Turn] When this Digimon would leave the battle area other than by your effects, you may play 1 level 4 or lower yellow, black or [CS] trait Digimon card from its digivolution cards without paying the cost.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerWhenRemoveField(hashtable, card)
                         && !CardEffectCommons.IsByEffect(hashtable, effect => effect.EffectSourceCard.Owner == card.Owner);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    yield return null;
                 }
             }
 
@@ -364,27 +358,17 @@ namespace DCGO.CardEffects.BT23
             if (timing == EffectTiming.WhenRemoveField)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Play 1 level 4- [Yellow]/[Black]/[CS] trait digimon from digivolution sources", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass, false), 1, true, EffectDiscription());
+                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass, false), 1, true, SharedEffectDiscription("Inherited All Turns"));
                 activateClass.SetIsInheritedEffect(true);
                 activateClass.SetHashString("BT23_032_AT_ESS");
                 cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[All Turns] [Once Per Turn] When this Digimon would leave the battle area other than by your effects, you may play 1 level 4 or lower yellow, black or [CS] trait Digimon card from its digivolution cards without paying the cost.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnField(card)
                         && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, PermamentCondition)
                         && !CardEffectCommons.IsByEffect(hashtable, effect => effect.EffectSourceCard.Owner == card.Owner);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnField(card);
                 }
 
                 bool PermamentCondition(Permanent permanent)
