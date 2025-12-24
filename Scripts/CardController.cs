@@ -1430,7 +1430,7 @@ public class PlayPermanentClass
                     }
 
                     List<CardSource> newDigivolutionCards = evoRootPermanents
-                        .Map(evoRootPermanent => evoRootPermanent.cardSources)
+                        .Map(evoRootPermanent => evoRootPermanent.StackCards)
                         .Flat();
 
                     foreach (Permanent evoRootPermanent in evoRootPermanents)
