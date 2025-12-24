@@ -76,7 +76,10 @@ namespace DCGO.CardEffects.BT24
                     {
                         if (CardEffectCommons.CanTriggerWhenLinked(hashtable, LinkPermanentCondition, null))
                         {
-                            return true;
+                            if (CardEffectCommons.IsOwnerTurn(card))
+                            {
+                                return true;
+                            }
                         }
                     }
                     return false;
@@ -86,14 +89,11 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (isExistOnField(card))
                     {
-                        if (CardEffectCommons.IsOwnerTurn(card))
+                        if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition))
                         {
-                            if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition))
+                            if (card.Owner.GetBattleAreaPermanents().Count(permanent => permanent.IsTamer) <= 1)
                             {
-                                if (card.Owner.GetBattleAreaPermanents().Count(permanent => permanent.IsTamer) <= 1)
-                                {
-                                    return true;
-                                }
+                                return true;
                             }
                         }
                     }
