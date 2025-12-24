@@ -1508,6 +1508,24 @@ public class CardSource : MonoBehaviour
 
     #endregion
 
+    #region whether this card has at least 1 trait that contains 1 string but not another
+
+    public bool ContainsXButNotY(string trait, string antiTrait)
+    {
+        if (string.IsNullOrEmpty(antiTrait))
+            return ContainsTraits(trait);
+        if (string.IsNullOrEmpty(trait))
+            return false;
+
+        string replaced = trait.Replace(" ", "");
+        string antiReplaced = antiTrait(" ", "");
+
+        return CardTraits.filter(cardTrait => !(cardTrait.Contains(antiTrait) || cardTrait.Contains(antiReplaced)))
+            .Some(cardTrait => cardTrait.Contains(trait) || cardTrait.Contains(replaced));
+    }
+
+    #endregion
+
     #region whether this card has at least 1 trait that contains "Bird"
 
     public bool HasBirdTraits
@@ -1541,7 +1559,7 @@ public class CardSource : MonoBehaviour
                 return true;
             }
 
-            if (ContainsTraits("Animal") && !ContainsTraits("Sea"))
+            if (ContainsXButNotY("Animal", "Sea Animal"))
             {
                 return true;
             }
@@ -1738,7 +1756,7 @@ public class CardSource : MonoBehaviour
             if (ContainsTraits("Beast"))
                 return true;
 
-            if (ContainsTraits("Animal") && !ContainsTraits("Sea Animal"))
+            if (ContainsXButNotY("Animal", "Sea Animal"))
                 return true;
 
             if (ContainsTraits("Sovereign"))
