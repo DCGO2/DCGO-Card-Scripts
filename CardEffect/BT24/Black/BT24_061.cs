@@ -43,7 +43,7 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && (permanent.IsDigimon || permanent.IsTamer)
                     && permanent.TopCard.HasPlayCost
-                    && permanent.TopCard.GetChangedCostItselef <= 3);
+                    && permanent.TopCard.GetChangedCostItselef <= 3;
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable)
