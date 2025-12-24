@@ -19,17 +19,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return targetPermanent.TopCard.IsLevel4
                         && (targetPermanent.TopCard.HasTSTraits
-                        && targetPermanent.Topcard.HasAquaTraits);
-                }
-
-                cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 1, ignoreDigivolutionRequirement: false, card: card, condition: null));
-            }
-
-            if (timing == EffectTiming.None)
-            {
-                bool PermanentCondition(Permanent targetPermanent)
-                {
-                    return (targetPermanent.TopCard.IsLevel3 && targetPermanent.TopCard.HasTSTraits);
+                        || targetPermanent.Topcard.HasAquaTraits);
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -109,7 +99,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDescription("On Play"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -127,7 +117,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDescription("When Digivolving"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -162,7 +152,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsDigimon
                         && (cardSource.EqualsTraits("TS")
-                        || cardSource.CardNames.Contains("Seadramon"))
+                        || cardSource.ContainsCardName("Seadramon"))
                         && cardSource.HasLevel && cardSource.Level <= 4
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
@@ -224,82 +214,82 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
-            #region Inerited Effect
+            #region When Attacking - ESS
 
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Unsuspend this Digimon, by placing 1 other Digimon as bottom source", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpICardEffect("Place 1 of your other Digimon as this Digimon's bottom digivolution card to unsuspend this Digimon.", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetHashString("Unsuspend_BT24_074");
+                activateClass.SetHashString("Attacking_BT24_074");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[When Attacking] [Once Per Turn] By placing 1 of your other Digimon as this Digimon's bottom digivolution card, it unsuspends.";
                 }
 
-                bool CanSelectOwnPermanentCondition(Permanent permanent)
+                bool CanSelectPermanentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && permanent != card.PermanentOfThisCard()
-                        && !permanent.TopCard.Equals(card);
+                    && permanent != card.PermanentOfThisCard()
+                    && !permanent.TopCard.Equals(card);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card)
-                        && CardEffectCommons.IsExistOnBattleArea(card);
+                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card);
+                    return CardEffectCommons.IsExistOnBattleArea(card)
+                    && !card.PermanentOfThisCard().IsToken
+                    && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition);
                 }
 
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    if (CanActivateCondition(_hashtable))
+                    List<CardSource> selectedCards = new List<CardSource>();
+
+                    SelectPermanentEffect selectPermanentEffect =
+                        GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                    selectPermanentEffect.SetUp(
+                        selectPlayer: card.Owner,
+                        canTargetCondition: CanSelectPermanentCondition,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        maxCount: 1,
+                        canNoSelect: false,
+                        canEndNotMax: false,
+                        selectPermanentCoroutine: SelectPermanentCoroutine,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.Custom,
+                        cardEffect: activateClass);
+
+                    selectPermanentEffect.SetUpCustomMessage(
+                        "Select 1 card to place on bottom of digivolution cards.",
+                        "The opponent is selecting 1 card to place on bottom of digivolution cards.");
+
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        List<CardSource> selectedCards = new List<CardSource>();
+                        selectedCards.Add(permanent.TopCard);
 
-                        int maxCount = 1;
+                        yield return ContinuousController.instance.StartCoroutine(new IPlacePermanentToDigivolutionCards(
+                            new List<Permanent[]>() { new Permanent[] { permanent, card.PermanentOfThisCard() } },
+                            false,
+                            activateClass).PlacePermanentToDigivolutionCards());
+                    }
 
-                        SelectPermanentEffect selectPermanentSourcecEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentSourcecEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectOwnPermanentCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: false,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentSourceCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectPermanentSourcecEffect.SetUpCustomMessage("Select 1 card to place on bottom of digivolution cards.", "The opponent is selecting 1 card to place on bottom of digivolution cards.");
-
-                        yield return StartCoroutine(selectPermanentSourcecEffect.Activate());
-
-                        IEnumerator SelectPermanentSourceCoroutine(Permanent permanent)
-                        {
-                            selectedCards.Add(permanent.TopCard);
-
-                            yield return null;
-                        }
-
-                        if (selectedCards.Count >= 1)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(card.PermanentOfThisCard().AddDigivolutionCardsBottom(
-                                selectedCards,
-                                activateClass));
-
-                            yield return ContinuousController.instance.StartCoroutine(new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() }, activateClass).Unsuspend());
-                        }
+                    if (selectedCards.Count >= 1)
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(
+                            new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() },
+                                activateClass).Unsuspend());
                     }
                 }
             }
