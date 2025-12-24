@@ -32,7 +32,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.EqualsCardName("Elizamon") || cardSource.EqualsCardName("Owen Dreadnought")
+                    return (cardSource.EqualsCardName("Elizamon")
+                        || cardSource.EqualsCardName("Owen Dreadnought"))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
