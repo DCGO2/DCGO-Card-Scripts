@@ -284,7 +284,7 @@ namespace DCGO.CardEffects.BT23
                 }
 
                 // Using this to cover both non ESS & ESS case.
-                var thisPermament = card.PermanentOfThisCard().TopCard.PermanentOfThisCard();
+                var thisPermament = card.PermanentOfThisCard();
 
                 if (thisPermament.StackCards.Exists(CanSelectCardCondition))
                 {
