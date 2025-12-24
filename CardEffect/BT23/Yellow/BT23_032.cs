@@ -283,9 +283,7 @@ namespace DCGO.CardEffects.BT23
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
-                Permanent thisPermament = null;
-                if (IsTopCard) thisPermament = card.PermanentOfThisCard();
-                else thisPermament = card.PermanentOfThisCard().TopCard.PermanentOfThisCard();
+                var thisPermament = card.PermanentOfThisCard();
 
                 if (thisPermament.StackCards.Exists(CanSelectCardCondition))
                 {
