@@ -61,10 +61,9 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared OP/WD
 
-            string EffectDiscriptionShared(string tag)
-            {
-                return $"[{tag}] Return 1 of your opponent's level 4 or lower Digimon to the bottom of the deck. Then, if played by effects, 1 of their Digimon or Tamers can't suspend until their turn ends.";
-            }
+            string SharedEffectName() => "Bot deck 1 lvl 4 or lower, possibly prevent suspension";
+
+            string EffectDiscriptionShared(string tag) => $"[{tag}] Return 1 of your opponent's level 4 or lower Digimon to the bottom of the deck. Then, if played by effects, 1 of their Digimon or Tamers can't suspend until their turn ends.";
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
@@ -159,7 +158,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Bot deck 1 lvl 4 or lower, possibly prevent suspension", CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
@@ -177,7 +176,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Bot deck 1 lvl 4 or lower, possibly prevent suspension", CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
