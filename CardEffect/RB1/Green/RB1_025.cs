@@ -25,7 +25,7 @@ public class RB1_025 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[When Digivolving] Suspend 1 of your opponentÅf Digimon. Then, if your opponent has no unsuspended Digimon, gain 1 memory.";
+                return "[When Digivolving] Suspend 1 of your opponent's Digimon. Then, if your opponent has no unsuspended Digimon, gain 1 memory.";
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -96,7 +96,7 @@ public class RB1_025 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[When Attacking] Suspend 1 of your opponentÅf Digimon. Then, if your opponent has no unsuspended Digimon, gain 1 memory.";
+                return "[When Attacking] Suspend 1 of your opponent's Digimon. Then, if your opponent has no unsuspended Digimon, gain 1 memory.";
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -161,7 +161,7 @@ public class RB1_025 : CEntity_Effect
         if (timing == EffectTiming.OnEndTurn)
         {
             ActivateClass activateClass = new ActivateClass();
-            activateClass.SetUpICardEffect("Your 1 Digimon attacks", CanUseCondition, card);
+            activateClass.SetUpICardEffect("1 Digimon with [Angoramon] in text attacks", CanUseCondition, card);
             activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
             cardEffects.Add(activateClass);
 
