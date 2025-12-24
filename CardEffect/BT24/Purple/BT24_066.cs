@@ -17,7 +17,7 @@ namespace DCGO.CardEffects.BT24
             {
                 bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.CardNames.Contains("Gigimon");
+                    return targetPermanent.TopCard.EqualsCardName("Gigimon");
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 0, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -133,7 +133,7 @@ namespace DCGO.CardEffects.BT24
                 bool SelectOpponentsLevel3Digimon(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
-                        && permanent.Level == 3;
+                        && permanent.TopCard.IsLevel3;
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -149,6 +149,8 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(SelectOpponentsLevel3Digimon));
+                
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
@@ -156,7 +158,7 @@ namespace DCGO.CardEffects.BT24
                         canTargetCondition: SelectOpponentsLevel3Digimon,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
-                        maxCount: 1,
+                        maxCount: maxCount,
                         canNoSelect: false,
                         canEndNotMax: false,
                         selectPermanentCoroutine: null,
