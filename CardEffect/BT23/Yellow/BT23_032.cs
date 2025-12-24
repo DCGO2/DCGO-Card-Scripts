@@ -273,7 +273,7 @@ namespace DCGO.CardEffects.BT23
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass, bool IsTopCard)
             {
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
@@ -283,8 +283,9 @@ namespace DCGO.CardEffects.BT23
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
-                // Using this to cover both non ESS & ESS case.
-                var thisPermament = card.PermanentOfThisCard();
+                Permanent thisPermament = null;
+                if (IsTopCard) thisPermament = card.PermanentOfThisCard();
+                else thisPermament = card.PermanentOfThisCard().TopCard.PermanentOfThisCard();
 
                 if (thisPermament.StackCards.Exists(CanSelectCardCondition))
                 {
