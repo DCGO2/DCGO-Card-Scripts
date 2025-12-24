@@ -56,11 +56,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return card.IsDigimon
                         && (card.EqualsTraits("Shaman")
-                        || card.ContainsTraits("Beast")
-                        || card.ContainsTraits("Sovereign")
-                        || (card.ContainsTraits("Animal")
-                            && !card.ContainsTraits("Sea Animal"))
-                        );
+                        || card.HasBeastTraits);
                 }
 
                 bool CanSelectCardCondition1(CardSource card)
