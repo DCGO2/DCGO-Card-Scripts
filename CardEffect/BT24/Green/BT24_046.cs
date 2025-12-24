@@ -17,7 +17,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return (permanent.TopCard.ContainsCardName("Gabumon") 
                         || permanent.TopCard.EqualsTraits("TS"))
-                        && permanent.Level == 3;
+                        && permanent.TopCard.IsLevel3;
                 }
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(Condition, 2, false, card, null));
             }
