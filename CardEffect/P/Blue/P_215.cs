@@ -139,7 +139,7 @@ namespace DCGO.CardEffects.P
                             canTargetCondition: CardSelectCondition,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
-                            canNoSelect: () => false,
+                            canNoSelect: () => true,
                             selectCardCoroutine: null,
                             afterSelectCardCoroutine: SelectCardCoroutine,
                             maxCount: maxCount,
