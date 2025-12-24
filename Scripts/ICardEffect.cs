@@ -16,6 +16,7 @@ public abstract class ICardEffect
         SetEffectSourcePermanent(null);
         SetMaxCountPerTurn(-1);
         SetEffectName(effectName);
+        SetEffectTarget(null);
         SetEffectDiscription("");
         SetHashString("");
         SetOnProcessCallbuck(null);
@@ -138,6 +139,26 @@ public abstract class ICardEffect
     internal void SetEffectName(string effectName)
     {
         EffectName = effectName;
+    }
+
+    #endregion
+
+    #region Effect Target, used to display a detail of what card triggered this / will be targetted by the effect if performed
+
+    CardSource _effectTarget = null;
+
+    public CardSource EffectTarget
+    {
+        get { return _effectTarget; }
+        private set
+        {
+            _effectTarget = value;
+        }
+    }
+
+    internal void SetEffectTarget(CardSource effectTarget)
+    {
+        EffectTarget = effectTarget;
     }
 
     #endregion
