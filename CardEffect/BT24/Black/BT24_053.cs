@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 // Protecmon
-namespace DCGO.CardEffects.BT22
+namespace DCGO.CardEffects.BT24
 {
     public class BT24_053 : CEntity_Effect
     {
