@@ -262,89 +262,91 @@ namespace DCGO.CardEffects.BT23
 
             #endregion
 
+            #region All Turns Shared
+
+            string SharedEffectName() => "Play 1 level 4- [Yellow]/[Black]/[CS] trait digimon from digivolution sources";
+
+            string SharedEffectDiscription(string tag) => $"[{tag}] [Once Per Turn] When this Digimon would leave the battle area other than by your effects, you may play 1 level 4 or lower yellow, black or [CS] trait Digimon card from its digivolution cards without paying the cost.";
+
+            bool SharedCanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            }
+
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass, bool IsTopCard)
+            {
+                bool CanSelectCardCondition(CardSource cardSource)
+                {
+                    return cardSource.IsDigimon
+                        && cardSource.HasLevel && cardSource.Level <= 4
+                        && (cardSource.CardColors.Contains(CardColor.Yellow) || cardSource.CardColors.Contains(CardColor.Black) || cardSource.HasCSTraits)
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
+                }
+
+                var thisPermament = card.PermanentOfThisCard();
+
+                if (thisPermament.StackCards.Exists(CanSelectCardCondition))
+                {
+                    CardSource selectedCard = null;
+                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    int maxCount = Math.Min(1, thisPermament.StackCards.Filter(CanSelectCardCondition).Count);
+
+                    selectCardEffect.SetUp(
+                                canTargetCondition: CanSelectCardCondition,
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                canNoSelect: () => true,
+                                selectCardCoroutine: SelectCardCoroutine,
+                                afterSelectCardCoroutine: null,
+                                message: "Select 1 digivolution card to play.",
+                                maxCount: maxCount,
+                                canEndNotMax: false,
+                                isShowOpponent: true,
+                                mode: SelectCardEffect.Mode.Custom,
+                                root: SelectCardEffect.Root.Custom,
+                                customRootCardList: card.PermanentOfThisCard().DigivolutionCards,
+                                canLookReverseCard: true,
+                                selectPlayer: card.Owner,
+                                cardEffect: null);
+
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    {
+                        selectedCard = cardSource;
+                        yield return null;
+                    }
+
+                    selectCardEffect.SetUpCustomMessage("Select 1 digivolution card to play.", "The opponent is selecting 1 digivolution card to play.");
+                    selectCardEffect.SetUpCustomMessage_ShowCard("Selected card");
+
+                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+
+                    if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                        cardSources: new List<CardSource>() { selectedCard },
+                        activateClass: activateClass,
+                        payCost: false,
+                        isTapped: false,
+                        root: SelectCardEffect.Root.DigivolutionCards,
+                        activateETB: true));
+                }
+            }
+
+            #endregion
+
             #region All Turns - OPT
 
             if (timing == EffectTiming.WhenRemoveField)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Play 1 level 4- [Yellow]/[Black]/[CS] trait digimon from digivolution sources", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass, true), 1, true, SharedEffectDiscription("All Turns"));
                 activateClass.SetHashString("BT23_032_AT");
                 cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[All Turns] [Once Per Turn] When this Digimon would leave the battle area other than by your effects, you may play 1 level 4 or lower yellow, black or [CS] trait Digimon card from its digivolution cards without paying the cost.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerWhenRemoveField(hashtable, card)
                         && !CardEffectCommons.IsByEffect(hashtable, effect => effect.EffectSourceCard.Owner == card.Owner);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    bool CanSelectCardCondition(CardSource cardSource)
-                    {
-                        return cardSource.IsDigimon
-                            && cardSource.HasLevel && cardSource.Level <= 4
-                            && (cardSource.CardColors.Contains(CardColor.Yellow) || cardSource.CardColors.Contains(CardColor.Black) || cardSource.HasCSTraits)
-                            && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
-                    }
-
-                    // Using this to cover both non ESS & ESS case.
-                    var thisPermament = card.PermanentOfThisCard().TopCard.PermanentOfThisCard();
-
-                    if (thisPermament.StackCards.Exists(CanSelectCardCondition))
-                    {
-                        CardSource selectedCard = null;
-                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-                        int maxCount = Math.Min(1, thisPermament.StackCards.Filter(CanSelectCardCondition).Count);
-
-                        selectCardEffect.SetUp(
-                                    canTargetCondition: CanSelectCardCondition,
-                                    canTargetCondition_ByPreSelecetedList: null,
-                                    canEndSelectCondition: null,
-                                    canNoSelect: () => true,
-                                    selectCardCoroutine: SelectCardCoroutine,
-                                    afterSelectCardCoroutine: null,
-                                    message: "Select 1 digivolution card to play.",
-                                    maxCount: maxCount,
-                                    canEndNotMax: false,
-                                    isShowOpponent: true,
-                                    mode: SelectCardEffect.Mode.Custom,
-                                    root: SelectCardEffect.Root.Custom,
-                                    customRootCardList: card.PermanentOfThisCard().DigivolutionCards,
-                                    canLookReverseCard: true,
-                                    selectPlayer: card.Owner,
-                                    cardEffect: null);
-
-                        IEnumerator SelectCardCoroutine(CardSource cardSource)
-                        {
-                            selectedCard = cardSource;
-                            yield return null;
-                        }
-
-                        selectCardEffect.SetUpCustomMessage("Select 1 digivolution card to play.", "The opponent is selecting 1 digivolution card to play.");
-                        selectCardEffect.SetUpCustomMessage_ShowCard("Selected card");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                        if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                            cardSources: new List<CardSource>() { selectedCard },
-                            activateClass: activateClass,
-                            payCost: false,
-                            isTapped: false,
-                            root: SelectCardEffect.Root.DigivolutionCards,
-                            activateETB: true));
-                    }
                 }
             }
 
@@ -355,16 +357,11 @@ namespace DCGO.CardEffects.BT23
             if (timing == EffectTiming.WhenRemoveField)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Play 1 level 4- [Yellow]/[Black]/[CS] trait digimon from digivolution sources", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass, false), 1, true, SharedEffectDiscription("Inherited All Turns"));
                 activateClass.SetIsInheritedEffect(true);
                 activateClass.SetHashString("BT23_032_AT_ESS");
                 cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[All Turns] [Once Per Turn] When this Digimon would leave the battle area other than by your effects, you may play 1 level 4 or lower yellow, black or [CS] trait Digimon card from its digivolution cards without paying the cost.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
@@ -373,73 +370,10 @@ namespace DCGO.CardEffects.BT23
                         && !CardEffectCommons.IsByEffect(hashtable, effect => effect.EffectSourceCard.Owner == card.Owner);
                 }
 
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnField(card);
-                }
-
                 bool PermamentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent == card.PermanentOfThisCard().TopCard.PermanentOfThisCard();
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    bool CanSelectCardCondition(CardSource cardSource)
-                    {
-                        return cardSource.IsDigimon
-                            && cardSource.HasLevel && cardSource.Level <= 4
-                            && (cardSource.CardColors.Contains(CardColor.Yellow) || cardSource.CardColors.Contains(CardColor.Black) || cardSource.HasCSTraits)
-                            && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
-                    }
-
-                    // Using this to cover both non ESS & ESS case.
-                    var thisPermament = card.PermanentOfThisCard().TopCard.PermanentOfThisCard();
-
-                    if (thisPermament.StackCards.Exists(CanSelectCardCondition))
-                    {
-                        CardSource selectedCard = null;
-                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-                        int maxCount = Math.Min(1, thisPermament.StackCards.Filter(CanSelectCardCondition).Count);
-
-                        selectCardEffect.SetUp(
-                                    canTargetCondition: CanSelectCardCondition,
-                                    canTargetCondition_ByPreSelecetedList: null,
-                                    canEndSelectCondition: null,
-                                    canNoSelect: () => true,
-                                    selectCardCoroutine: SelectCardCoroutine,
-                                    afterSelectCardCoroutine: null,
-                                    message: "Select 1 digivolution card to play.",
-                                    maxCount: maxCount,
-                                    canEndNotMax: false,
-                                    isShowOpponent: true,
-                                    mode: SelectCardEffect.Mode.Custom,
-                                    root: SelectCardEffect.Root.Custom,
-                                    customRootCardList: card.PermanentOfThisCard().DigivolutionCards,
-                                    canLookReverseCard: true,
-                                    selectPlayer: card.Owner,
-                                    cardEffect: null);
-
-                        IEnumerator SelectCardCoroutine(CardSource cardSource)
-                        {
-                            selectedCard = cardSource;
-                            yield return null;
-                        }
-
-                        selectCardEffect.SetUpCustomMessage("Select 1 digivolution card to play.", "The opponent is selecting 1 digivolution card to play.");
-                        selectCardEffect.SetUpCustomMessage_ShowCard("Selected card");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                        if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                            cardSources: new List<CardSource>() { selectedCard },
-                            activateClass: activateClass,
-                            payCost: false,
-                            isTapped: false,
-                            root: SelectCardEffect.Root.DigivolutionCards,
-                            activateETB: true));
-                    }
                 }
             }
 
