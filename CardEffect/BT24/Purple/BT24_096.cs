@@ -93,17 +93,6 @@ namespace DCGO.CardEffects.BT24
 
                     bool failedToDelete = true;
 
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DeletePeremanentAndProcessAccordingToResult(
-                                    targetPermanents: new List<Permanent>() { card.PermanentOfThisCard() },
-                                    activateClass: activateClass,
-                                    successProcess: permanents => SuccessProcess(),
-                                    failureProcess: null));
-
-                    IEnumerator SuccessProcess()
-                    {
-                        yield return null;
-                    }
-
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermament))
                     {
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
