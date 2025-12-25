@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// Muchomon
 namespace DCGO.CardEffects.BT24
 {
     public class BT24_044 : CEntity_Effect
