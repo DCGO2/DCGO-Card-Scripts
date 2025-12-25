@@ -52,8 +52,7 @@ namespace DCGO.CardEffects.BT24
                 return cardSource.GetCostItself <= 5
                     && (cardSource.EqualsTraits("Machine")
                     || cardSource.EqualsTraits("Cyborg")
-                    || cardSource.EqualsTratits("TS"))
-                    && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, false, activateClass);
+                    || cardSource.EqualsTratits("TS"));
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
