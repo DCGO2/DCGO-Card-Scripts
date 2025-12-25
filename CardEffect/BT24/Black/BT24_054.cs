@@ -57,8 +57,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectCardToDigivolveInto(CardSource cardSource)
                 {
-                    return cardSource.ContainsCardName("Hisyaryumon")
-                        && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, false, activateClass);
+                    return cardSource.ContainsCardName("Hisyaryumon");
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -103,7 +102,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
-                        && permanent.TopCard.GetCostItself <= card.PermanentOfThisCard().TopCard.GetCostItself
+                        && permanent.TopCard.GetChangedCostItselef <= card.PermanentOfThisCard().TopCard.GetChangedCostItselef
                         && (permanent.TopCard.IsDigimon
                         || permanent.TopCard.IsTamer);
                 }
