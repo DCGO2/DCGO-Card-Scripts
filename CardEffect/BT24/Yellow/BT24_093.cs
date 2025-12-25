@@ -32,19 +32,20 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    return card.Owner.SecurityCards.Count > 0;
-                
-                    CardSource topCard = card.Owner.SecurityCards[0];
-
-                    yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddHandCards(new List<CardSource>() { topCard }, false, activateClass));
-
-                    yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                        player: card.Owner,
-                        refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-
-                    yield return ContinuousController.instance.StartCoroutine(new IRecovery(card.Owner, 1, activateClass).Recovery());
-
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
+                    if (card.Owner.SecurityCards.Count > 0)
+                    {
+                        CardSource topCard = card.Owner.SecurityCards[0];
+    
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddHandCards(new List<CardSource>() { topCard }, false, activateClass));
+    
+                        yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
+                            player: card.Owner,
+                            refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
+    
+                        yield return ContinuousController.instance.StartCoroutine(new IRecovery(card.Owner, 1, activateClass).Recovery());
+    
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
+                    }
                 }
             }
 
