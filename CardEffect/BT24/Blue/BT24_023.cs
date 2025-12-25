@@ -61,10 +61,9 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared OP/WD
 
-            string EffectDiscriptionShared(string tag)
-            {
-                return $"[{tag}] Return 1 of your opponent's level 4 or lower Digimon to the bottom of the deck. Then, if played by effects, 1 of their Digimon or Tamers can't suspend until their turn ends.";
-            }
+            string SharedEffectName() => "Bot deck 1 lvl 4 or lower, possibly prevent suspension";
+
+            string EffectDiscriptionShared(string tag) => $"[{tag}] Return 1 of your opponent's level 4 or lower Digimon to the bottom of the deck. Then, if played by effects, 1 of their Digimon or Tamers can't suspend until their turn ends.";
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
@@ -86,33 +85,32 @@ namespace DCGO.CardEffects.BT24
 
             IEnumerator ActivateCoroutineShared(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, CanSelectPermanentCondition))
-                {
-                    int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: maxCount1,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        selectPermanentCoroutine: null,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.PutLibraryBottom,
-                        cardEffect: activateClass);
+                selectPermanentEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: CanSelectPermanentCondition,
+                    canTargetCondition_ByPreSelecetedList: null,
+                    canEndSelectCondition: null,
+                    maxCount: maxCount1,
+                    canNoSelect: false,
+                    canEndNotMax: false,
+                    selectPermanentCoroutine: null,
+                    afterSelectPermanentCoroutine: null,
+                    mode: SelectPermanentEffect.Mode.PutLibraryBottom,
+                    cardEffect: activateClass);
 
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to bottom deck.", "The opponent is selecting 1 Digimon to bottom deck.");
+                selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to bottom deck.", "The opponent is selecting 1 Digimon to bottom deck.");
 
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                }
+                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
                 if (CardEffectCommons.IsByEffect(hashtable, null))
                 {
                     if (CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanSelectPermanentCondition1))
                     {
+                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition1));
+
                         Permanent selectedPermanent = null;
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -121,7 +119,7 @@ namespace DCGO.CardEffects.BT24
                             canTargetCondition: CanSelectPermanentCondition1,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
-                            maxCount: 1,
+                            maxCount: maxCount,
                             canNoSelect: false,
                             canEndNotMax: false,
                             selectPermanentCoroutine: SelectPermanentCoroutine,
@@ -145,7 +143,6 @@ namespace DCGO.CardEffects.BT24
                                 isOnlyActivePhase: false,
                                 effectName: "Can't Suspend"
                             ));
-
                     }
                 }
             }
@@ -157,7 +154,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Bot deck 1 lvl 4 or lower, possibly prevent suspension", CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
@@ -175,7 +172,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Bot deck 1 lvl 4 or lower, possibly prevent suspension", CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
