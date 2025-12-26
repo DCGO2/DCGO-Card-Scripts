@@ -64,7 +64,8 @@ namespace DCGO.CardEffects.EX10
 
             bool CanSelectLinkCard(CardSource cardSource)
             {
-                return cardSource.CanLinkToTargetPermanent(card.PermanentOfThisCard(), false);
+                return cardSource.IsDigimon
+                    && cardSource.CanLinkToTargetPermanent(card.PermanentOfThisCard(), false);
             }
 
             bool ThisPermamentCondition(Permanent permanent)
