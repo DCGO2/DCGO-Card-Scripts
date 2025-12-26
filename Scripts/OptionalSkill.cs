@@ -17,7 +17,7 @@ public class OptionalSkill : MonoBehaviourPunCallbacks
         _endSelect = false;
         _useOptional = false;
 
-        string _Message = $"Will you use \"{cardEffect.EffectName}\"?";
+        string _Message = cardEffect.EffectTarget != null ? $"Will you use \"{cardEffect.EffectName}\" targetting {cardEffect.EffectTarget.Name}?" : $"Will you use \"{cardEffect.EffectName}\"?";
 
         yield return GManager.instance.photonWaitController.StartWait("SelectOptional");
 
@@ -48,13 +48,30 @@ public class OptionalSkill : MonoBehaviourPunCallbacks
         if (cardEffect.EffectSourceCard.Owner.isYou)
         {
             Permanent permanent = cardEffect.EffectSourceCard.PermanentOfThisCard();
+            Permanent targetPermanent = cardEffect.EffectTarget.PermanentOfThisCard();
+
+            List<FieldPermanentCard> highlightPermanents = new List<FieldPermanentCard>();
 
             if (permanent != null)
             {
                 if (permanent.ShowingPermanentCard != null)
                 {
-                    GManager.instance.hideCannotSelectObject.SetUpHideCannotSelectObject(new List<FieldPermanentCard>() { permanent.ShowingPermanentCard }, false);
+                    highlightPermanents.Add(permanent.ShowingPermanentCard);
+                
                 }
+            }
+
+            if (targetPermanent != null)
+            {
+                if (targetPermanent.ShowingPermanentCard != null)
+                {
+                    highlightPermanents.Add(targetPermanent.ShowingPermanentCard);
+                }
+            }
+
+            if (highlightPermanents.Count > 0)
+            {
+                GManager.instance.hideCannotSelectObject.SetUpHideCannotSelectObject(highlightPermanents, false);
             }
 
             GManager.instance.commandText.OpenCommandText(_Message);
