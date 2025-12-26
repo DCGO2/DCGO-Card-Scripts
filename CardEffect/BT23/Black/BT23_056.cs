@@ -50,14 +50,14 @@ namespace DCGO.CardEffects.BT23
                     && permanent.TopCard.HasCSTraits;
             }
 
+            bool CanSelectPermamentCondition(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
+            }
+
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 Permanent selectedPermanent = null;
-
-                bool CanSelectPermamentCondition(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
-                }
 
                 #region Select Permament
 
@@ -184,7 +184,7 @@ namespace DCGO.CardEffects.BT23
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Give 1 digimon '[Start of your main phase] this digimon attacks' ", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
@@ -201,7 +201,8 @@ namespace DCGO.CardEffects.BT23
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer);
+                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer)
+                        && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermamentCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -218,7 +219,7 @@ namespace DCGO.CardEffects.BT23
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Give 1 digimon '[Start of your main phase] this digimon attacks' ", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
@@ -235,7 +236,8 @@ namespace DCGO.CardEffects.BT23
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer);
+                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer)
+                        && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermamentCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
