@@ -111,7 +111,9 @@ namespace DCGO.CardEffects.BT21
 
             bool CanSelectLinkCard(CardSource cardSource)
             {
-                return cardSource.CanLinkToTargetPermanent(card.PermanentOfThisCard(), false);
+                return cardSource.IsDigimon
+                    && cardSource.HasAppmonTraits
+                    && cardSource.CanLinkToTargetPermanent(card.PermanentOfThisCard(), false);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
