@@ -32,7 +32,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "<De-Digivolve 1> of your opponent's Digimon.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] <De-Digivolve 1> of your opponent's Digimon.";
+            string SharedEffectDescription(string tag) => $"[{tag}] <De-Digivolve 1> of your opponent's Digimon.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
