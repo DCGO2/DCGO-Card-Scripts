@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// DoGatchmon
+// Raidramon
 namespace DCGO.CardEffects.BT24
 {
     public class BT24_071 : CEntity_Effect
@@ -51,13 +51,99 @@ namespace DCGO.CardEffects.BT24
             }
             #endregion
 
+            #region Shared OP/WD
+
+            string SharedEffectName() => "<De-Digivolve 1> of your opponent's Digimon.";
+
+            string SharedEffectDescription(string tag) => $"[{tag}] 1 of your Digimon with the [System], [Life] or [Transmutation] trait gains <Security A. +1> for the turn.";
+
+            bool SharedCanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            }
+
+            bool CanSelectPermanentCondition(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                    && (permanent.TopCard.EqualsTraits("System")
+                    || permanent.TopCard.EqualsTraits("Life")
+                    || permanent.TopCard.EqualsTraits("Transmutation"));
+            }
+
+            IEnumerator ActivateCoroutine(Hashtable _hashtable)
+            {
+                maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                selectPermanentEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: CanSelectPermanentCondition,
+                    canTargetCondition_ByPreSelecetedList: null,
+                    canEndSelectCondition: null,
+                    maxCount: maxCount,
+                    canNoSelect: false,
+                    canEndNotMax: false,
+                    selectPermanentCoroutine: SelectPermanentCoroutine,
+                    afterSelectPermanentCoroutine: null,
+                    mode: SelectPermanentEffect.Mode.Custom,
+                    cardEffect: activateClass);
+
+                selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get Security A+1.", "The opponent is selecting 1 Digimon that will get Security A+1.");
+
+                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                {
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonSAttack(targetPermanent: permanent, changeValue: 1, effectDuration: EffectDuration.UntilEachTurnEnd, activateClass: activateClass));
+                }
+            }
+
+            #endregion
+
+            #region On Play
+
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+                }
+            }
+
+            #endregion
+
+            #region When Digivolving
+
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                }
+            }
+
+            #endregion
+
             #region Shared OD/LOD
 
-            string SharedEffectName() => "Play 1 level 3 [Appmon] from trash.";
+            string SharedEffectName1() => "Play 1 level 3 [Appmon] from trash.";
 
-            string SharedEffectDiscription(string tag) => "[On Deletion] You may play 1 level 3 [Appmon] trait Digimon card from your trash without paying the cost.]";
+            string SharedEffectDescription1(string tag) => "[On Deletion] You may play 1 level 3 [Appmon] trait Digimon card from your trash without paying the cost.]";
 
-            bool CanSelectCardCondition(CardSource cardSource)
+            bool CanSelectCardCondition1(CardSource cardSource)
             {
                 return cardSource.IsDigimon
                     && cardSource.IsLevel3
@@ -65,28 +151,28 @@ namespace DCGO.CardEffects.BT24
                     && CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
             }
 
-            bool SharedCanUseCondition(Hashtable hashtable)
+            bool SharedCanUseCondition1(Hashtable hashtable)
             {
                 return CardEffectCommons.CanTriggerOnDeletion(hashtable, card);
             }
 
-            bool SharedCanActivateCondition(Hashtable hashtable)
+            bool SharedCanActivateCondition1(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnTrash(card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine1(Hashtable _hashtable)
             {
-                if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, (cardSource) => CanSelectCardCondition(cardSource)))
+                if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, (cardSource) => CanSelectCardCondition1(cardSource)))
                 {
-                    int maxCount = Math.Min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition(cardSource)));
+                    int maxCount = Math.Min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition1(cardSource)));
 
                     List<CardSource> selectedCards = new List<CardSource>();
 
                     SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                     selectCardEffect.SetUp(
-                                canTargetCondition: CanSelectCardCondition,
+                                canTargetCondition: CanSelectCardCondition1,
                                 canTargetCondition_ByPreSelecetedList: null,
                                 canEndSelectCondition: null,
                                 canNoSelect: () => true,
@@ -126,8 +212,8 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnDestroyedAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), SharedCanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpICardEffect(SharedEffectName1(), SharedCanUseCondition1, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, SharedActivateCoroutine1, -1, true, SharedEffectDescription1());
                 cardEffects.Add(activateClass);
             }
 
@@ -138,8 +224,8 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnDestroyedAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), SharedCanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, SharedActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpICardEffect(SharedEffectName1(), SharedCanUseCondition1, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, SharedActivateCoroutine1, -1, true, SharedEffectDescription1());
                 activateClass.SetIsLinkedEffect(true);
                 cardEffects.Add(activateClass);
             }
