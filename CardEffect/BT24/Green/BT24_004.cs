@@ -14,12 +14,12 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Draw 1", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetHashString("BT24_004_Draw1");
                 activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[Your Turn] [Once Per Turn] When any of your [Iliad] trait Digimon are played, <Draw 1>.";
                 }
