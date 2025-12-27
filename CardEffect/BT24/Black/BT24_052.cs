@@ -28,7 +28,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Play Diaboromon Token";
 
-            string EffectDiscriptionShared(string tag) => $"[{tag}] You may play 1 [Diaboromon] Token without paying the cost. (Digimon/Cost 14/Lv.6/White/Mega/Unknown/Unidentified/3000 DP).";
+            string EffectDescriptionShared(string tag) => $"[{tag}] You may play 1 [Diaboromon] Token without paying the cost. (Digimon/Cost 14/Lv.6/White/Mega/Unknown/Unidentified/3000 DP).";
             
             bool CanActivateConditionShared(Hashtable hashtable)
             {
@@ -47,7 +47,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, true, EffectDiscriptionShared("When Moving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, true, EffectDescriptionShared("When Moving"));
                 cardEffects.Add(activateClass);
 
                 bool PermanentCondition(Permanent permanent)
@@ -68,7 +68,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, true, EffectDiscriptionShared("When Digivolving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, true, EffectDescriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -85,12 +85,12 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delete 1 of your other [Diaboromon] to prevent this Digimon from leaving", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetHashString("Substitute_BT24_052");
                 activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[All Turns] [Once Per Turn] When this Digimon with [Diaboromon] in its text would leave the battle area, by deleting 1 of your other [Diaboromon], it doesn't leave.";
                 }

@@ -75,9 +75,9 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Bounce all opponent's lowest level. Unsuspend a Digimon. Then, you may link this card.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
 
-                string EffectDiscription()
+                string EffectDescription()
                     => "[Main] Return all of your opponent's lowest level Digimon to the hand. If this effect returned, 1 of your [TS] trait Digimon unsuspends. Then, you may link this card to 1 of your Digimon on the field without paying the cost.";
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -218,12 +218,12 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Bounce 1 opponent's lowest level Digimon.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetIsLinkedEffect(true);
                 activateClass.SetHashString("WA_BT24-091");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[When Attacking] [Once Per Turn] Return 1 of your opponent's lowest level Digimon to the hand.";
                 }
