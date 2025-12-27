@@ -30,7 +30,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "By trashing 1, delete 1 each of opponent's lvl 3 and 4";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] By trashing 1 card in your hand, delete 1 each of your opponent's level 3 and level 4 Digimon.";
+            string SharedEffectDescription(string tag) => $"[{tag}] By trashing 1 card in your hand, delete 1 each of your opponent's level 3 and level 4 Digimon.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
