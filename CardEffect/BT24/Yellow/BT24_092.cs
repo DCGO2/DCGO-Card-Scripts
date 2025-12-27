@@ -124,9 +124,9 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("1 opponent's Digimon gets -6K DP for the turn. Then, you may link this card.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
 
-                string EffectDiscription()
+                string EffectDescription()
                     => "[Main] 1 of your opponent's Digimon gets -6000 DP for the turn. Then, you may link this card to 1 of your Digimon on the field without paying the cost.";
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -191,12 +191,12 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("1 Opponent's digimon gets -6K DP for the turn.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetIsLinkedEffect(true);
                 activateClass.SetHashString("WA_BT24-092");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[When Attacking] [Once Per Turn] 1 of your opponent's Digimon gets -6000 DP for the turn.";
                 }
