@@ -31,7 +31,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Return opponent's Digimon to top deck.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Return 1 of your opponent's play cost 3 or lower Digimon or Tamers to the top of the deck.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Return 1 of your opponent's play cost 3 or lower Digimon or Tamers to the top of the deck.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
