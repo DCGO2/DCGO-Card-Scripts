@@ -31,7 +31,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Trash 3 sources, if by effect, delete 1 sourceless.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Trash any 3 digivolution cards from 1 of your opponent's Digimon. Then, if played by effects, delete 1 of your opponent's Digimon with no digivolution cards.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Trash any 3 digivolution cards from 1 of your opponent's Digimon. Then, if played by effects, delete 1 of your opponent's Digimon with no digivolution cards.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
