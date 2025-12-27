@@ -61,7 +61,37 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.EqualsTraits("SEEKERS"));
             }
 
-            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            IEnumerator AfterSelectPermanent(List<Permanent> permanents)
+            {
+                if (permanents.Count >= 1)
+                    selectedPermanent = permanents[0];
+
+                yield return null;
+            }
+
+            #region Can't Be De-Digivolved
+
+            void ActivateDeDigivolveProtection()
+            {
+                ImmuneFromDeDigivolveClass immuneFromDeDigivolveClass = new ImmuneFromDeDigivolveClass();
+                immuneFromDeDigivolveClass.SetUpICardEffect("Isn't affected by <De-Digivolve>", CanUseDeDigivolveCondition, selectedPermanent.TopCard);
+                immuneFromDeDigivolveClass.SetUpImmuneFromDeDigivolveClass(PermanentCondition: PermanentDeDigivolveCondition);
+                selectedPermanent.UntilOpponentTurnEndEffects.Add((_timing) => immuneFromDeDigivolveClass);
+            }
+
+            bool CanUseDeDigivolveCondition(Hashtable hashtable1)
+            {
+                return selectedPermanent.TopCard != null;
+            }
+
+            bool PermanentDeDigivolveCondition(Permanent permanent)
+            {
+                return permanent == selectedPermanent;
+            }
+
+            #endregion
+
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
             {
                 List<CardSource> selectedCards = new List<CardSource>();
 
@@ -115,35 +145,12 @@ namespace DCGO.CardEffects.BT24
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
+                    if (selectedPermanent != null)
+                    {
+                        ActivateDeDigivolveProtection();
+                    }
+
                     Permament selectedPermanent = null;
-
-                    IEnumerator AfterSelectPermanent(List<Permanent> permanents)
-                    {
-                        if (permanents.Count >= 1)
-                            selectedPermanent = permanents[0];
-
-                        yield return null;
-                    }
-
-                    #region Can't Be De-Digivolved
-
-                    ImmuneFromDeDigivolveClass immuneFromDeDigivolveClass = new ImmuneFromDeDigivolveClass();
-                    immuneFromDeDigivolveClass.SetUpICardEffect("Isn't affected by <De-Digivolve>", CanUseDeDigivolveCondition, selectedPermanent.TopCard);
-                    immuneFromDeDigivolveClass.SetUpImmuneFromDeDigivolveClass(PermanentCondition: PermanentDeDigivolveCondition);
-                    selectedPermanent.UntilOpponentTurnEndEffects.Add((_timing) => immuneFromDeDigivolveClass);
-
-                    bool CanUseDeDigivolveCondition(Hashtable hashtable1)
-                    {
-                        return selectedPermanent.TopCard != null;
-                    }
-
-                    bool PermanentDeDigivolveCondition(Permanent permanent)
-                    {
-                        return permanent == selectedPermanent;
-                    }
-
-                    #endregion
-
                 }
             }
 
