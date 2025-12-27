@@ -55,7 +55,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "1 Digimon can't be returned to hand or deck.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Until your opponent's turn ends, their effects can't return 1 of your Digimon with the [System], [Life] or [Transmutation] trait to hands or decks.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Until your opponent's turn ends, their effects can't return 1 of your Digimon with the [System], [Life] or [Transmutation] trait to hands or decks.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
@@ -163,11 +163,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delete 1 Digimon with 5 or less Cost", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 activateClass.SetIsLinkedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[When Linking] Delete 1 of your opponent's play cost 5 or lower Digimon.";
                 }

@@ -18,10 +18,10 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Place 1 [Dimetromon] from trash under 1 [Elizamon], to digivolve for 3", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[Hand] [Main] If you have [Owen Dreadnought], by placing 1 [Dimetromon] from your trash as any of your [Elizamon]'s bottom digivolution card, it digivolves into this card for a digivolution cost of 3, ignoring digivolution requirements.";
                 }
@@ -219,7 +219,7 @@ namespace DCGO.CardEffects.BT24
                     fromTop: true).DestroySecurity());
             }
             
-            string SharedEffectDiscription(string tag)
+            string SharedEffectDescription(string tag)
             {
                 return $"[{tag}] [Once Per Turn] Your opponent places 1 card from their hand as the bottom security card. Then, trash their top security card.";
             }
@@ -236,7 +236,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Opponent places 1 card from hand in security bottom. Trash their security top", CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDiscription("When Attacking"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDescription("When Attacking"));
                 activateClass.SetHashString("WAWD_BT24-016");
                 cardEffects.Add(activateClass);
 
@@ -255,7 +255,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Opponent places 1 card from hand in security bottom. Trash their security top", CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDiscription("When Digivolving"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), 1, false, SharedEffectDescription("When Digivolving"));
                 activateClass.SetHashString("WAWD_BT24-016");
                 cardEffects.Add(activateClass);
 
@@ -274,12 +274,12 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 1 [Reptile] or [Dragonkin] from hand", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
                 activateClass.SetHashString("PlayDigimon_BT24_016");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                     => "[All Turns] [Once Per Turn] When your opponent's security stack is removed from, you may play 1 5000 DP or lower [Reptile] or [Dragonkin] trait Digimon card from your hand without paying the cost.";
 
                 bool CanUseCondition(Hashtable hashtable)
