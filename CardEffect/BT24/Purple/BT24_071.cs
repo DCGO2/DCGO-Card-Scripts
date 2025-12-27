@@ -15,7 +15,7 @@ namespace DCGO.CardEffects.BT24
             {
                 bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.EqualsTraits("Stnd.");
+                    return targetPermanent.TopCard.HasStandardAppTraits;
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -53,7 +53,7 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared OP/WD
 
-            string SharedEffectName() => "<De-Digivolve 1> of your opponent's Digimon.";
+            string SharedEffectName() => "Give 1 proper traited digimon <Security A. +1> for turn.";
 
             string SharedEffectDescription(string tag) => $"[{tag}] 1 of your Digimon with the [System], [Life] or [Transmutation] trait gains <Security A. +1> for the turn.";
 
@@ -72,7 +72,7 @@ namespace DCGO.CardEffects.BT24
 
             IEnumerator ActivateCoroutine(Hashtable _hashtable)
             {
-                maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
 
                 SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -143,7 +143,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectDescription1(string tag) => "[On Deletion] You may play 1 level 3 [Appmon] trait Digimon card from your trash without paying the cost.]";
 
-            bool CanSelectCardCondition1(CardSource cardSource)
+            bool CanSelectCardCondition1(CardSource cardSource, ActivateClass activateClass)
             {
                 return cardSource.IsDigimon
                     && cardSource.IsLevel3
@@ -161,18 +161,18 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnTrash(card);
             }
 
-            IEnumerator SharedActivateCoroutine1(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine1(Hashtable _hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, (cardSource) => CanSelectCardCondition1(cardSource)))
+                if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, (cardSource) => CanSelectCardCondition1(cardSource, activateClass)))
                 {
-                    int maxCount = Math.Min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition1(cardSource)));
+                    int maxCount = Math.Min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition1(cardSource, activateClass)));
 
                     List<CardSource> selectedCards = new List<CardSource>();
 
                     SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                     selectCardEffect.SetUp(
-                                canTargetCondition: CanSelectCardCondition1,
+                                canTargetCondition: (cardSource) => CanSelectCardCondition1(cardSource, activateClass),
                                 canTargetCondition_ByPreSelecetedList: null,
                                 canEndSelectCondition: null,
                                 canNoSelect: () => true,
