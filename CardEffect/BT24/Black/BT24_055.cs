@@ -61,61 +61,32 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.EqualsTraits("SEEKERS"));
             }
 
-            IEnumerator AfterSelectPermanent(List<Permanent> permanents)
-            {
-                if (permanents.Count >= 1)
-                    selectedPermanent = permanents[0];
-
-                yield return null;
-            }
-
             IEnumerator ActivateCoroutine(Hashtable hashtable)
             {
-                bool canSelectHand = card.Owner.HandCards.Count(CanSelectCardCondition) >= 1;
-
-                if (canSelectHand)
-                {
-                    GManager.instance.userSelectionManager.SetBool(canSelectHand);
-                }
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
-
-                bool fromHand = GManager.instance.userSelectionManager.SelectedBoolValue;
-
                 List<CardSource> selectedCards = new List<CardSource>();
 
-                IEnumerator SelectCardCoroutine(CardSource cardSource)
-                {
-                    selectedCards.Add(cardSource);
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectCardCondition));
 
-                    yield return null;
-                }
+                SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
-                if (fromHand)
-                {
-                    int maxCount = 1;
+                selectHandEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: CanSelectCardCondition,
+                    canTargetCondition_ByPreSelecetedList: null,
+                    canEndSelectCondition: null,
+                    maxCount: maxCount,
+                    canNoSelect: true,
+                    canEndNotMax: false,
+                    isShowOpponent: true,
+                    selectCardCoroutine: SelectCardCoroutine,
+                    afterSelectCardCoroutine: null,
+                    mode: SelectHandEffect.Mode.Custom,
+                    cardEffect: activateClass);
 
-                    SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+                selectHandEffect.SetUpCustomMessage("Select 1 card to place on bottom of digivolution cards.", "The opponent is selecting 1 card to place on bottom of digivolution cards.");
+                selectHandEffect.SetUpCustomMessage_ShowCard("Digivolution Card");
 
-                    selectHandEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectCardCondition,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: maxCount,
-                        canNoSelect: true,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        selectCardCoroutine: SelectCardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        mode: SelectHandEffect.Mode.Custom,
-                        cardEffect: activateClass);
-
-                    selectHandEffect.SetUpCustomMessage("Select 1 card to place on bottom of digivolution cards.", "The opponent is selecting 1 card to place on bottom of digivolution cards.");
-                    selectHandEffect.SetUpCustomMessage_ShowCard("Digivolution Card");
-
-                    yield return StartCoroutine(selectHandEffect.Activate());
-                }
+                yield return StartCoroutine(selectHandEffect.Activate());
 
                 if (selectedCards.Count >= 1)
                 {
@@ -141,6 +112,14 @@ namespace DCGO.CardEffects.BT24
                                 "The opponent is selecting Digimon that will get effects.");
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                    IEnumerator AfterSelectPermanent(List<Permanent> permanents)
+                    {
+                        if (permanents.Count >= 1)
+                            selectedPermanent = permanents[0];
+
+                        yield return null;
+                    }
 
                     #region Can't Be De-Digivolved
 
@@ -227,13 +206,12 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                         && (permanent.IsDigimon
                         || permanent.IsTamer)
-                        && permanent.TopCard.GetCostItself <= card.PermanentOfThisCard().TopCard.GetCostItself;
+                        && permanent.TopCard.GetChangedCostItselef <= card.PermanentOfThisCard().TopCard.GetChangedCostItselef;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition);
+                    return CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
