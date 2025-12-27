@@ -123,15 +123,10 @@ namespace DCGO.CardEffects.BT24
 
                     #region Can't Be De-Digivolved
 
-                    ActivateDeDigivolveProtection();
-
-                    void ActivateDeDigivolveProtection()
-                    {
-                        ImmuneFromDeDigivolveClass immuneFromDeDigivolveClass = new ImmuneFromDeDigivolveClass();
-                        immuneFromDeDigivolveClass.SetUpICardEffect("Isn't affected by <De-Digivolve>", CanUseDeDigivolveCondition, selectedPermanent.TopCard);
-                        immuneFromDeDigivolveClass.SetUpImmuneFromDeDigivolveClass(PermanentCondition: PermanentDeDigivolveCondition);
-                        selectedPermanent.UntilOpponentTurnEndEffects.Add((_timing) => immuneFromDeDigivolveClass);
-                    }
+                    ImmuneFromDeDigivolveClass immuneFromDeDigivolveClass = new ImmuneFromDeDigivolveClass();
+                    immuneFromDeDigivolveClass.SetUpICardEffect("Isn't affected by <De-Digivolve>", CanUseDeDigivolveCondition, selectedPermanent.TopCard);
+                    immuneFromDeDigivolveClass.SetUpImmuneFromDeDigivolveClass(PermanentCondition: PermanentDeDigivolveCondition);
+                    selectedPermanent.UntilOpponentTurnEndEffects.Add((_timing) => immuneFromDeDigivolveClass);
 
                     bool CanUseDeDigivolveCondition(Hashtable hashtable1)
                     {
