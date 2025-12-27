@@ -44,7 +44,7 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
-            IEnumerator ActivateCoroutine(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
             {
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                 {
@@ -68,11 +68,6 @@ namespace DCGO.CardEffects.BT24
                     selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to De-Digivolve.", "The opponent is selecting 1 Digimon to De-Digivolve.");
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    bool CanEndSelectCondition(List<Permanent> permanents)
-                    {
-                        return permanents.Count <= 0;
-                    }
 
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
@@ -132,7 +127,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Reveal 3, maybe play 7 cost [TS] trait, trash rest.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
