@@ -46,10 +46,10 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("May trash 1 opponent's security. Then, this may unsuspend.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                     => "[When Digivolving] You may trash any 1 of your opponent's security cards. Then, this Digimon may unsuspend.";
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -130,11 +130,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delete 1 of your opponent's Digimon?", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetHashString("BT24_18_AT_Sec_Removed");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                  => "[All Turns] [Once Per Turn] When your opponent's security stack is removed from, you may delete 1 of their Digimon.";
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -190,11 +190,11 @@ namespace DCGO.CardEffects.BT24
 
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delte an opponent's Digimon, to prevent [Reptile] or [Dragonkin] trait digimon from leaving the battle area", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetHashString("BT24_018_AT_Prevent_Deletion");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                  => "[All Turns] [Once Per Turn] When any of your [Reptile] or [Dragonkin] trait Digimon would leave the battle area, by deleting 1 of your opponent's lowest DP Digimon, they don't leave.";
 
                 bool IsReptileKin(Permanent permanent)

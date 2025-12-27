@@ -15,7 +15,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Play 1 lvl 4 purple tamer from trash.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] If you have 4 or fewer cards in your hand, you may play 1 purple Tamer card with a play cost of 4 or less from your trash without paying the cost.";
+            string SharedEffectDescription(string tag) => $"[{tag}] If you have 4 or fewer cards in your hand, you may play 1 purple Tamer card with a play cost of 4 or less from your trash without paying the cost.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
