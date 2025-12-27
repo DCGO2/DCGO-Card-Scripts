@@ -57,7 +57,7 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
-            #region Shared OP/WD
+            #region Shared OP/OD
 
             string SharedEffectName() => "1 opponent digimon can't attack players.";
 
