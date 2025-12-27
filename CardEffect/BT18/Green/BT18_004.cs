@@ -36,10 +36,9 @@ namespace DCGO.CardEffects.BT18
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
-                        return CardEffectCommons.HasMatchConditionOwnersHand(card,IsRoyalBaseDigimon);
-
-                    return false;
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.HasMatchConditionOwnersHand(card,IsRoyalBaseDigimon)
+                        && card.Owner.CanAddSecurity(activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
