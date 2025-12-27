@@ -66,7 +66,7 @@ namespace DCGO.CardEffects.BT23
                     bool canAddHand = CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardSource);
                     bool canAddTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardSource);
 
-                    if(canAddHand || canAddTrash)
+                    if(card.Owner.CanAddSecurity(activateClass) && (canAddHand || canAddTrash))
                     {
                         if(canAddHand && canAddTrash)
                         {
