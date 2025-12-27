@@ -61,7 +61,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "1 opponent digimon can't attack players.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Until your opponent's turn ends, 1 of their Digimon can't attack players.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Until your opponent's turn ends, 1 of their Digimon can't attack players.";
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
@@ -165,11 +165,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("De-Digivolve 1 on 1 Digimon", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 activateClass.SetIsLinkedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[On Deletion] <De-Digivolve 1> 1 of your opponent's Digimon. (Trash 1 card from the top of 1 of your opponent's Digimon. Stop trashing when you would trash a level 3 card or the Digimon's last card.)";
                 }
