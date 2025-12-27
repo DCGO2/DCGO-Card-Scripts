@@ -29,7 +29,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Reveal 3, add or place under sources 1, return rest to top or bot";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Reveal the top 3 cards of your deck. Among them, add 1 [Machine], [Cyborg] or [TS] trait Digimon card or Tamer card to the hand or place it as any of your [Machine], [Cyborg] or [TS] trait Digimon's bottom digivolution card. Return the rest to the top or bottom of the deck.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Reveal the top 3 cards of your deck. Among them, add 1 [Machine], [Cyborg] or [TS] trait Digimon card or Tamer card to the hand or place it as any of your [Machine], [Cyborg] or [TS] trait Digimon's bottom digivolution card. Return the rest to the top or bottom of the deck.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
