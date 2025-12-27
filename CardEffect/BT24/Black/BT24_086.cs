@@ -69,14 +69,15 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && card.Owner.Enemy.GetBattleAreaDigimons().Count >= 1
-                        && card.Owner.CanAddMemory(activateClass);
+                    return CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
+                    if (card.Owner.Enemy.GetBattleAreaDigimons().Count >= 1 && card.Owner.CanAddMemory(activateClass))
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
+                    }
                 }
             }
 
@@ -104,21 +105,21 @@ namespace DCGO.CardEffects.BT24
                 bool IsMyProperDigimon(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && (card.PermanentOfThisCard().TopCard.HasXAntibodyTraits
-                        || card.PermanentOfThisCard().TopCard.EqualsTraits("DigiPolice")
-                        || card.PermanentOfThisCard().TopCard.HasSeekersTraits));
+                        && (permanent.TopCard.HasXAntibodyTraits
+                        || permanent.TopCard.EqualsTraits("DigiPolice")
+                        || permanent.TopCard.HasSeekersTraits));
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return isExistOnField(card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, MyPlayedDigimonCondition)
                         || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, MyPlayedDigimonCondition));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return isExistOnField(card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && CardEffectCommons.HasMatchConditionPermanent(IsMyProperDigimon);
                 }
 
@@ -184,7 +185,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
-                        && cardSource.CardNames.Contains("Shuu Yulin");
+                        && cardSource.EqualsCardName("Shuu Yulin");
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
