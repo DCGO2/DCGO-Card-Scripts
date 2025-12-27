@@ -113,6 +113,8 @@ namespace DCGO.CardEffects.BT24
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
+                    Permament selectedPermanent = null;
+
                     IEnumerator AfterSelectPermanent(List<Permanent> permanents)
                     {
                         if (permanents.Count >= 1)
