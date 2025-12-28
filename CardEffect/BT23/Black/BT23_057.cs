@@ -330,7 +330,7 @@ namespace DCGO.CardEffects.BT23
                 {
                     int maxCost = 6;
 
-                    maxCost += 3 * card.Owner.GetBattleAreaPermanents().Count(permanent => permanent != card.PermanentOfThisCard());
+                    maxCost += 3 * card.Owner.GetBattleAreaPermanents().Count(permanent => permanent.IsDigimon && permanent != card.PermanentOfThisCard());
 
                     if (permanent.TopCard.GetCostItself <= maxCost)
                     {
