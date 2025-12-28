@@ -275,11 +275,6 @@ namespace DCGO.CardEffects.BT23
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
-                bool CanSelectPermamentCondition(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
-                }
-
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermamentCondition))
