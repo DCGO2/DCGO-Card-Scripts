@@ -50,7 +50,7 @@ namespace DCGO.CardEffects.BT23
                     && permanent.TopCard.HasCSTraits;
             }
 
-            bool CanSelectPermamentCondition(Permanent permanent)
+            bool SharedCanSelectPermamentCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
@@ -62,11 +62,11 @@ namespace DCGO.CardEffects.BT23
                 #region Select Permament
 
                 SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermamentCondition));
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(SharedCanSelectPermamentCondition));
 
                 selectPermanentEffect.SetUp(
                     selectPlayer: card.Owner,
-                    canTargetCondition: CanSelectPermamentCondition,
+                    canTargetCondition: SharedCanSelectPermamentCondition,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     maxCount: maxCount,
@@ -202,7 +202,7 @@ namespace DCGO.CardEffects.BT23
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer)
-                        && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermamentCondition);
+                        && CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermamentCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -237,7 +237,7 @@ namespace DCGO.CardEffects.BT23
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer)
-                        && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermamentCondition);
+                        && CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermamentCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -277,18 +277,18 @@ namespace DCGO.CardEffects.BT23
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermamentCondition))
+                    if (CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermamentCondition))
                     {
                         Permanent selectedPermanent = null;
 
                         #region Select Permament
 
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermamentCondition));
+                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(SharedCanSelectPermamentCondition));
 
                         selectPermanentEffect.SetUp(
                             selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermamentCondition,
+                            canTargetCondition: SharedCanSelectPermamentCondition,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: maxCount,
