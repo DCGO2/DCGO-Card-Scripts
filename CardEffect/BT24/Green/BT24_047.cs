@@ -119,7 +119,7 @@ namespace DCGO.CardEffects.BT24
                                 new IUnuspendPermanents(new List<Permanent>() { selectedPermanent },
                                     CardEffectCommons.CardEffectHashtable(activateClass)).Unsuspend());
 
-                            unsuspend = selectedPermanent.IsUnsuspended &&
+                            unsuspend = !selectedPermanent.IsSuspended &&
                                          CardEffectCommons.IsOwnerPermanent(selectedPermanent, card);
                         }
 
