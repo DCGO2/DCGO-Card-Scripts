@@ -21,7 +21,7 @@ public class BT9_018 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[When Digivolving] For each Tamer your opponent has in play, suspend 1 of your opponentÅf Digimon and gain 1 memory.";
+                return "[When Digivolving] For each Tamer your opponent has in play, suspend 1 of your opponent¬Åf Digimon and gain 1 memory.";
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -44,47 +44,39 @@ public class BT9_018 : CEntity_Effect
 
             bool CanActivateCondition(Hashtable hashtable)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (card.Owner.Enemy.GetBattleAreaPermanents().Count((permanent) => permanent.IsTamer) >= 1)
-                    {
-                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
+                return CardEffectCommons.IsExistOnBattleArea(card);
             }
 
             IEnumerator ActivateCoroutine(Hashtable _hashtable)
             {
-                int tamerCount = card.Owner.Enemy.GetBattleAreaPermanents().Count((permanent) => permanent.IsTamer);
-
-                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                if (card.Owner.Enemy.GetBattleAreaPermanents().Count((permanent) => permanent.IsTamer) >= 1)
                 {
-                    int maxCount = Math.Min(tamerCount, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: maxCount,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        selectPermanentCoroutine: null,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Tap,
-                        cardEffect: activateClass);
-
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                    int tamerCount = card.Owner.Enemy.GetBattleAreaPermanents().Count((permanent) => permanent.IsTamer);
+    
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                    {
+                        int maxCount = Math.Min(tamerCount, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+    
+                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+    
+                        selectPermanentEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: CanSelectPermanentCondition,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: maxCount,
+                            canNoSelect: false,
+                            canEndNotMax: false,
+                            selectPermanentCoroutine: null,
+                            afterSelectPermanentCoroutine: null,
+                            mode: SelectPermanentEffect.Mode.Tap,
+                            cardEffect: activateClass);
+    
+                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                    }
+    
+                    yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(tamerCount, activateClass));
                 }
-
-                yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(tamerCount, activateClass));
             }
         }
 
@@ -98,7 +90,7 @@ public class BT9_018 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[All Turns][Once Per Turn] When an opponentÅf Digimon with 6000 DP or less becomes suspended, you may delete that Digimon.";
+                return "[All Turns][Once Per Turn] When an opponent¬Åf Digimon with 6000 DP or less becomes suspended, you may delete that Digimon.";
             }
 
             bool PermanentCondition(Permanent permanent)
