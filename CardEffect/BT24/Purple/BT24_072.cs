@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.EqualsTraits("Titan"));
             }
 
-            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            IEnumerator ActivateCoroutine(Hashtable hashtable, ActivateClass activateClass))
             {
                 bool discarded = false;
 
@@ -155,6 +155,81 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
+            #region On Deletion
+
+            if (timing == EffectTiming.OnDestroyedAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Play 1 lvl 4- [Demon] or [Titan] from trash", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
+                cardEffects.Add(activateClass);
+
+                string EffectDescription() => "[On Deletion] You may play 1 level 4 or lower [Demon] or [Titan] trait Digimon card from your trash without paying the cost.";
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanTriggerOnDeletion(hashtable, card);
+                }
+
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanActivateOnDeletion(card);
+                }
+
+                bool CanPlayCardCondition(CardSource cardSource)
+                {
+                    return cardSource.IsDigimon
+                        && cardSource.HasLevel
+                        && cardSource.Level <= 4
+                        && (cardSource.EqualsTraits("Demon")
+                        || cardSource.EqualsTraits("Titan"))
+                        && CardEffectCommons.CanPlayAsNewPermament(cardSource, false, activateClass);
+                }
+
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
+                {
+                    int maxCount = Math.Min(1, card.Owner.TrashCards.Count(CanPlayCardCondition));
+
+                        List<CardSource> selectedCards = new List<CardSource>();
+
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                        selectCardEffect.SetUp(
+                                    canTargetCondition: CanPlayCardCondition,
+                                    canTargetCondition_ByPreSelecetedList: null,
+                                    canEndSelectCondition: null,
+                                    canNoSelect: () => true,
+                                    selectCardCoroutine: SelectCardCoroutine,
+                                    afterSelectCardCoroutine: null,
+                                    message: "Select 1 card to play.",
+                                    maxCount: maxCount,
+                                    canEndNotMax: false,
+                                    isShowOpponent: true,
+                                    mode: SelectCardEffect.Mode.Custom,
+                                    root: SelectCardEffect.Root.Trash,
+                                    customRootCardList: null,
+                                    canLookReverseCard: true,
+                                    selectPlayer: card.Owner,
+                                    cardEffect: activateClass);
+
+                        selectCardEffect.SetUpCustomMessage("Select 1 card to play.", "The opponent is selecting 1 card to play.");
+                        selectCardEffect.SetUpCustomMessage_ShowCard("Played Card");
+
+                        yield return StartCoroutine(selectCardEffect.Activate());
+
+                        IEnumerator SelectCardCoroutine(CardSource cardSource)
+                        {
+                            selectedCards.Add(cardSource);
+
+                            yield return null;
+                        }
+
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(cardSources: selectedCards, activateClass: activateClass, payCost: false, isTapped: false, root: SelectCardEffect.Root.Trash, activateETB: true));
+                }
+            }
+
+            #endregion
+
             #region Inherited
 
             if (timing == EffectTiming.None)
@@ -164,7 +239,7 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.IsOwnerTurn(card)
                         && (card.PermanentOfThisCard().TopCard.EqualsCardName("Titamon")
-                        && card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
+                        || card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
                 }
 
                 cardEffects.Add(CardEffectFactory.ChangeSelfSAttackStaticEffect(changeValue: 1, isInheritedEffect: true, card: card, condition: Condition));
