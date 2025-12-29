@@ -213,7 +213,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName1(), SharedCanUseCondition1, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition1, SharedActivateCoroutine1, -1, true, SharedEffectDescription1());
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, hash => SharedActivateCoroutine1(hash, activateClass), -1, true, SharedEffectDescription1());
                 cardEffects.Add(activateClass);
             }
 
@@ -225,7 +225,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName1(), SharedCanUseCondition1, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition1, SharedActivateCoroutine1, -1, true, SharedEffectDescription1());
+                activateClass.SetUpActivateClass(SharedCanActivateCondition1, hash => SharedActivateCoroutine1(hash, activateClass), -1, true, SharedEffectDescription1());
                 activateClass.SetIsLinkedEffect(true);
                 cardEffects.Add(activateClass);
             }
