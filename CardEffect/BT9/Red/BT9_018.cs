@@ -21,7 +21,7 @@ public class BT9_018 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[When Digivolving] For each Tamer your opponent has in play, suspend 1 of your opponentf Digimon and gain 1 memory.";
+                return "[When Digivolving] For each Tamer your opponent has in play, suspend 1 of your opponent's Digimon and gain 1 memory.";
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -90,7 +90,7 @@ public class BT9_018 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[All Turns][Once Per Turn] When an opponentf Digimon with 6000 DP or less becomes suspended, you may delete that Digimon.";
+                return "[All Turns][Once Per Turn] When an opponent's Digimon with 6000 DP or less becomes suspended, you may delete that Digimon.";
             }
 
             bool PermanentCondition(Permanent permanent)
