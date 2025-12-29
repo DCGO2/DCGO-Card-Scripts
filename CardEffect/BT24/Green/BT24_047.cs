@@ -111,16 +111,16 @@ namespace DCGO.CardEffects.BT24
                         }
                       
                         if (selectedPermanent != null &&
-                        selectedPermanent.TopCard &&
-                        !selectedPermanent.TopCard.CanNotBeAffected(activateClass) &&
-                        selectedPermanent.IsSuspended && selectedPermanent.CanUnsuspend)
+                            selectedPermanent.TopCard &&
+                            !selectedPermanent.TopCard.CanNotBeAffected(activateClass) &&
+                            selectedPermanent.IsSuspended)
                         {
                             yield return ContinuousController.instance.StartCoroutine(
                                 new IUnuspendPermanents(new List<Permanent>() { selectedPermanent },
                                     CardEffectCommons.CardEffectHashtable(activateClass)).Unsuspend());
-
+                            
                             unsuspend = !selectedPermanent.IsSuspended &&
-                                         CardEffectCommons.IsOwnerPermanent(selectedPermanent, card);
+                                        CardEffectCommons.IsOwnerPermanent(selectedPermanent, card);
                         }
 
                         if(unsuspend && selectedPermament.CanAttack(activateClass))
