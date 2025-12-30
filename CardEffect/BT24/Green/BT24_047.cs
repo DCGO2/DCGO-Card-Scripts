@@ -24,15 +24,15 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectSuspendPermanentCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent)
-                    && permanent.IsDigimon;
+                return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent);
             }
 
             bool CanSelectUnsuspendPermanentCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card)
                     && (permanent.TopCard.ContainsTraits("Avian")
-                    || permanent.TopCard.ContainsTraits("Bird"));
+                    || permanent.TopCard.ContainsTraits("Bird")
+                    || permanent.TopCard.EqualsTraits("Vortex Warrior"));
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -119,8 +119,7 @@ namespace DCGO.CardEffects.BT24
                                 new IUnuspendPermanents(new List<Permanent>() { selectedPermanent },
                                     CardEffectCommons.CardEffectHashtable(activateClass)).Unsuspend());
                             
-                            unsuspend = !selectedPermanent.IsSuspended &&
-                                        CardEffectCommons.IsOwnerPermanent(selectedPermanent, card);
+                            unsuspend = !selectedPermanent.IsSuspended;
                         }
 
                         if(unsuspend && selectedPermament.CanAttack(activateClass))
