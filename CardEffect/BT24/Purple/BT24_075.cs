@@ -50,7 +50,7 @@ namespace DCGO.CardEffects.BT24
                     && permanent.TopCard.IsLevel4;
             }
 
-            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass))
             {
                 bool discarded = false;
 
@@ -195,7 +195,7 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.IsOwnerTurn(card)
                         && (card.PermanentOfThisCard().TopCard.EqualsCardName("Titamon")
-                        && card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
+                        || card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
                 }
 
                 cardEffects.Add(CardEffectFactory.ChangeSelfSAttackStaticEffect(changeValue: 1, isInheritedEffect: true, card: card, condition: Condition));
