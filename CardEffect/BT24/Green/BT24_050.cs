@@ -39,9 +39,9 @@ namespace DCGO.CardEffects.BT24
 
             #region OP/WD Shared
 
-            string SharedEffectName() => "Suspend 1 opponent's Digimon.";
+            string SharedEffectName() => "Unsuspend 1 of your Digimon, then stun 1 opponent's Digimon.";
 
-            string SharedEffectDescription(string tag) => $"[{tag}] Suspend 1 of your opponent's Digimon.";
+            string SharedEffectDescription(string tag) => $"[{tag}] 1 of your Digimon may unsuspend. Then, 1 of your opponent's Digimon or Tamers can't unsuspend until their turn ends.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
