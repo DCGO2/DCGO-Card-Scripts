@@ -50,7 +50,7 @@ namespace DCGO.CardEffects.BT24
                     && permanent.TopCard.IsLevel4;
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass))
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 bool discarded = false;
 
