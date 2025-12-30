@@ -38,9 +38,7 @@ namespace DCGO.CardEffects.BT24
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                bool trashDeck = card.Owner.Enemy.TrashCards.Count <= 10;
-
-                if (trashDeck)
+                if (card.Owner.Enemy.TrashCards.Count <= 10)
                 {
                     yield return ContinuousController.instance.StartCoroutine(new IAddTrashCardsFromLibraryTop(
                         addTrashCount: 3,
@@ -53,9 +51,7 @@ namespace DCGO.CardEffects.BT24
                         cardEffect: activateClass).AddTrashCardsFromLibraryTop());
                 }
 
-                bool trashDeck2 = card.Owner.Enemy.TrashCards.Count => 10;
-
-                if (trashDeck2)
+                if ( card.Owner.Enemy.TrashCards.Count => 10)
                 {
                     int maxCount = Math.Min(1, card.Owner.TrashCards.Count(CanPlayCardCondition));
 
