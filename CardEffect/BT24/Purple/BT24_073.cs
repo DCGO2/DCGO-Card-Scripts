@@ -51,7 +51,7 @@ namespace DCGO.CardEffects.BT24
                         cardEffect: activateClass).AddTrashCardsFromLibraryTop());
                 }
 
-                if ( card.Owner.Enemy.TrashCards.Count => 10)
+                if ( card.Owner.Enemy.TrashCards.Count >= 10)
                 {
                     int maxCount = Math.Min(1, card.Owner.TrashCards.Count(CanPlayCardCondition));
 
