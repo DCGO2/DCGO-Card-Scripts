@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCardCondition(CardSource card)
                 {
                     return card.EqualsTraits("Evil")
-                        || card.EqualsTraits("Fallen Angel"));
+                        || card.EqualsTraits("Fallen Angel");
                 }
 
                 bool CanSelectCardCondition1(CardSource card)
