@@ -353,7 +353,7 @@ namespace DCGO.CardEffects.EX10
 
                 bool IsBagraArmyDigimon(Permanent permanent)
                 {
-                    return permanent.IsDigimon && permanent.TopCard.HasBagraArmyTraits;
+                    return permanent.IsDigimon && permanent.TopCard.HasBagraArmyTraits && permanent.TopCard.Owner == card.Owner;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
