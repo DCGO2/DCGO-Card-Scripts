@@ -231,7 +231,6 @@ namespace DCGO.CardEffects.EX6
                 {
                     if(CardEffectCommons.IsOwnerPermanent(permanent, card))
                     {
-                        if (cardSource.IsDigimon)
                         return cardSource.ContainsTraits("Seven Great Demon Lords");
                     }
                     
@@ -240,7 +239,10 @@ namespace DCGO.CardEffects.EX6
 
                 bool HasSevenGreatDemonLordTrait(CardSource cardSource)
                 {
-                    return cardSource.ContainsTraits("Seven Great Demon Lords");
+                    if (cardSource.IsDigimon)
+                        return cardSource.ContainsTraits("Seven Great Demon Lords");
+
+                    return false;
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
