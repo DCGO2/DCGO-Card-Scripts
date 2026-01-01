@@ -185,39 +185,10 @@ namespace DCGO.CardEffects.P
                         return false;
                     }
 
-                    if (isExistOnField(card))
-                    {
-                        if (CardEffectCommons.IsOwnerTurn(card))
-                        {
-                            ICardEffect activateClass = null;
-
-                            if (card.EffectList(EffectTiming.BeforePayCost).Count >= 1)
-                            {
-                                foreach (ICardEffect cardEffect in card.EffectList(EffectTiming.BeforePayCost))
-                                {
-                                    if (cardEffect.HashString == REDUCE_DIGIVOLVE_HASH)
-                                    {
-                                        activateClass = cardEffect;
-                                        break;
-                                    }
-                                }
-                            }
-
-
-                            if (activateClass != null)
-                            {
-                                if (!card.cEntity_EffectController.isOverMaxCountPerTurn(activateClass, activateClass.MaxCountPerTurn))
-                                {
-                                    if (CardEffectCommons.HasMatchConditionOwnersPermanent(card, (permanent) => permanent.IsTamer))
-                                    {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    return false;
+                    return isExistOnField(card)
+                        && CardEffectCommons.IsOwnerTurn(card)
+                        && !CardEffectCommons.HasExpendedOtherEffect(card, EffectTiming.BeforePayCost, REDUCE_DIGIVOLVE_HASH)
+                        && CardEffectCommons.HasMatchConditionOwnersPermanent(card, (permanent) => permanent.IsTamer);
                 }
 
                 int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)

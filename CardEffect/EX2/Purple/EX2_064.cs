@@ -7,6 +7,7 @@ namespace DCGO.CardEffects.EX2
 {
     public class EX2_064 : CEntity_Effect
     {
+        static string DELETE_DIGIMON_HASH = "DeleteDigimon_EX2_064";
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
@@ -16,7 +17,7 @@ namespace DCGO.CardEffects.EX2
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delete 1 Digimon to get Digivolution Cost -3", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
-                activateClass.SetHashString("DeleteDigimon_EX2_064");
+                activateClass.SetHashString(DELETE_DIGIMON_HASH);
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
@@ -211,58 +212,18 @@ namespace DCGO.CardEffects.EX2
                         return false;
                     }
 
-                    if (isExistOnField(card))
+                    bool CanSelectPermanentCondition(Permanent permanent)
                     {
-                        if (CardEffectCommons.IsOwnerTurn(card))
-                        {
-                            ICardEffect activateClass = null;
-
-                            if (card.EffectList(EffectTiming.BeforePayCost).Count >= 1)
-                            {
-                                foreach (ICardEffect cardEffect in card.EffectList(EffectTiming.BeforePayCost))
-                                {
-                                    if (cardEffect.HashString == "DeleteDigimon_EX2_064")
-                                    {
-                                        activateClass = cardEffect;
-                                        break;
-                                    }
-                                }
-                            }
-
-
-                            if (activateClass != null)
-                            {
-                                if (!card.cEntity_EffectController.isOverMaxCountPerTurn(activateClass, activateClass.MaxCountPerTurn))
-                                {
-                                    bool CanSelectPermanentCondition(Permanent permanent)
-                                    {
-                                        if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
-                                        {
-                                            if (permanent.CanBeDestroyedBySkill(activateClass))
-                                            {
-                                                if (permanent.CanSelectBySkill(activateClass))
-                                                {
-                                                    if (!permanent.TopCard.CanNotBeAffected(activateClass))
-                                                    {
-                                                        return true;
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return false;
-                                    }
-
-                                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                                    {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
+                        return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                            && permanent.CanBeDestroyedBySkill(activateClass)
+                            && permanent.CanSelectBySkill(activateClass)
+                            && !permanent.TopCard.CanNotBeAffected(activateClass);
                     }
 
-                    return false;
+                    return isExistOnField(card)
+                        && CardEffectCommons.IsOwnerTurn(card)
+                        && !CardEffectCommons.HasExpendedOtherEffect(card, EffectTiming.BeforePayCost, DELETE_DIGIMON_HASH)
+                        && CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition);
                 }
 
                 int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
