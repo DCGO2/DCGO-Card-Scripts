@@ -10,14 +10,25 @@ public class OptionalSkill : MonoBehaviourPunCallbacks
     public string waitingText { get; set; } = "The opponent is considering whether to use the effect.";
     bool _endSelect = false;
     bool _useOptional = false;
-    public IEnumerator SelectOptional(ICardEffect cardEffect)
+    public IEnumerator SelectOptional(ICardEffect cardEffect, Hashtable hash)
     {
         List<string> _YesNoTexts = new List<string>() { "Use", "Not use" };
 
         _endSelect = false;
         _useOptional = false;
 
-        string _Message = cardEffect.EffectTarget != null ? $"Will you use \"{cardEffect.EffectName}\" targetting {cardEffect.EffectTarget.Name}?" : $"Will you use \"{cardEffect.EffectName}\"?";
+        string _Message;
+
+        List<Permanent> effectTargets = cardEffect.EffectTargets != null ? cardEffect.EffectTargets(hash) : null;
+
+        if (effectTargets == null || effectTargets.Count == 0)
+        {
+            _Message = $"Will you use \"{cardEffect.EffectName}\"?";
+        }
+        else
+        {
+            _Message = $"Will you use \"{cardEffect.EffectName}\" targetting {string.Join(", ", effectTargets.Select(permanent => permanent.TopCard.CardNames[0]))}?";
+        }
 
         yield return GManager.instance.photonWaitController.StartWait("SelectOptional");
 
@@ -48,7 +59,6 @@ public class OptionalSkill : MonoBehaviourPunCallbacks
         if (cardEffect.EffectSourceCard.Owner.isYou)
         {
             Permanent permanent = cardEffect.EffectSourceCard.PermanentOfThisCard();
-            Permanent targetPermanent = cardEffect.EffectTarget.PermanentOfThisCard();
 
             List<FieldPermanentCard> highlightPermanents = new List<FieldPermanentCard>();
 
@@ -61,11 +71,14 @@ public class OptionalSkill : MonoBehaviourPunCallbacks
                 }
             }
 
-            if (targetPermanent != null)
+            if (effectTargets != null)
             {
-                if (targetPermanent.ShowingPermanentCard != null)
+                foreach (Permanent targetPermanent in effectTargets)
                 {
-                    highlightPermanents.Add(targetPermanent.ShowingPermanentCard);
+                    if (targetPermanent.ShowingPermanentCard != null)
+                    {
+                        highlightPermanents.Add(targetPermanent.ShowingPermanentCard);
+                    }
                 }
             }
 
