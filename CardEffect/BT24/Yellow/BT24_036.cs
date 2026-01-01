@@ -100,6 +100,7 @@ namespace DCGO.CardEffects.BT24
                                                               maxCountPerTurn: -1,
                                                               onPlay: true,
                                                               onDeletion: true);
+                                                              
             #endregion
 
             #region Link

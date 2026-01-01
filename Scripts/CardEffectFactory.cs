@@ -562,11 +562,26 @@ public partial class CardEffectFactory
 
     #region Shared Effect Condition Creators
 
-    /**
-    *   Method that can be used to quickly set up effects with multiple trigger conditions
-    *   Example: [When Digivolving] [When Attacking] (Do Something) can be set up with whenDigivolving = true and whenAttacking = true
-    *   Does not support sharing with Link or Inherited effect, purposefully to ensure they don't accidentally share a hashValue on Once Per Turn effects
-    */
+    /// Method that can be used to quickly set up effects with multiple trigger conditions
+    /// Example: [When Digivolving] [When Attacking] (Do Something) can be set up with whenDigivolving = true and whenAttacking = true
+    /// Does not support sharing with Link or Inherited effect, purposefully to ensure they don't accidentally share a hashValue on Once Per Turn effects
+    /// 
+    /// Always pass in the cardEffects, timing and card variables from the calling card script, this ensures the below methods are added to that card's effects for the correct timing
+    /// 
+    /// The minimal conditions for triggering and activating the timings are included automatically,
+    /// further checks can be added to all created CanUseConditions and CanActivateConditions by passing those additonal checks with additionalUseCondition and additionalActivateCondition
+    /// For example, if a effect read "[On Play] [When Attacking] By trashing 1 card in hand..." you might create 
+    /// bool AdditionalActivateCondition(Hashtable hashtable) => card.Owner.HandCards.Count >= 1;
+    /// and pass such a method into this function.
+    /// 
+    /// By default, the effects are no optional and have no max per turn count. You can omit those parameters when this is the case and only change them when needed.
+    /// To ensure correct behaviour of X Per Turn, the hashValue is shared as the effect is once per turn regardless of how it is triggered.
+    /// 
+    /// Finally, for whichever combination of effects you want, you will set the corresponding booleans to true. Order does not matter when refering to them by name
+    /// Examples: 
+    /// "[when Moving] [When Digivolving] [When Attacking] ..." => (... whenMoving: true, whenDigivolving: true, whenAttacking: true)
+    /// "[When Digivolving] [On Deletion] ..." => (... whenDigivolving: true, onDeletion: true)
+    /// "[End of Attack] [End of Opponent's Turn] ..." => (... endOfAttack: true, endOfOpponentTurn: true)
     public static List<ICardEffect> ActivateClassesForSharedEffects(ref List<ICardEffect> cardEffects,
                                                                     EffectTiming timing, 
                                                                     CardSource card,
