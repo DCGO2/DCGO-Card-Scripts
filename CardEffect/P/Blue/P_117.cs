@@ -10,18 +10,19 @@ namespace DCGO.CardEffects.P
 {
     public class P_117 : CEntity_Effect
     {
+        static string REDUCE_DIGIVOLVE_HASH = "DigivolutionCost-1_P_117";
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-            #region Activate Cost Reduciton
+            #region Activate Cost Reduction
             if (timing == EffectTiming.BeforePayCost)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Reduce the digivolution cost by 1", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
-                activateClass.SetHashString("DigivolutionCost-1_P_117");
+                activateClass.SetHashString(REDUCE_DIGIVOLVE_HASH);
 
 
                 string EffectDiscription()
@@ -167,6 +168,131 @@ namespace DCGO.CardEffects.P
             }
             #endregion
 
+            #region Cost Reduction Preview
+
+            if (timing == EffectTiming.None)
+            {
+                ChangeCostClass changeCostClass = new ChangeCostClass();
+                changeCostClass.SetUpICardEffect("Reduce the digivolution cost by 1", CanUseCondition, card);
+                changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => true, isChangePayingCost: () => true);
+                changeCostClass.SetNotShowUI(true);
+                cardEffects.Add(changeCostClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    if (!card.Owner.isYou && GManager.instance.IsAI)
+                    {
+                        return false;
+                    }
+
+                    if (isExistOnField(card))
+                    {
+                        if (CardEffectCommons.IsOwnerTurn(card))
+                        {
+                            ICardEffect activateClass = null;
+
+                            if (card.EffectList(EffectTiming.BeforePayCost).Count >= 1)
+                            {
+                                foreach (ICardEffect cardEffect in card.EffectList(EffectTiming.BeforePayCost))
+                                {
+                                    if (cardEffect.HashString == REDUCE_DIGIVOLVE_HASH)
+                                    {
+                                        activateClass = cardEffect;
+                                        break;
+                                    }
+                                }
+                            }
+
+
+                            if (activateClass != null)
+                            {
+                                if (!card.cEntity_EffectController.isOverMaxCountPerTurn(activateClass, activateClass.MaxCountPerTurn))
+                                {
+                                    if (CardEffectCommons.HasMatchConditionOwnersPermanent(card, (permanent) => permanent.IsTamer))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+
+                int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                {
+                    if (CardSourceCondition(cardSource))
+                    {
+                        if (RootCondition(root))
+                        {
+                            if (PermanentsCondition(targetPermanents))
+                            {
+                                Cost -= 1;
+                            }
+                        }
+                    }
+
+                    return Cost;
+                }
+
+                bool PermanentsCondition(List<Permanent> targetPermanents)
+                {
+                    if (targetPermanents != null)
+                    {
+                        if (targetPermanents.Count(PermanentCondition) >= 1)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                bool PermanentCondition(Permanent targetPermanent)
+                {
+                    if (targetPermanent.TopCard != null)
+                    {
+                        if (targetPermanent.TopCard.Owner == card.Owner)
+                        {
+                            if (targetPermanent.TopCard.Owner.GetBattleAreaPermanents().Contains(targetPermanent))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+
+                bool CardSourceCondition(CardSource cardSource)
+                {
+                    if (cardSource != null)
+                    {
+                        if (cardSource.Owner == card.Owner)
+                        {
+                            return cardSource.EqualsTraits("Free");
+                        }
+                    }
+
+                    return false;
+                }
+
+                bool RootCondition(SelectCardEffect.Root root)
+                {
+                    return true;
+                }
+
+                bool isUpDown()
+                {
+                    return true;
+                }
+            }
+
+            #endregion
+
+            #region Inherited
+
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
@@ -203,6 +329,8 @@ namespace DCGO.CardEffects.P
                     yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
                 }
             }
+
+            #endregion
 
             return cardEffects;
         }
