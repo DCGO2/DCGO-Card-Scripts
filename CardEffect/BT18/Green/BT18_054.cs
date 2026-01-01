@@ -105,13 +105,11 @@ namespace DCGO.CardEffects.BT18
             bool SharedPermanentCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
-                    && CardEffectCommons.IsExistOnBattleArea(card)
                     && card.PermanentOfThisCard().HasDP
                     && permanent.TopCard.HasDP
                     && permanent.DP <= card.PermanentOfThisCard().DP
                     && !permanent.TopCard.CanNotBeAffected(activateClass)
-                    && !permanent.IsSuspended
-                    && permannent.CanSuspend;
+                    && permanent.CanSuspend;
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
