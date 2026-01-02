@@ -53,11 +53,11 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCardCondition(CardSource card)
                 {
                     return card.EqualsTraits("Evil")
-                        || card.EqualsTraits("Dark Dragon"))
-                        || card.EqualsTraits("Evil Dragon"))
-                        || card.EqualsTraits("Dark Knight"))
+                        || card.EqualsTraits("Dark Dragon")
+                        || card.EqualsTraits("Evil Dragon")
+                        || card.EqualsTraits("Dark Knight")
                         || (card.IsTamer
-                        && card.CardColors.Contains(CardColor.Purple));
+                            && card.CardColors.Contains(CardColor.Purple));
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
