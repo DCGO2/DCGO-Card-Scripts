@@ -107,7 +107,7 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && (permanent.TopCard.HasXAntibodyTraits
                         || permanent.TopCard.EqualsTraits("DigiPolice")
-                        || permanent.TopCard.HasSeekersTraits));
+                        || permanent.TopCard.HasSeekersTraits);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -184,13 +184,13 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
+                    return CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass)
                         && cardSource.EqualsCardName("Shuu Yulin");
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    ireturn CardEffectCommons.IsExistOnBattleArea(card);
+                    return CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
