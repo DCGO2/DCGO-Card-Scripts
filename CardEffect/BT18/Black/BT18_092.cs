@@ -16,7 +16,7 @@ namespace DCGO.CardEffects.BT18
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Trash 1 card from hand to gain Memory +1 and Draw 1", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
