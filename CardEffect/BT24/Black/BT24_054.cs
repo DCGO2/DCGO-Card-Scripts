@@ -20,8 +20,8 @@ namespace DCGO.CardEffects.BT24
                 {
                     return targetPermanent.TopCard.EqualsCardName("Kyokyomon")
                         || (targetPermanent.TopCard.IsLevel2
-                        && (targetPermanent.TopCard.EqualsTraits("DigiPolice")
-                        || (targetPermanent.TopCard.EqualsTraits("SEEKERS"));
+                            && (targetPermanent.TopCard.EqualsTraits("DigiPolice")
+                                || targetPermanent.TopCard.EqualsTraits("SEEKERS")));
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 0, ignoreDigivolutionRequirement: false, card: card, condition: null));
