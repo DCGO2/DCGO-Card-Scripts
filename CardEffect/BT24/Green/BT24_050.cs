@@ -203,7 +203,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return (cardSource.IsDigimon
+                    return cardSource.IsDigimon
                         && cardSource.HasDP
                         && cardSource.BaseDP <= 4000
                         && (cardSource.HasIliadTraits
