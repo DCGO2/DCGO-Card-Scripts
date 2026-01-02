@@ -158,7 +158,7 @@ namespace DCGO.CardEffects.BT24
             #region Retaliation - Linked
             if (timing == EffectTiming.OnDestroyedAnyone)
             {
-                cardEffects.Add(CardEffectFactory.RetaliationSelfEffect((isInheritedEffect: false, card: card, condition: null, isLinkedEffect: true));
+                cardEffects.Add(CardEffectFactory.RetaliationSelfEffect((isInheritedEffect: false, card: card, condition: null, isLinkedEffect: true)));
             }
             #endregion
 
