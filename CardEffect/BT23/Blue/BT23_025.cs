@@ -38,6 +38,7 @@ namespace DCGO.CardEffects.BT23
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Give 3 Digimon Sec-1", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, true, EffectDescription());
+                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -72,7 +73,8 @@ namespace DCGO.CardEffects.BT23
                     // Can use from your hand, if you have a CS digimon or tamer
                     return CardEffectCommons.IsExistOnHand(card)
                         && CardEffectCommons.IsOwnerTurn(card)
-                        && CardEffectCommons.HasMatchConditionOwnersPermanent(card, IsCSDigimonOrTamer);
+                        && CardEffectCommons.HasMatchConditionOwnersPermanent(card, IsCSDigimonOrTamer)
+                        && card.Owner.MaxMemoryCost >= 5;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -112,7 +114,14 @@ namespace DCGO.CardEffects.BT23
                         // Either way, pay the 5 cost, then place this card as the top security card.
                         yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(-5, activateClass));
 
-                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(card, true, false));
+                        if (card.Owner.CanAddSecurity(activateClass))
+                        {
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(card, true, false));
+                        }
+                        else
+                        {
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(card));
+                        }
                     }
                 }
             }

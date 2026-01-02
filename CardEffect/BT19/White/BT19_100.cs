@@ -139,8 +139,11 @@ namespace DCGO.CardEffects.BT19
                             fromTop: true).DestroySecurity());
 
                     // Place this card face up as the top security card
-                    yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                        card, toTop: true, faceUp: true));
+                    if (card.Owner.CanAddSecurity(activateClass))
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                            card, toTop: true, faceUp: true));
+                    }
                 }
             }
             #endregion

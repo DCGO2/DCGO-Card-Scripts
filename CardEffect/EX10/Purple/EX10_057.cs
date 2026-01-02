@@ -372,7 +372,8 @@ namespace DCGO.CardEffects.EX10
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(card);                           
+                    return CardEffectCommons.CanActivateOnDeletion(card)
+                        && card.Owner.CanAddSecurity(activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

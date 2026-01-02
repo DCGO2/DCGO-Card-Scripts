@@ -61,7 +61,7 @@ namespace DCGO.CardEffects.BT19
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    if(CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, IsRoyalBaseDigimon))
+                    if(CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, IsRoyalBaseDigimon) && card.Owner.CanAddSecurity(activateClass))
                     {
                         CardSource selectedCard = null;
 
