@@ -62,7 +62,7 @@ namespace DCGO.CardEffects.EX11
 
                 selectHandEffect.SetUp(
                     selectPlayer: card.Owner,
-                    canTargetCondition: HasVemmonArchtype,
+                    canTargetCondition: HasVemmonArchetype,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     maxCount: discardCount,
@@ -169,101 +169,61 @@ namespace DCGO.CardEffects.EX11
 
                     List<PlayPermanentClass> targetPermanents = playedPermanents.filter(PermanentCondition);
 
-                    #region Reveal top 2 so user is aware which vemmon will be available
-                    RevealLibraryClass revealLibrary = new RevealLibraryClass(card.Owner, 2);
-                    yield return ContinuousController.instance.StartCoroutine(revealLibrary.RevealLibrary());
-                    List<CardSource> remainingCards = revealLibrary.RevealedCards;
                     List<CardSource> selectedCards = new List<CardSource>();
-                    #endregion
 
-                    int vemmonCount = revealLibrary.RevealedCards.Count(IsVemmon);
-                    if (vemmonCount > 0 && targetPermanents.Count > 0)
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
+                        revealCount: 2,
+                        simplifiedSelectCardConditions:
+                        new SimplifiedSelectCardConditionClass[]
+                        {
+                        new SimplifiedSelectCardConditionClass(
+                            canTargetCondition:IsVemmon,
+                            message: "Select 2 [Vemmon] to tuck.",
+                            mode: SelectCardEffect.Mode.Custom,
+                            maxCount: 2,
+                            selectCardCoroutine: SelectCardCoroutine),
+                        },
+                        remainingCardsPlace: RemainingCardsPlace.Trash,
+                        activateClass: activateClass
+                    ));
+
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
                     {
-                        
-                        #region Select Target Digimon
-                        Permanent selectedPermanent = null;
-                        if (targetPermanents.Count == 1)
-                        {
-                            selectedPermanent = targetPermanents[0];
-                        }
-                        else
-                        {
-                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                            selectPermanentEffect.SetUp(
-                                selectPlayer: card.Owner,
-                                canTargetCondition: permanent => targetPermanents.Contains(permanent),
-                                canTargetCondition_ByPreSelecetedList: null,
-                                canEndSelectCondition: null,
-                                maxCount: 1,
-                                canNoSelect: false,
-                                canEndNotMax: false,
-                                selectPermanentCoroutine: SelectPermanentCoroutine,
-                                afterSelectPermanentCoroutine: null,
-                                mode: SelectPermanentEffect.Mode.Custom,
-                                cardEffect: activateClass);
-
-                            selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
-
-                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                            IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                            {
-                                Permanent selectedPermanent = permanent;
-
-                                yield return null;
-                            }
-                        }
-                        #endregion
-
-                        #region Place vemmon
-                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-
-                        selectCardEffect.SetUp(
-                                    canTargetCondition: IsVemmon,
-                                    canTargetCondition_ByPreSelecetedList: null,
-                                    canEndSelectCondition: CanEndSelectCondition,
-                                    canNoSelect: () => false,
-                                    selectCardCoroutine: SelectCardCoroutine,
-                                    afterSelectCardCoroutine: null,
-                                    message: "Select cards to place on bottom of digivolution cards\n(cards will be placed so that cards with lower numbers are on top).",
-                                    maxCount: vemmonCount,
-                                    canEndNotMax: false,
-                                    isShowOpponent: true,
-                                    mode: SelectCardEffect.Mode.Custom,
-                                    root: SelectCardEffect.Root.Custom,
-                                    customRootCardList: remainingCards,
-                                    canLookReverseCard: true,
-                                    selectPlayer: card.Owner,
-                                    cardEffect: activateClass);
-
-                        selectCardEffect.SetNotShowCard();
-                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                        IEnumerator SelectCardCoroutine(CardSource cardSource)
+                        if (cardSource != null)
                         {
                             selectedCards.Add(cardSource);
-                            remainingCards.remove(cardSource);
-                            yield return null;
                         }
-
-                        if (selectedCards.Count >= 1)
-                        {
-                            if (selectedPermanent != null)
-                            {
-                                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(selectedCards, "Digivolution Cards", true, true));
-                                yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
-                            }
-                        }
-
-                        #endregion
                     }
 
-                    #region Trash the rest
-                    yield return ContinuousController.instance.StartCoroutine(new ITrashDeckCards(remainingCards, activateClass).TrashDeckCards());
+                    if(selectedCards.Count > 0)
+                    {
+                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(remainingCards, "Discarded Cards", true, true));
-                    #endregion
+                        selectPermanentEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: permanent => targetPermanents.Contains(permanent),
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: 1,
+                            canNoSelect: false,
+                            canEndNotMax: false,
+                            selectPermanentCoroutine: SelectPermanentCoroutine,
+                            afterSelectPermanentCoroutine: null,
+                            mode: SelectPermanentEffect.Mode.Custom,
+                            cardEffect: activateClass);
+
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
+
+                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                        {
+                            Permanent selectedPermanent = permanent;
+
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(selectedCards, "Digivolution Cards", true, true));
+                            yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
+                        }
+                    }
                 }
             }
 
