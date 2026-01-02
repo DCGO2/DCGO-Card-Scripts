@@ -121,6 +121,11 @@ namespace DCGO.CardEffects.BT18
                           root: SelectCardEffect.Root.Hand,
                           activateETB: true,
                           isBreedingArea: true));
+
+                        if (!card.Owner.GetBreedingAreaPermanents().Contains(card.PermanentOfThisCard()))
+                        {
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(card));
+                        }
                     }
                 }
             }
