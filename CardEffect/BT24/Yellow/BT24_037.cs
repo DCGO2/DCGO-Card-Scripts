@@ -117,7 +117,12 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
+            bool SharedCanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            }
+
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
             {
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectOpponentsDigimon))
                 {
@@ -209,7 +214,7 @@ namespace DCGO.CardEffects.BT24
                     }
                     #endregion
 
-                    if (CardEffectCommons.IsJogress(hashtable))
+                    if (CardEffectCommons.IsJogress(_hashtable))
                     {
                         int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectOwnDigimon));
 

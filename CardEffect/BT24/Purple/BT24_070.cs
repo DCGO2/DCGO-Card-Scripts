@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Growlmon
 namespace DCGO.CardEffects.BT24
@@ -23,7 +24,7 @@ namespace DCGO.CardEffects.BT24
                     && card.Owner.HandCards.Count <= 4;
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectCardCondition(CardSource cardSource, ActivateClass activateClass)
             {
                 return cardSource.IsTamer
                     && cardSource.GetCostItself <= 4
@@ -35,17 +36,19 @@ namespace DCGO.CardEffects.BT24
             {
                 List<CardSource> selectedCards = new List<CardSource>();
 
+                int maxCount = Math.Min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition(cardSource, activateClass)));
+
                 SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                 selectCardEffect.SetUp(
-                            canTargetCondition: CanSelectCardCondition,
+                            canTargetCondition: (cardSource) => CanSelectCardCondition(cardSource, activateClass),
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             canNoSelect: () => true,
                             selectCardCoroutine: SelectCardCoroutine,
                             afterSelectCardCoroutine: null,
                             message: "Select 1 card to play.",
-                            maxCount: 1,
+                            maxCount: maxCount,
                             canEndNotMax: false,
                             isShowOpponent: true,
                             mode: SelectCardEffect.Mode.Custom,

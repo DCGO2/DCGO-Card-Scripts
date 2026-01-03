@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // Hyogamon
 namespace DCGO.CardEffects.BT24
 {
-    public class BT24_036 : CEntity_Effect
+    public class BT24_026 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {

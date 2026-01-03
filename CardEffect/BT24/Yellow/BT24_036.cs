@@ -56,7 +56,7 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
                 {
                     if (CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermanentCondition))
                     {
@@ -132,7 +132,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(hashtable, card);
+                    return CardEffectCommons.CanActivateOnDeletion(card);
                 }
             }
             #endregion

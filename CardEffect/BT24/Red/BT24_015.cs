@@ -28,7 +28,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return targetPermanent.TopCard.HasLevel && 
                         targetPermanent.TopCard.IsLevel4 &&
-                        (targetPermanent.Topcard.ContainsCardName("Greymon") ||
+                        (targetPermanent.TopCard.ContainsCardName("Greymon") ||
                             targetPermanent.TopCard.HasTSTraits);
                 }
 
@@ -65,14 +65,14 @@ namespace DCGO.CardEffects.BT24
                 bool PermamentCondition(Permanent permanent)
                 {
                     return permanent.IsDigimon &&
-                        permanent.HasLevel && 
+                        permanent.TopCard.HasLevel && 
                         permanent.Level >= 6;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return card.Owner.ExecutingCards.Contains(card) &&
-                        CardEffectCommons.HasMatchConditionOpponentsPermanent(PermamentCondition) &&
+                        CardEffectCommons.HasMatchConditionOpponentsPermanent(card, PermamentCondition) &&
                         CardEffectCommons.CanPlayAsNewPermanent(cardSource: card, payCost: false, cardEffect: activateClass);
                 }
 

@@ -50,23 +50,23 @@ namespace DCGO.CardEffects.BT23
                     && permanent.TopCard.HasCSTraits;
             }
 
+            bool SharedCanSelectPermamentCondition(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
+            }
+
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 Permanent selectedPermanent = null;
 
-                bool CanSelectPermamentCondition(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
-                }
-
                 #region Select Permament
 
                 SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermamentCondition));
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(SharedCanSelectPermamentCondition));
 
                 selectPermanentEffect.SetUp(
                     selectPlayer: card.Owner,
-                    canTargetCondition: CanSelectPermamentCondition,
+                    canTargetCondition: SharedCanSelectPermamentCondition,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     maxCount: maxCount,
@@ -184,7 +184,7 @@ namespace DCGO.CardEffects.BT23
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Give 1 digimon '[Start of your main phase] this digimon attacks' ", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
@@ -201,7 +201,8 @@ namespace DCGO.CardEffects.BT23
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer);
+                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer)
+                        && CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermamentCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -218,7 +219,7 @@ namespace DCGO.CardEffects.BT23
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Give 1 digimon '[Start of your main phase] this digimon attacks' ", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
@@ -235,7 +236,8 @@ namespace DCGO.CardEffects.BT23
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer);
+                        && CardEffectCommons.HasMatchConditionPermanent(IsCsTamer)
+                        && CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermamentCondition);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -273,25 +275,20 @@ namespace DCGO.CardEffects.BT23
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
-                bool CanSelectPermamentCondition(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
-                }
-
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermamentCondition))
+                    if (CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermamentCondition))
                     {
                         Permanent selectedPermanent = null;
 
                         #region Select Permament
 
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermamentCondition));
+                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(SharedCanSelectPermamentCondition));
 
                         selectPermanentEffect.SetUp(
                             selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermamentCondition,
+                            canTargetCondition: SharedCanSelectPermamentCondition,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: maxCount,
