@@ -46,6 +46,7 @@ namespace DCGO.CardEffects.BT24
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("1 [Dark Dragon] or [Evil Dragon] may digivolve into this", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
+                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
