@@ -220,124 +220,129 @@ public class DetailCard_DeckEditor : MonoBehaviour
             evoCostObject.SetActive(false);
         }
 
-        //デジモン詳細
+        #region Traits
+
+        string formString = "";
+
+        for (int i = 0; i < cEntity_Base.Form_ENG.Count; i++)
+        {
+            if (i >= 1)
+            {
+                formString += " ";
+            }
+
+            if (ContinuousController.instance.language == Language.ENG)
+            {
+                formString += $"{cEntity_Base.Form_ENG[i]}";
+            }
+
+            else
+            {
+                formString += $"{cEntity_Base.Form_JPN[i]}";
+            }
+        }
+
+        if (ContinuousController.instance.language == Language.ENG)
+        {
+            formText.font = Font_ENG;
+            formText.fontSharedMaterial = Material_ENG;
+        }
+
+        else
+        {
+            formText.font = Font_JPN;
+        }
+
+        formText.text = $"{formString}";
+
+        string attributeString = "";
+
+        for (int i = 0; i < cEntity_Base.Attribute_ENG.Count; i++)
+        {
+            if (i >= 1)
+            {
+                attributeString += " ";
+            }
+
+            if (ContinuousController.instance.language == Language.ENG)
+            {
+                attributeString += $"{cEntity_Base.Attribute_ENG[i]}";
+            }
+
+            else
+            {
+                attributeString += $"{cEntity_Base.Attribute_JPN[i]}";
+            }
+        }
+
+        if (ContinuousController.instance.language == Language.ENG)
+        {
+            attributeText.font = Font_ENG;
+            attributeText.fontSharedMaterial = Material_ENG;
+        }
+
+        else
+        {
+            attributeText.font = Font_JPN;
+        }
+
+        attributeText.text = $"{attributeString}";
+
+        string typeString = "";
+
+        for (int i = 0; i < cEntity_Base.Type_ENG.Count; i++)
+        {
+            if (i >= 1)
+            {
+                typeString += "/";
+            }
+
+            if (ContinuousController.instance.language == Language.ENG)
+            {
+                typeString += $"{cEntity_Base.Type_ENG[i]}";
+            }
+
+            else
+            {
+                if (cEntity_Base.Type_JPN.Count > i)
+                {
+                    typeString += $"{cEntity_Base.Type_JPN[i]}";
+                }
+            }
+        }
+
+        if (ContinuousController.instance.language == Language.ENG)
+        {
+            typeText.font = Font_ENG;
+            typeText.fontSharedMaterial = Material_ENG;
+        }
+
+        else
+        {
+            typeText.font = Font_JPN;
+        }
+
+        typeText.text = $"{typeString}";
+
+        if (!string.IsNullOrEmpty(attributeString))
+        {
+            ((RectTransform)formText.transform).sizeDelta = new Vector2(110, ((RectTransform)formText.transform).sizeDelta.y);
+        }
+
+        else
+        {
+            ((RectTransform)formText.transform).sizeDelta = new Vector2(184.81f, ((RectTransform)formText.transform).sizeDelta.y);
+        }
+
+        #endregion
+
+        //Level
         if (cEntity_Base.cardKind == CardKind.Digimon)
         {
             digimonDetailObject.SetActive(true);
 
             levelText.text = $"Lv{cEntity_Base.Level}";
 
-            string formString = "";
-
-            for (int i = 0; i < cEntity_Base.Form_ENG.Count; i++)
-            {
-                if (i >= 1)
-                {
-                    formString += " ";
-                }
-
-                if (ContinuousController.instance.language == Language.ENG)
-                {
-                    formString += $"{cEntity_Base.Form_ENG[i]}";
-                }
-
-                else
-                {
-                    formString += $"{cEntity_Base.Form_JPN[i]}";
-                }
-            }
-
-            if (ContinuousController.instance.language == Language.ENG)
-            {
-                formText.font = Font_ENG;
-                formText.fontSharedMaterial = Material_ENG;
-            }
-
-            else
-            {
-                formText.font = Font_JPN;
-            }
-
-            formText.text = $"{formString}";
-
-            string attributeString = "";
-
-            for (int i = 0; i < cEntity_Base.Attribute_ENG.Count; i++)
-            {
-                if (i >= 1)
-                {
-                    attributeString += " ";
-                }
-
-                if (ContinuousController.instance.language == Language.ENG)
-                {
-                    attributeString += $"{cEntity_Base.Attribute_ENG[i]}";
-                }
-
-                else
-                {
-                    attributeString += $"{cEntity_Base.Attribute_JPN[i]}";
-                }
-            }
-
-            if (ContinuousController.instance.language == Language.ENG)
-            {
-                attributeText.font = Font_ENG;
-                attributeText.fontSharedMaterial = Material_ENG;
-            }
-
-            else
-            {
-                attributeText.font = Font_JPN;
-            }
-
-            attributeText.text = $"{attributeString}";
-
-            string typeString = "";
-
-            for (int i = 0; i < cEntity_Base.Type_ENG.Count; i++)
-            {
-                if (i >= 1)
-                {
-                    typeString += "/";
-                }
-
-                if (ContinuousController.instance.language == Language.ENG)
-                {
-                    typeString += $"{cEntity_Base.Type_ENG[i]}";
-                }
-
-                else
-                {
-                    if (cEntity_Base.Type_JPN.Count > i)
-                    {
-                        typeString += $"{cEntity_Base.Type_JPN[i]}";
-                    }
-                }
-            }
-
-            if (ContinuousController.instance.language == Language.ENG)
-            {
-                typeText.font = Font_ENG;
-                typeText.fontSharedMaterial = Material_ENG;
-            }
-
-            else
-            {
-                typeText.font = Font_JPN;
-            }
-
-            typeText.text = $"{typeString}";
-
-            if (!string.IsNullOrEmpty(attributeString))
-            {
-                ((RectTransform)formText.transform).sizeDelta = new Vector2(110, ((RectTransform)formText.transform).sizeDelta.y);
-            }
-
-            else
-            {
-                ((RectTransform)formText.transform).sizeDelta = new Vector2(184.81f, ((RectTransform)formText.transform).sizeDelta.y);
-            }
         }
 
         else
