@@ -18,6 +18,7 @@ namespace DCGO.CardEffects.BT24
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play this card from trash with reduced cost", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
+                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
