@@ -16,8 +16,9 @@ namespace DCGO.CardEffects.EX10
             if (timing == EffectTiming.OnDiscardLibrary)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("delete 1 level 4 or lower digimon", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete 1 level 4 or lower digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()

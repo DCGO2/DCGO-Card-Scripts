@@ -89,7 +89,8 @@ namespace DCGO.CardEffects.BT19
 
                     IEnumerator DeDigivolvePermanent(Permanent permanent)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(new IDegeneration(permanent, maxCount, activateClass).Degeneration());
+                        for(int i = 0; i < maxCount; i++)
+                            yield return ContinuousController.instance.StartCoroutine(new IDegeneration(permanent, 1, activateClass).Degeneration());
                     }
 
                     SelectPermanentEffect selectCannotEvoEffect = GManager.instance.GetComponent<SelectPermanentEffect>();

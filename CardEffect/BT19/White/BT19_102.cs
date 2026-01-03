@@ -109,7 +109,7 @@ namespace DCGO.CardEffects.BT19
 
                 string EffectDescription()
                 {
-                    return  "[On Play] Choose 1 other Digimon. By playing level 4 or lower Digimon card from it's digivolution cards, delete the chosen Digimon.";
+                    return "[On Play] Choose 1 other Digimon. By playing level 4 or lower Digimon card from it's digivolution cards, delete the chosen Digimon.";
                 }
 
                 bool CanSelectDigimon(Permanent permanent)
@@ -119,7 +119,7 @@ namespace DCGO.CardEffects.BT19
                            permanent.DigivolutionCards.Count(CanSelectDigimonToPlay) > 0;
                 }
 
-                bool CanSelectDigimonToPlay(CardSource cardSource) 
+                bool CanSelectDigimonToPlay(CardSource cardSource)
                 {
                     if (cardSource.IsDigimon)
                     {
@@ -176,7 +176,7 @@ namespace DCGO.CardEffects.BT19
                         yield return null;
                     }
 
-                    if (selectedPermanent != null)
+                    if (selectedPermanent != null && !selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                     {
                         List<CardSource> selectedCards = new List<CardSource>();
 
@@ -301,7 +301,7 @@ namespace DCGO.CardEffects.BT19
                         yield return null;
                     }
 
-                    if (selectedPermanent != null)
+                    if (selectedPermanent != null && !selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                     {
                         List<CardSource> selectedCards = new List<CardSource>();
 

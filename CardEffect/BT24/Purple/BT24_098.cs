@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Super Hacking
 namespace DCGO.CardEffects.BT24
@@ -36,13 +37,13 @@ namespace DCGO.CardEffects.BT24
 
                     if (card.Owner.HandCards.Count >= 1)
                     {
-                        int discardCount = Math.min(2, card.Owner.HandCards.Count);
+                        int discardCount = Math.Min(2, card.Owner.HandCards.Count);
 
                         SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
                         selectHandEffect.SetUp(
                             selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectCardCondition,
+                            canTargetCondition: source => source != null,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: discardCount,
@@ -80,12 +81,12 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.CanDeclareOptionDelayEffect(card)
-                        && CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, PermanentCondition);
+                        && CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, PermamentCondition);
                 }
 
                 bool PermamentCondition(Permanent permanent)
                 {
-                    return permanent.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.EqualsTraits("Titan");
                 }
 
@@ -114,7 +115,7 @@ namespace DCGO.CardEffects.BT24
                         yield return null;
                     }
 
-                    if (delaySuccessful && card.Owner.Memory <= -5)
+                    if (delaySuccessful && card.Owner.MemoryForPlayer <= -5)
                     {
                         int maxCount = Math.Min(1, card.Owner.TrashCards.Count(CanPlayCondition));   
 
@@ -127,6 +128,7 @@ namespace DCGO.CardEffects.BT24
                             canNoSelect: () => true,
                             selectCardCoroutine: SelectCardCoroutine,
                             afterSelectCardCoroutine: null,
+                            message: "Select digimon to play.",
                             maxCount: maxCount,
                             canEndNotMax: true,
                             isShowOpponent: true,
@@ -196,11 +198,11 @@ namespace DCGO.CardEffects.BT24
                     {
                         if (canSelectHand && canSelectTrash)
                         {
-                            List<SelectionElement<int>> selectionElements1 = new List<SelectionElement<bool>>()
+                            List<SelectionElement<int>> selectionElements1 = new List<SelectionElement<int>>()
                         {
-                            new SelectionElement<int>(message: $"From hand", value : "1", spriteIndex: 0),
-                            new SelectionElement<int>(message: $"From trash", value : "2", spriteIndex: 1),
-                            new SelectionElement<int>(message: $"Don't play", value: "3", spriteIndex: 2)
+                            new(message: $"From hand", value: 1, spriteIndex: 0),
+                            new(message: $"From trash", value: 2, spriteIndex: 1),
+                            new(message: $"Don't play", value: 3, spriteIndex: 2),
                         };
 
                             string selectPlayerMessage1 = "From which area will you play a card?";
@@ -245,8 +247,8 @@ namespace DCGO.CardEffects.BT24
 
                             yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
-                            if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                                new List<CardSource>() { selectedCard },
+                            if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                                selectedCards,
                                 activateClass: activateClass,
                                 payCost: false,
                                 isTapped: false,
@@ -279,8 +281,8 @@ namespace DCGO.CardEffects.BT24
                             selectCardEffect.SetUpCustomMessage_ShowCard("Selected Digimon");
 
                             yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-                            if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                                new List<CardSource>() { selectedCard },
+                            if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                                selectedCards,
                                 activateClass: activateClass,
                                 payCost: false,
                                 isTapped: false,

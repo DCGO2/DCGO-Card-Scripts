@@ -27,7 +27,7 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared OP/WD
 
-            string SharedEffectName() => "Reveal 3, add or place under sources 1, return rest to top or bot";
+            string SharedEffectName() => "Reveal 3, add or place under sources 1, return rest to deck";
 
             string SharedEffectDescription(string tag) => $"[{tag}] Reveal the top 3 cards of your deck. Among them, add 1 [Machine], [Cyborg] or [TS] trait Digimon card or Tamer card to the hand or place it as any of your [Machine], [Cyborg] or [TS] trait Digimon's bottom digivolution card. Return the rest to the top or bottom of the deck.";
 
@@ -36,7 +36,7 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectCardCondition(Permanent permanent)
+            bool CanSelectCardConditionShared(CardSource cardSource)
             {
                 return (cardSource.IsDigimon
                     || cardSource.IsTamer)
@@ -53,7 +53,7 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.EqualsTraits("TS"));
             }
 
-            IEnumerator ActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 if (card.Owner.LibraryCards.Count > 0)
                 {
@@ -63,7 +63,7 @@ namespace DCGO.CardEffects.BT24
                     new SimplifiedSelectCardConditionClass[]
                     {
                             new SimplifiedSelectCardConditionClass(
-                                canTargetCondition:HasIliad,
+                                canTargetCondition:CanSelectCardConditionShared,
                                 message: "Select 1 [Machine], [Cyborg] or [TS] trait Digimon card or Tamer card.",
                                 mode: SelectCardEffect.Mode.Custom,
                                 maxCount: 1,
@@ -128,7 +128,7 @@ namespace DCGO.CardEffects.BT24
                             {
                                 yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(new List<CardSource>() { cardSource }, "Digivolution Card", true, true));
 
-                                yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
+                                yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddDigivolutionCardsBottom(new List<CardSource>() { cardSource }, activateClass));
                             }
                         }
                     }

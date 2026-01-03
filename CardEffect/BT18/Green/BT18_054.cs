@@ -86,11 +86,48 @@ namespace DCGO.CardEffects.BT18
 
             #endregion
 
-            #region On Play/ When Digivolving Shared
+            #region Shared OP / WD
+
+            string SharedEffectName = "Suspend all of your opponent's Digimon with as much or less DP as this Digimon";
+
+            string SharedEffectDescription(string tag) => $"[{tag}] Suspend all of your opponent's Digimon with as much or less DP as this Digimon. None of your opponent's Digimon can unsuspend until the end of their turn.";
 
             bool CanActivateConditionShared(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            }
+
+            bool SharedOpponentsDigimon(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
+            }
+
+            
+
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
+            {
+                bool SharedPermanentCondition(Permanent permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
+                        && card.PermanentOfThisCard().HasDP
+                        && permanent.TopCard.HasDP
+                        && permanent.DP <= card.PermanentOfThisCard().DP
+                        && !permanent.TopCard.CanNotBeAffected(activateClass)
+                        && permanent.CanSuspend;
+                }
+
+                List<Permanent> suspendTargetPermanents = card.Owner.Enemy.GetBattleAreaDigimons().Filter(SharedPermanentCondition);
+
+                yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(
+                    suspendTargetPermanents,
+                    CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
+
+                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotUnsuspendPlayerEffect(
+                    permanentCondition: SharedOpponentsDigimon,
+                    effectDuration: EffectDuration.UntilOpponentTurnEnd,
+                    activateClass: activateClass,
+                    isOnlyActivePhase: false,
+                    effectName: "Can't Unsuspend"));
             }
 
             #endregion
@@ -100,38 +137,14 @@ namespace DCGO.CardEffects.BT18
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Suspend all of your opponent's Digimon with as much or less DP as this Digimon",
-                    CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutine, -1, false, EffectDescription());
+                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
-
-                string EffectDescription()
-                {
-                    return
-                        "[On Play] Suspend all of your opponent's Digimon with as much or less DP as this Digimon. None of your opponent's Digimon can unsuspend until the end of their turn.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    bool PermanentCondition(Permanent permanent)
-                    {
-                        return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
-                               permanent.TopCard.CanNotBeAffected(activateClass) &&
-                               permanent.DP <= card.PermanentOfThisCard().DP &&
-                               permanent.CanSuspend;
-                    }
-
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotUnsuspendPlayerEffect(
-                        permanentCondition: PermanentCondition,
-                        effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                        activateClass: activateClass,
-                        isOnlyActivePhase: false,
-                        effectName: "Can't Unsuspend"));
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
                 }
             }
 
@@ -142,38 +155,14 @@ namespace DCGO.CardEffects.BT18
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Suspend all of your opponent's Digimon with as much or less DP as this Digimon",
-                    CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutine, -1, false, EffectDescription());
+                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
                 cardEffects.Add(activateClass);
-
-                string EffectDescription()
-                {
-                    return
-                        "[When Digivolving] Suspend all of your opponent's Digimon with as much or less DP as this Digimon. None of your opponent's Digimon can unsuspend until the end of their turn.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    bool PermanentCondition(Permanent permanent)
-                    {
-                        return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
-                               permanent.TopCard.CanNotBeAffected(activateClass) &&
-                               permanent.DP <= card.PermanentOfThisCard().DP &&
-                               permanent.CanSuspend;
-                    }
-
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCanNotUnsuspendPlayerEffect(
-                        permanentCondition: PermanentCondition,
-                        effectDuration: EffectDuration.UntilOpponentTurnEnd,
-                        activateClass: activateClass,
-                        isOnlyActivePhase: false,
-                        effectName: "Can't Unsuspend"));
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
                 }
             }
 

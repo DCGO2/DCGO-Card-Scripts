@@ -47,7 +47,7 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.ContainsCardName("Shoto Kazama");
                 }
 
-                bool CanSelectCardCondition1(Permanent permanent)
+                bool CanSelectCardCondition1(CardSource cardSource)
                 {
                     return cardSource.HasBirdTraits
                         || cardSource.EqualsTraits("Vortex Warriors");

@@ -141,7 +141,7 @@ namespace DCGO.CardEffects.P
                                 }
                                 foreach (int level in cardSource1.Level_Assembly)
                                 {
-                                    if (!cardNames.Contains(level))
+                                    if (!cardLevels.Contains(level))
                                     {
                                         cardLevels.Add(level);
                                     }
@@ -204,7 +204,7 @@ namespace DCGO.CardEffects.P
 
             bool PermanentSelectCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent);
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
             bool PermanentSelectCondition1(Permanent permanent)
@@ -231,7 +231,7 @@ namespace DCGO.CardEffects.P
                         selectPermanentCoroutine: SelectPermanentCoroutine,
                         afterSelectPermanentCoroutine: null,
                         mode: SelectPermanentEffect.Mode.Custom,
-                        cardEffect: activatePlayClass);
+                        cardEffect: activateClass);
 
                     selectPermanentEffect.SetUpCustomMessage(
                         "Select 1 Digimon to De-Digivolve.",
@@ -264,8 +264,8 @@ namespace DCGO.CardEffects.P
                         canEndNotMax: false,
                         selectPermanentCoroutine: null,
                         afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Detroy,
-                        cardEffect: activatePlayClass);
+                        mode: SelectPermanentEffect.Mode.Destroy,
+                        cardEffect: activateClass);
 
                     selectPermanentEffect.SetUpCustomMessage(
                         "Select 1 Digimon to Delete.",
@@ -335,7 +335,7 @@ namespace DCGO.CardEffects.P
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(hashtable, card) &&
+                    return CardEffectCommons.CanActivateOnDeletion(card) &&
                         card.Owner.TrashCards.Count(CardSelectCondition) >= 3;
                 }
 
@@ -420,7 +420,7 @@ namespace DCGO.CardEffects.P
                                 remainingCards: selectedCards,
                                 activateClass: activateClass));
 
-                            if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(CardSelectCondition1)){
+                            if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CardSelectCondition1)){
                                 List<CardSource> selectedCards1 = new List<CardSource>();
 
                                 int maxCount1 = Math.Min(2, CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, CardSelectCondition1));

@@ -1,7 +1,9 @@
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 // Gatomon
 namespace DCGO.CardEffects.BT24
@@ -237,6 +239,16 @@ namespace DCGO.CardEffects.BT24
             #endregion
 
             return cardEffects;
+        }
+
+        private bool _endSelect = false;
+        private int[] _jogressEvoRootsFrameIDs = new int[0];
+
+        [PunRPC]
+        public void SetJogressEvoRootsFrameIDs(int[] JogressEvoRootsFrameIDs)
+        {
+            this._jogressEvoRootsFrameIDs = JogressEvoRootsFrameIDs;
+            _endSelect = true;
         }
     }
 }

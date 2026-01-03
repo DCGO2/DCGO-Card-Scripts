@@ -70,7 +70,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerWhenLoseSecurity(hashtable, IsYourSecurity)
+                        && CardEffectCommons.CanTriggerWhenLoseSecurity(hashtable, player => card.Owner)
                         && CardEffectCommons.CanDeclareOptionDelayEffect(card);
                 }
 
