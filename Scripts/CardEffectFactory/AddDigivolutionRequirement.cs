@@ -28,7 +28,7 @@ public partial class CardEffectFactory
     #endregion
 
     #region Static effect that adds digivolution requirement
-    public static AddDigivolutionRequirementClass AddDigivolutionRequirementStaticEffect(Func<Permanent, bool> permanentCondition, Func<CardSource, bool> cardCondition, bool ignoreDigivolutionRequirement, int digivolutionCost, bool isInheritedEffect, CardSource card, Func<bool> condition, string effectName, Func<int> costEquation)
+    public static AddDigivolutionRequirementClass AddDigivolutionRequirementStaticEffect(Func<Permanent, bool> permanentCondition, Func<CardSource, bool> cardCondition, bool ignoreDigivolutionRequirement, int digivolutionCost, bool isInheritedEffect, CardSource card, Func<bool> condition, string effectName, Func<int> costEquation = null)
     {
         AddDigivolutionRequirementClass addDigivolutionRequirementClass = new AddDigivolutionRequirementClass();
         addDigivolutionRequirementClass.SetUpICardEffect(effectName, CanUseCondition, card);
