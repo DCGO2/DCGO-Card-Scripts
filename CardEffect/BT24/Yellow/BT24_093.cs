@@ -17,10 +17,10 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Top sec to hand, Recovery +1, place in battle area.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[Main] Add your top security card to the hand and <Recovery +1 (Deck)>. Then, place this card in the battle area.";
                 }
@@ -59,10 +59,10 @@ namespace DCGO.CardEffects.BT24
 
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Place top card [Aegiochusmon] or [Jupitermon] on top sec.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[All Turns] When your security stack is removed, <Delay>.\r\n• You may place the top stacked card of any your Digimon with [Aegiochusmon] or [Jupitermon] in their names as the top security card.";
                 }
@@ -157,11 +157,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 1 [Aegiomon]/[Elecmon] from hand or trash.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
                 activateClass.SetIsSecurityEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[Security] You may play 1 [Aegiomon] or [Elecmon] from your hand or trash without paying the cost.";
                 }

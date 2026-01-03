@@ -15,7 +15,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Play 1 lvl 4 purple tamer from trash.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] If you have 4 or fewer cards in your hand, you may play 1 purple Tamer card with a play cost of 4 or less from your trash without paying the cost.";
+            string SharedEffectDescription(string tag) => $"[{tag}] If you have 4 or fewer cards in your hand, you may play 1 purple Tamer card with a play cost of 4 or less from your trash without paying the cost.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
@@ -23,7 +23,7 @@ namespace DCGO.CardEffects.BT24
                     && card.Owner.HandCards.Count <= 4;
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectCardCondition(CardSource cardSource, ActivateClass activateClass)
             {
                 return cardSource.IsTamer
                     && cardSource.GetCostItself <= 4
@@ -35,17 +35,19 @@ namespace DCGO.CardEffects.BT24
             {
                 List<CardSource> selectedCards = new List<CardSource>();
 
+                int maxCount = Math.min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition(cardSource, activateClass)));
+
                 SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                 selectCardEffect.SetUp(
-                            canTargetCondition: CanSelectCardCondition,
+                            canTargetCondition: (cardSource) => CanSelectCardCondition(cardSource, activateClass),
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             canNoSelect: () => true,
                             selectCardCoroutine: SelectCardCoroutine,
                             afterSelectCardCoroutine: null,
                             message: "Select 1 card to play.",
-                            maxCount: 1,
+                            maxCount: maxCount,
                             canEndNotMax: false,
                             isShowOpponent: true,
                             mode: SelectCardEffect.Mode.Custom,

@@ -230,13 +230,16 @@ namespace DCGO.CardEffects.ST22
                     #endregion
 
                     #region Place in security
-                    yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                        card, toTop: false, faceUp: true));
+                    if (card.Owner.CanAddSecurity(activateClass))
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                            card, toTop: false, faceUp: true));
 
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                        .CreateRecoveryEffect(card.Owner));
+                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
+                            .CreateRecoveryEffect(card.Owner));
 
-                    yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
+                        yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
+                    }
                     #endregion
                 }
             }

@@ -113,7 +113,7 @@ public class ST2_15 : CEntity_Effect
                                         mode: SelectCardEffect.Mode.Custom,
                                         root: SelectCardEffect.Root.Custom,
                                         customRootCardList: selectedPermanent.DigivolutionCards,
-                                        canLookReverseCard: false,
+                                        canLookReverseCard: true,
                                         selectPlayer: card.Owner,
                                         cardEffect: activateClass);
 
