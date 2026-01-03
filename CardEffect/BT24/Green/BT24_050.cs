@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // WereGarurumon
 namespace DCGO.CardEffects.BT24
@@ -60,13 +62,13 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.IsTamer);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                 {
                     int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,

@@ -63,6 +63,7 @@ namespace DCGO.CardEffects.BT24
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
                     bool addedCard = false;
+
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
                         revealCount: 3,
                         simplifiedSelectCardConditions:
@@ -73,13 +74,13 @@ namespace DCGO.CardEffects.BT24
                             message: "Select 1 card to add to hand.",
                             mode: SelectCardEffect.Mode.AddHand,
                             maxCount: 1,
-                            selectCardCoroutine: SelectCardCoroutine),
+                            selectCardCoroutine: null),
                         new SimplifiedSelectCardConditionClass(
                             canTargetCondition:CanSelectCardCondition,
                             message: "Select 1 card to trash.",
                             mode: SelectCardEffect.Mode.Discard,
                             maxCount: 1,
-                            selectCardCoroutine: SelectCardCoroutine),
+                            selectCardCoroutine: null),
                         },
                         remainingCardsPlace: RemainingCardsPlace.DeckBottom,
                         activateClass: activateClass

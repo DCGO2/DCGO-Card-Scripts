@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // Raidramon
 namespace DCGO.CardEffects.BT24
@@ -70,7 +72,7 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.EqualsTraits("Transmutation"));
             }
 
-            IEnumerator ActivateCoroutine(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
             {
                 int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
 
@@ -141,7 +143,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName1() => "Play 1 level 3 [Appmon] from trash.";
 
-            string SharedEffectDescription1(string tag) => "[On Deletion] You may play 1 level 3 [Appmon] trait Digimon card from your trash without paying the cost.]";
+            string SharedEffectDescription1() => "[On Deletion] You may play 1 level 3 [Appmon] trait Digimon card from your trash without paying the cost.]";
 
             bool CanSelectCardCondition1(CardSource cardSource, ActivateClass activateClass)
             {

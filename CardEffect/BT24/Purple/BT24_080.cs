@@ -132,7 +132,7 @@ namespace DCGO.CardEffects.BT24
 
             bool SharedCanSelectPermanentCondition(Permanent permanent) => CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy);
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable, Activateclass activateclass)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 List<Permanent> destroyTargetPermanents = card.Owner.Enemy.GetBattleAreaDigimons().Filter(SharedCanSelectPermanentCondition);
                 yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(destroyTargetPermanents, CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
@@ -192,7 +192,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(hashtable, card);
+                    return CardEffectCommons.CanActivateOnDeletion(card);
                 }
             }
 

@@ -102,18 +102,20 @@ namespace DCGO.CardEffects.BT18
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
-            bool SharedPermanentCondition(Permanent permanent)
-            {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
-                    && card.PermanentOfThisCard().HasDP
-                    && permanent.TopCard.HasDP
-                    && permanent.DP <= card.PermanentOfThisCard().DP
-                    && !permanent.TopCard.CanNotBeAffected(activateClass)
-                    && permanent.CanSuspend;
-            }
+            
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                bool SharedPermanentCondition(Permanent permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
+                        && card.PermanentOfThisCard().HasDP
+                        && permanent.TopCard.HasDP
+                        && permanent.DP <= card.PermanentOfThisCard().DP
+                        && !permanent.TopCard.CanNotBeAffected(activateClass)
+                        && permanent.CanSuspend;
+                }
+
                 List<Permanent> suspendTargetPermanents = card.Owner.Enemy.GetBattleAreaDigimons().Filter(SharedPermanentCondition);
 
                 yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(
@@ -136,7 +138,7 @@ namespace DCGO.CardEffects.BT18
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("On Play"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -154,7 +156,7 @@ namespace DCGO.CardEffects.BT18
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)

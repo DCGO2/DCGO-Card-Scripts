@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 // Garurumon
 namespace DCGO.CardEffects.BT24
@@ -38,7 +39,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectDescription(string tag) => $"[{tag}] Suspend 1 of your opponent's Digimon.";
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectPermanentConditionShared(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
@@ -48,18 +49,18 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleArea(card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentConditionShared))
                 {
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentConditionShared));
 
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
+                        canTargetCondition: CanSelectPermanentConditionShared,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: maxCount,

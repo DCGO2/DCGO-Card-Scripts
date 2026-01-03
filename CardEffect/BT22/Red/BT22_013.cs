@@ -113,7 +113,7 @@ namespace DCGO.CardEffects.BT22
                             isHand: true,
                             activateClass: activateClass,
                             successProcess: null,
-                            failedProcess: OnFail,
+                            failedProcess: OnFail(),
                             ignoreRequirements: CardEffectCommons.IgnoreRequirement.All));
                     }
 

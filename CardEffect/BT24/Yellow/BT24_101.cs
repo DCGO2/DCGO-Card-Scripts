@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 // Jupitermon
 namespace DCGO.CardEffects.BT24

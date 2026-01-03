@@ -41,23 +41,23 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.ContainsTraits("Bird"));
             }
 
-            bool DigivolveToCardCondition(CardSource cardSource)
-            {
-                return cardSource.IsDigimon
-                    && cardSource.HasLevel
-                    && cardSource.Level <= 5
-                    && (cardSource.ContainsTraits("Avian")
-                    || cardSource.ContainsTraits("Bird"))
-                    && cardSource.CanPlayCardTargetFrame(
-                               frame: card.Owner.GetBreedingAreaPermanents()[0].PermanentFrame,
-                               PayCost: false,
-                               cardEffect: activateClass,
-                               root: SelectCardEffect.Root.Hand,
-                               isBreedingArea: true);
-            }
-
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                bool DigivolveToCardCondition(CardSource cardSource)
+                {
+                    return cardSource.IsDigimon
+                        && cardSource.HasLevel
+                        && cardSource.Level <= 5
+                        && (cardSource.ContainsTraits("Avian")
+                        || cardSource.ContainsTraits("Bird"))
+                        && cardSource.CanPlayCardTargetFrame(
+                                   frame: card.Owner.GetBreedingAreaPermanents()[0].PermanentFrame,
+                                   PayCost: false,
+                                   cardEffect: activateClass,
+                                   root: SelectCardEffect.Root.Hand,
+                                   isBreedingArea: true);
+                }
+
                 if (card.Owner.CanHatch)
                 {
                     List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()

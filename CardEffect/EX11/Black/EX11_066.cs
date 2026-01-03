@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Xeno
 namespace DCGO.CardEffects.EX11
@@ -160,14 +161,14 @@ namespace DCGO.CardEffects.EX11
                 {
                     yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent> { card.PermanentOfThisCard() }, hashtable).Tap());
 
-                    List<PermanentCondition> playedPermanents = new List<PermanentCondition>();
+                    List<Permanent> playedPermanents = new List<Permanent>();
 
                     foreach (Hashtable hash in CardEffectCommons.GetHashtablesFromHashtable(hashtable))
                     {
                         playedPermanents.Add(CardEffectCommons.GetPermanentFromHashtable(hash));
                     }
 
-                    List<PlayPermanentClass> targetPermanents = playedPermanents.filter(PermanentCondition);
+                    List<Permanent> targetPermanents = playedPermanents.Filter(PermanentCondition);
 
                     List<CardSource> selectedCards = new List<CardSource>();
 
@@ -193,6 +194,8 @@ namespace DCGO.CardEffects.EX11
                         {
                             selectedCards.Add(cardSource);
                         }
+
+                        yield return null;
                     }
 
                     if(selectedCards.Count > 0)

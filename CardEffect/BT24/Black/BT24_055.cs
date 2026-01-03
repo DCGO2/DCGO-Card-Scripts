@@ -49,23 +49,21 @@ namespace DCGO.CardEffects.BT24
                     && card.Owner.HandCards.Count(CanSelectCardCondition) >= 1;
             }
 
-            bool CanSelectCardCondition(Permanent permanent)
+            bool CanSelectCardCondition(CardSource cardSource)
             {
                 return cardSource.EqualsCardName("Shuu Yulin");
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectPermanentConditionShared(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && (permanent.TopCard.EqualsTraits("DigiPolice")
                     || permanent.TopCard.EqualsTraits("SEEKERS"));
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 List<CardSource> selectedCards = new List<CardSource>();
-
-                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectCardCondition));
 
                 SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
@@ -74,7 +72,7 @@ namespace DCGO.CardEffects.BT24
                     canTargetCondition: CanSelectCardCondition,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
-                    maxCount: maxCount,
+                    maxCount: 1,
                     canNoSelect: true,
                     canEndNotMax: false,
                     isShowOpponent: true,
@@ -86,7 +84,15 @@ namespace DCGO.CardEffects.BT24
                 selectHandEffect.SetUpCustomMessage("Select 1 card to place on bottom of digivolution cards.", "The opponent is selecting 1 card to place on bottom of digivolution cards.");
                 selectHandEffect.SetUpCustomMessage_ShowCard("Digivolution Card");
 
-                yield return StartCoroutine(selectHandEffect.Activate());
+                yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
+
+                IEnumerator SelectCardCoroutine(CardSource source)
+                {
+                    if (source != null)
+                        selectedCards.Add(source);
+
+                    yield return null;
+                }
 
                 if (selectedCards.Count >= 1)
                 {
@@ -94,11 +100,11 @@ namespace DCGO.CardEffects.BT24
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                    int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                    int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentConditionShared));
 
                     selectPermanentEffect.SetUp(
                             selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermanentCondition,
+                            canTargetCondition: CanSelectPermanentConditionShared,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: maxCount1,
@@ -115,7 +121,7 @@ namespace DCGO.CardEffects.BT24
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                    Permament selectedPermanent = null;
+                    Permanent selectedPermanent = null;
 
                     IEnumerator AfterSelectPermanent(List<Permanent> permanents)
                     {
@@ -213,7 +219,7 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                         && (permanent.IsDigimon
                         || permanent.IsTamer)
-                        && permanent.TopCard.GetChangedCostItselef <= card.PermanentOfThisCard().TopCard.GetChangedCostItselef;
+                        && permanent.TopCard.GetCostItself <= card.PermanentOfThisCard().TopCard.GetCostItself;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)

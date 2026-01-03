@@ -112,14 +112,14 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, MyPlayedDigimonCondition)
                         || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, MyPlayedDigimonCondition));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.HasMatchConditionPermanent(IsMyProperDigimon);
                 }
 

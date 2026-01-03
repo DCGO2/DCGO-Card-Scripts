@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Galacticmon
 namespace DCGO.CardEffects.EX11
@@ -50,7 +51,7 @@ namespace DCGO.CardEffects.EX11
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                int maxCount = Math.min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectHighestCostCondition));
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectHighestCostCondition));
 
                 SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -75,7 +76,7 @@ namespace DCGO.CardEffects.EX11
                 {
                     if (permanent != null)
                     {
-                        List<Permanent> targetPermanents = card.Owner.Enemy.GetBattleAreaDigimons.Filter(perm => perm != permanent);
+                        List<Permanent> targetPermanents = card.Owner.Enemy.GetBattleAreaDigimons().Filter(perm => perm != permanent);
 
                         yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(targetPermanents, CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
                     }
@@ -89,13 +90,13 @@ namespace DCGO.CardEffects.EX11
                     CanNotAffectedClass canNotAffectedClass = new CanNotAffectedClass();
                     canNotAffectedClass.SetUpICardEffect("Isn't affected by opponent's effect", CanUseCondition1, card);
                     canNotAffectedClass.SetUpCanNotAffectedClass(CardCondition: CardCondition, SkillCondition: SkillCondition);
-                    selectedPermanent.UntilOpponentTurnEndEffects.Add((_timing) => canNotAffectedClass);
+                    thisPermanent.UntilOpponentTurnEndEffects.Add((_timing) => canNotAffectedClass);
 
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateBuffEffect(selectedPermanent));
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateBuffEffect(thisPermanent));
 
                     bool CanUseCondition1(Hashtable hashtable)
                     {
-                        if (selectedPermanent.TopCard != null)
+                        if (thisPermanent.TopCard != null)
                         {
                             return true;
                         }
@@ -105,11 +106,11 @@ namespace DCGO.CardEffects.EX11
 
                     bool CardCondition(CardSource cardSource)
                     {
-                        if (selectedPermanent.TopCard != null)
+                        if (thisPermanent.TopCard != null)
                         {
-                            if (selectedPermanent.TopCard.Owner.GetBattleAreaPermanents().Contains(selectedPermanent))
+                            if (thisPermanent.TopCard.Owner.GetBattleAreaPermanents().Contains(thisPermanent))
                             {
-                                if (cardSource == selectedPermanent.TopCard)
+                                if (cardSource == thisPermanent.TopCard)
                                 {
                                     return true;
                                 }
@@ -191,8 +192,8 @@ namespace DCGO.CardEffects.EX11
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && (CardEffectCommons.HasMatchConditionOwnersHand(CanSelectCardCondition)
-                            || CardEffectCommons.HasMatchConditionOwnersCardInTrash(CanSelectCardCondition));
+                        && (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition)
+                            || CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition));
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)

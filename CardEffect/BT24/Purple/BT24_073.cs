@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 // SkullSatamon
 namespace DCGO.CardEffects.BT24
@@ -26,18 +27,18 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectDescription(string tag) => $"[{tag}] If your opponent has 10 or fewer cards in their trash, trash the top 3 cards of both player's decks. Then, if your opponent has 10 or more cards in their trash, you may play 1 level 4 or lower [Evil] or [Fallen Angel] trait Digimon card from your trash without paying the cost.";
 
-            bool CanPlayCardCondition(CardSource cardSource)
-            {
-                return cardSource.IsDigimon
-                    && cardSource.HasLevel
-                    && cardSource.Level <= 4
-                    && (cardSource.EqualsTraits("Evil")
-                    || cardSource.EqualsTraits("Fallen Angel"))
-                    && CardEffectCommons.CanPlayAsNewPermament(cardSource, false, activateClass);
-            }
-
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                bool CanPlayCardCondition(CardSource cardSource)
+                {
+                    return cardSource.IsDigimon
+                        && cardSource.HasLevel
+                        && cardSource.Level <= 4
+                        && (cardSource.EqualsTraits("Evil")
+                        || cardSource.EqualsTraits("Fallen Angel"))
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
+                }
+
                 if (card.Owner.Enemy.TrashCards.Count <= 10)
                 {
                     yield return ContinuousController.instance.StartCoroutine(new IAddTrashCardsFromLibraryTop(

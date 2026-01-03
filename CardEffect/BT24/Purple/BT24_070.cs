@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Growlmon
 namespace DCGO.CardEffects.BT24
@@ -35,7 +36,7 @@ namespace DCGO.CardEffects.BT24
             {
                 List<CardSource> selectedCards = new List<CardSource>();
 
-                int maxCount = Math.min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition(cardSource, activateClass)));
+                int maxCount = Math.Min(1, card.Owner.TrashCards.Count((cardSource) => CanSelectCardCondition(cardSource, activateClass)));
 
                 SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 // Ouryumon
 namespace DCGO.CardEffects.BT24
@@ -142,7 +143,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && (permanent.IsTamer || permanent.IsDigimon);
                 }
 

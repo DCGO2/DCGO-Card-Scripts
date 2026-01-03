@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("De-digivolve 1 opponent's Digimon. Delete all their highest play cost Digimon.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivteCoroutine, -1, false, EffectDescription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
                 string EffectDescription() => "[When Digivolving] To 1 of your opponent's Digimon, <De-Digivolve 1> for each of your Digimon. Then, delete all of your opponent's Digimon with the highest play cost.";
@@ -64,7 +64,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent);
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
                 }
 
                 bool CanDeleteCondition(Permanent permanent)
@@ -93,7 +93,6 @@ namespace DCGO.CardEffects.BT24
                         cardEffect: activateClass);
 
                     selectPermanentEffect.SetUpCustomMessage($"Select 1 digimon to <De-Digivolve 1> {digimonCount} times", "Opponent is selecting a Digimon to De-Digivolve.");
-                    selectPermanentEffect.SetUpCustomMessage_ShowCard("Played Card");
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
@@ -140,7 +139,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && (CardEffectCommons.HasMatchConditionOwnersHand(CanSelectCardCondition)
+                        && (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition)
                             || card.PermanentOfThisCard().DigivolutionCards.Any(CanSelectCardCondition));
                 }
 

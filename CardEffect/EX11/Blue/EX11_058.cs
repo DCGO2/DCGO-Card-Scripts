@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Yao Qinglan
 namespace DCGO.CardEffects.EX11
@@ -32,8 +33,8 @@ namespace DCGO.CardEffects.EX11
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && card.Owner.HandCards.Count(CanSelectCardCondition)
-                        && CardEffectCommons.HasMatchConditionOwnersPermanent(OwnAquaDigimon);
+                        && card.Owner.HandCards.Count(CanSelectCardCondition) > 0
+                        && CardEffectCommons.HasMatchConditionOwnersPermanent(card, OwnAquaDigimon);
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)

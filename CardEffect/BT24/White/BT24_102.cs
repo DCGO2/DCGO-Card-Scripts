@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -19,6 +19,11 @@ namespace DCGO.CardEffects.BT24
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
+                string EffectDiscription()
+                {
+                    return "[Start of Your Main Phase] Gain 1 memory. Then, if you have 5 or more memory, suspend this Tamer and ＜Draw 1＞.";
+                }
+
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card) &&
@@ -34,7 +39,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
 
-                    if (card.Owner.Memory >= 5)
+                    if (card.Owner.MemoryForPlayer >= 5)
                     {
                         yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent>() { card.PermanentOfThisCard() }, CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
                         yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
@@ -87,9 +92,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent) &&
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
                         permanent.TopCard.EqualsTraits("Olympos XII") &&
-                        selectedPermanent.EffectList(EffectTiming.OnEnterFieldAnyone).Any(CanBeEffectCandidate);
+                        permanent.EffectList(EffectTiming.OnEnterFieldAnyone).Any(CanBeEffectCandidate);
                 }
 
                 bool CanBeEffectCandidate(ICardEffect cardEffect)
@@ -101,8 +106,8 @@ namespace DCGO.CardEffects.BT24
                         (cardEffect.IsWhenDigivolving ||
                             cardEffect.IsOnPlay))
                             {
-                                Hashtable onPlayHashtable = CardEffectCommons.OnPlayCheckHashtableOfCard(cardEffect);
-                                Hashtable digivolvingHashtable = CardEffectCommons.WhenDigivolvingCheckHashtableOfCard(cardEffect);
+                                Hashtable onPlayHashtable = CardEffectCommons.OnPlayCheckHashtableOfCard(cardEffect.EffectSourceCard);
+                                Hashtable digivolvingHashtable = CardEffectCommons.WhenDigivolvingCheckHashtableOfCard(cardEffect.EffectSourceCard);
 
                                 return cardEffect.CanUse(digivolvingHashtable) || cardEffect.CanUse(onPlayHashtable);
                             }
@@ -144,8 +149,9 @@ namespace DCGO.CardEffects.BT24
                         mode: SelectPermanentEffect.Mode.Custom,
                         cardEffect: activateClass);
 
-                    
-                    selectCardEffect.SetUpCustomMessage("Select 1 of your [Olympos XII] digimon to use their effect.", "Your opponent is selecting an effect to use.");
+
+
+                    selectPermanentEffect.SetUpCustomMessage("Select 1 of your [Olympos XII] digimon to use their effect.", "Your opponent is selecting an effect to use.");
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
                     IEnumerator SelectCardCoroutine(Permanent permanent)

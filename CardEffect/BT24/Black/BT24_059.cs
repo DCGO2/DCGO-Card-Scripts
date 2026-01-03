@@ -20,7 +20,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return targetPermanent.TopCard.IsLevel4
                         && (targetPermanent.TopCard.HasTSTraits
-                        || targetPermanent.Topcard.HasAquaTraits);
+                        || targetPermanent.TopCard.HasAquaTraits);
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -39,24 +39,24 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectPermanentConditionShared(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentConditionShared))
                 {
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentConditionShared));
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
+                        canTargetCondition: CanSelectPermanentConditionShared,
                         canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: CanEndSelectCondition,
+                        canEndSelectCondition: null,
                         maxCount: maxCount,
                         canNoSelect: false,
                         canEndNotMax: false,

@@ -37,11 +37,11 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnTrash(card) 
-                        && CardEffectCommons.IsOwnerTurn(Card)
+                        && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.CanTriggerOnPermanentAttack(hashtable, PermanentCondition);
                 }
 
-                bool PermanentCondition(Permanent permanent) => targetPermanent.TopCard.EqualsCardName("Creepymon");
+                bool PermanentCondition(Permanent permanent) => permanent.TopCard.EqualsCardName("Creepymon");
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {

@@ -59,13 +59,13 @@ namespace DCGO.CardEffects.BT24
                             message: "Select 1 Digimon with [Evil] or [Fallen Angel] in its traits.",
                             mode: SelectCardEffect.Mode.AddHand,
                             maxCount: 1,
-                            selectCardCoroutine: SelectCardCoroutine),
+                            selectCardCoroutine: null),
                         new SimplifiedSelectCardConditionClass(
                             canTargetCondition:CanSelectCardCondition1,
                             message: "Select 1 card with [Seven Great Demon Lords] in its traits.",
                             mode: SelectCardEffect.Mode.AddHand,
                             maxCount: 1,
-                            selectCardCoroutine: SelectCardCoroutine),
+                            selectCardCoroutine: null),
                         },
                         remainingCardsPlace: RemainingCardsPlace.DeckBottom,
                         activateClass: activateClass

@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // Revivemon
 namespace DCGO.CardEffects.BT24
 {
-    public class BT24_071 : CEntity_Effect
+    public class BT24_077 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -286,7 +288,7 @@ namespace DCGO.CardEffects.BT24
                         && cardSource.HasLevel
                         && cardSource.Level <= 4
                         && cardSource.HasAppmonTraits
-                        && CardEffectCommons.CanPlayAsNewPermament(cardSource, false, activateClass);
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

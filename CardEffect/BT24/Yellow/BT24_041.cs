@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 // Minervamon
 namespace DCGO.CardEffects.BT24
@@ -62,7 +63,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return permanent.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && permanent.TopCard.EqualsTraits("Iliad")
                         && (permanent.IsDigimon
                             || permanent.IsTamer);
@@ -157,7 +158,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return permanent.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && permanent.TopCard.EqualsTraits("Iliad")
                         && (permanent.IsDigimon
                             || permanent.IsTamer);
@@ -237,13 +238,13 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent);
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent,card);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 CardSource selectedCard = null;
-                int maxCount = Math.min (1, card.Owner.HandCards.Count(cardSource => CanSelectCardCondition(cardSource, activateClass)));
+                int maxCount = Math.Min (1, card.Owner.HandCards.Count(cardSource => CanSelectCardCondition(cardSource, activateClass)));
 
                 SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
@@ -348,7 +349,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnDestroyedAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Deletion"));
                 cardEffects.Add(activateClass);
 

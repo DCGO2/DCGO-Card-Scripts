@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 // Venusmon
 namespace DCGO.CardEffects.BT24
@@ -210,12 +211,12 @@ namespace DCGO.CardEffects.BT24
 
             bool CanTrashDigivolutionCardsCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent);
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
             bool CanFreezeCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permament)
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && (permanent.TopCard.IsDigimon || permanent.TopCard.IsTamer);
             }
 
@@ -284,7 +285,7 @@ namespace DCGO.CardEffects.BT24
                         DisableEffectClass invalidationClass = new DisableEffectClass();
                         invalidationClass.SetUpICardEffect("Ignore [When Digivolving] Effect", CanUseConditionDebuff, card);
                         invalidationClass.SetUpDisableEffectClass(DisableCondition: InvalidateCondition);
-                        selectedPermanent.UntilOwnerTurnEndEffects.Add(_ => invalidationClass);
+                        permanent.UntilOwnerTurnEndEffects.Add(_ => invalidationClass);
 
                         bool CanUseConditionDebuff(Hashtable hashtableDebuff)
                         {
@@ -293,13 +294,13 @@ namespace DCGO.CardEffects.BT24
 
                         bool InvalidateCondition(ICardEffect cardEffect)
                         {
-                            return selectedPermanent.TopCard != null
+                            return permanent.TopCard != null
                                 && cardEffect != null
                                 && cardEffect.EffectSourceCard != null
                                 && isExistOnField(cardEffect.EffectSourceCard)
-                                && cardEffect.EffectSourceCard.PermanentOfThisCard() == selectedPermanent
+                                && cardEffect.EffectSourceCard.PermanentOfThisCard() == permanent
                                 && cardEffect.IsWhenDigivolving
-                                && !selectedPermanent.TopCard.CanNotBeAffected(activateClass);
+                                && !permanent.TopCard.CanNotBeAffected(activateClass);
                         }
                         #endregion
                     }
@@ -389,7 +390,7 @@ namespace DCGO.CardEffects.BT24
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     Permanent selectedPermanent = null;
-                    int maxCount = Math.min(1, CardEffectCommons.MatchConditionPermanentCount(CanPlaceToSecurityCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanPlaceToSecurityCondition));
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -419,7 +420,7 @@ namespace DCGO.CardEffects.BT24
 
                     if (selectedPermanent != null)
                     {
-                        if (!selectedPermament.TopCard.CanNotBeAffected(activateClass))
+                        if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                         {
                             #region hashtable
                             Hashtable _hashtable = new Hashtable()
@@ -431,7 +432,7 @@ namespace DCGO.CardEffects.BT24
                             CardSource toSecCard = selectedPermanent.TopCard;
 
                             yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
-                                permanent: selectedPermament,
+                                permanent: selectedPermanent,
                                 hashtable: _hashtable,
                                 toTop: false).PutSecurity()
                             );

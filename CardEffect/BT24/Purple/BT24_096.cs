@@ -136,7 +136,7 @@ namespace DCGO.CardEffects.BT24
 
                     if (failedToDelete)
                     {
-                        int trashCount = 3
+                        int trashCount = 3;
 
                         yield return ContinuousController.instance.StartCoroutine(new IAddTrashCardsFromLibraryTop(trashCount, card.Owner.Enemy, activateClass).AddTrashCardsFromLibraryTop());
                     }
