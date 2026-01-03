@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Super Hacking
 namespace DCGO.CardEffects.BT24
@@ -134,7 +135,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.CanDeclareOptionDelayEffect(card)
-                        && CardEffectCommons.CanTriggerOnPermanentDeleted(hashtable, PermanentCondition);
+                        && CardEffectCommons.CanTriggerOnPermanentDeleted(hashtable, PermamentCondition);
                 }
 
                 bool PermamentCondition(Permanent permanent)
@@ -142,12 +143,7 @@ namespace DCGO.CardEffects.BT24
                     return permanent.IsDigimon;
                 }
 
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card);
-                }
-
-                bool OwnPermamentCondition(CardSource cardsource, Permanent permanent) => CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) && cardSource.CanLinkToTargetPermanent(permanent, false);
+                bool OwnPermamentCondition(CardSource cardsource, Permanent permanent) => CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) && cardsource.CanLinkToTargetPermanent(permanent, false);
                 bool LinkCardCondition(CardSource cardSource) => cardSource.IsDigimon && cardSource.HasAppmonTraits && cardSource.CanLink(false);
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -181,6 +177,7 @@ namespace DCGO.CardEffects.BT24
                                 canNoSelect: () => true,
                                 selectCardCoroutine: SelectCardCoroutine,
                                 afterSelectCardCoroutine: null,
+                                message: "Select 1 [Appmon] to link",
                                 maxCount: maxCount1,
                                 canEndNotMax: false,
                                 isShowOpponent: true,
@@ -199,7 +196,7 @@ namespace DCGO.CardEffects.BT24
 
                             selectCardEffect.SetUpCustomMessage("Select 1 [Appmon] to link", "The opponent is selecting 1 [Appmon] to link");
                             selectCardEffect.SetUpCustomMessage_ShowCard("Selected card");
-                            yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
+                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
                             #endregion
 

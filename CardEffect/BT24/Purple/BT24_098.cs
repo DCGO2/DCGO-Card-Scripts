@@ -6,7 +6,7 @@ using System.Linq;
 // Super Hacking
 namespace DCGO.CardEffects.BT24
 {
-    public class BT24_099 : CEntity_Effect
+    public class BT24_098 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
