@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 // Abyss Sanctuary: Throne Room
 namespace DCGO.CardEffects.BT24
@@ -95,7 +96,7 @@ namespace DCGO.CardEffects.BT24
                 bool HasOXII(Permanent permanent)
                 {
                     return permanent.TopCard.EqualsCardName("Neptunemon")
-                        || permanent.topCard.EqualsCardName("Venusmon");
+                        || permanent.TopCard.EqualsCardName("Venusmon");
                 }
 
                 List<ICardEffect> GetEffects1(CardSource cardSource, List<ICardEffect> effects, EffectTiming effectTiming)
@@ -239,7 +240,7 @@ namespace DCGO.CardEffects.BT24
 
                     #endregion
 
-                    int maxCount = Math.min(1, card.Owner.HandCards.Count(CanSelectCardCondition));
+                    int maxCount = Math.Min(1, card.Owner.HandCards.Count(CanSelectCardCondition));
 
                     SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
@@ -316,7 +317,7 @@ namespace DCGO.CardEffects.BT24
                     {
                         if (canSelectHand && canSelectTrash)
                         {
-                            List<SelectionElement<int>> selectionElements1 = new List<SelectionElement<bool>>()
+                            List<SelectionElement<int>> selectionElements1 = new List<SelectionElement<int>>()
                         {
                             new (message: $"From hand", value : 1, spriteIndex: 0),
                             new (message: $"From trash", value : 2, spriteIndex: 1),
@@ -365,8 +366,8 @@ namespace DCGO.CardEffects.BT24
 
                             yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
-                            if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                                new List<CardSource>() { selectedCard },
+                            if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                                selectedCards,
                                 activateClass: activateClass,
                                 payCost: false,
                                 isTapped: false,
@@ -399,8 +400,8 @@ namespace DCGO.CardEffects.BT24
                             selectCardEffect.SetUpCustomMessage_ShowCard("Selected Digimon");
 
                             yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-                            if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                                new List<CardSource>() { selectedCard },
+                            if (selectedCards.Count > 0) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                                selectedCards,
                                 activateClass: activateClass,
                                 payCost: false,
                                 isTapped: false,
