@@ -92,49 +92,15 @@ namespace DCGO.CardEffects.BT24
                     }
                 }
 
-            #endregion
-
-            #region On Play
-            if (timing == EffectTiming.OnEnterFieldAnyone)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, (hashTable) => SharedActivateCoroutine(hashTable, activateClass), -1, false, SharedEffectDescription("On Play"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
-                        CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
-                        CardEffectCommons.HasMatchConditionPermanent(SharedCanSelectPermanentCondition);
-                }
-            }
-            #endregion
-
-            #region On Deletion
-
-            if (timing == EffectTiming.OnDestroyedAnyone)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, (hashTable) => SharedActivateCoroutine(hashTable, activateClass), -1, false, SharedEffectDescription("On Deletion"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOnDeletion(hashtable, card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanActivateOnDeletion(card);
-                }
-            }
+            CardEffectFactory.ActivateClassesForSharedEffects(cardEffects, timing, card,
+                                                              effectName: SharedEffectName(),
+                                                              activateCoroutine: SharedActivateCoroutine,
+                                                              effectDescription: SharedEffectDescription,
+                                                              optional: false,
+                                                              maxCountPerTurn: -1,
+                                                              onPlay: true,
+                                                              onDeletion: true);
+                                                              
             #endregion
 
             #region Link
