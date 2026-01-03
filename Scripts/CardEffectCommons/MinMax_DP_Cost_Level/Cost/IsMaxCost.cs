@@ -40,15 +40,15 @@ public partial class CardEffectCommons
             : owner.GetBattleAreaPermanents().Where(p => p.IsDigimon || p.IsTamer);
 
         var list = candidates
-            .Where(x => x.TopCard != null && x.TopCard.HasPlayCost)
+            .Where(x => x.TopCard != null)
             .ToList();
 
         if (list.Count == 0) return new List<Permanent>();
 
-        var maxCost = list.Max(p => p.TopCard.GetCostItself);
+        var maxCost = list.Max(p => p.TopCard.HasPlayCost ? p.TopCard.GetCostItself : -1);
 
         return list
-            .Where(p => p.TopCard.GetCostItself < maxCost)
+            .Where(p => !p.TopCard.HasPlayCost || p.TopCard.GetCostItself < maxCost)
             .ToList();
     }
 }
