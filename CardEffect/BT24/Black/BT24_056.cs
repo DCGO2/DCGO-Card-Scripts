@@ -55,14 +55,14 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "1 Digimon can't be returned to hand or deck.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Until your opponent's turn ends, their effects can't return 1 of your Digimon with the [System], [Life] or [Transmutation] trait to hands or decks.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Until your opponent's turn ends, their effects can't return 1 of your Digimon with the [System], [Life] or [Transmutation] trait to hands or decks.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectPermanentConditionShared(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && (permanent.TopCard.EqualsTraits("System")
@@ -76,12 +76,12 @@ namespace DCGO.CardEffects.BT24
 
                 #region Select Permanent
 
-                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersPermanentCount(card, MyDigimonCondition));
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersPermanentCount(card, CanSelectPermanentConditionShared));
                 SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                 selectPermanentEffect.SetUp(
                     selectPlayer: card.Owner,
-                    canTargetCondition: CanSelectPermanentCondition,
+                    canTargetCondition: CanSelectPermanentConditionShared,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     maxCount: maxCount,
@@ -163,11 +163,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delete 1 Digimon with 5 or less Cost", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 activateClass.SetIsLinkedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[When Linking] Delete 1 of your opponent's play cost 5 or lower Digimon.";
                 }
@@ -176,7 +176,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.HasPlayCost
-                        && permanent.TopCard.GetChangedCostItselef <= 5;
+                        && permanent.TopCard.GetCostItself <= 5;
                 }
 
                 bool CanUseCondition(Hashtable hashtable)

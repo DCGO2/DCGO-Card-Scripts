@@ -22,7 +22,7 @@ public class BT2_059 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[Your Turn] When you play another Digimon with the same name as this DigimonÅCgain 1 memory.";
+                return "[Your Turn] When you play another Digimon with the same name as this Digimon, gain 1 memory.";
             }
 
             bool PermanentCondition(Permanent permanent)

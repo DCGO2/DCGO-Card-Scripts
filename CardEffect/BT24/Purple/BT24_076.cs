@@ -17,10 +17,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play this card from trash with reduced cost", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
+                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[Trash] [Main] If you have 4 or fewer cards in your hand, you may play this card from your trash with the play cost reduced by 2.";
                 }
@@ -96,7 +97,7 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Delete 1 lvl 4 or lower.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Delete 1 of your opponent's level 4 or lower Digimon.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Delete 1 of your opponent's level 4 or lower Digimon.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
@@ -114,6 +115,8 @@ namespace DCGO.CardEffects.BT24
             {          
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectLevelOpponentPermanentCondition))
                 {
+                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
                         canTargetCondition: CanSelectLevelOpponentPermanentCondition,
@@ -175,11 +178,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 1 Digimon from trash", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[On Deletion] You may play 1 level 4 or lower Digimon card with the [Dark Dragon] or [Evil Dragon] trait from your trash without paying the cost.";
                 }

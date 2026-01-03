@@ -31,24 +31,24 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Return opponent's Digimon to top deck.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Return 1 of your opponent's play cost 3 or lower Digimon or Tamers to the top of the deck.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Return 1 of your opponent's play cost 3 or lower Digimon or Tamers to the top of the deck.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectPermanentConditionShared(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && (permanent.IsDigimon || permanent.IsTamer)
                     && permanent.TopCard.HasPlayCost
-                    && permanent.TopCard.GetChangedCostItselef <= 3;
+                    && permanent.TopCard.GetCostItself <= 3;
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentConditionShared))
                 {
                     int maxCount = 1;
 
@@ -56,7 +56,7 @@ namespace DCGO.CardEffects.BT24
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
+                        canTargetCondition: CanSelectPermanentConditionShared,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: maxCount,
@@ -64,21 +64,18 @@ namespace DCGO.CardEffects.BT24
                         canEndNotMax: false,
                         selectPermanentCoroutine: null,
                         afterSelectPermanentCoroutine: AfterSelectCardCoroutine,
-                        mode: SelectCardEffect.Mode.Custom,
-                        root: SelectCardEffect.Root.Custom,
+                        mode: SelectPermanentEffect.Mode.PutLibraryBottom,
                         cardEffect: activateClass);
 
                     selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to return to the top of the deck.", "The opponent is selecting 1 Digimon to return to the top of the deck.");
 
-                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                    IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                    IEnumerator AfterSelectCardCoroutine(List<Permanent> permanents)
                     {
-                        if (cardSources.Count == 1)
+                        if (permanents.Count == 1)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(cardSources));
-
-                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(cardSources, "Deck Top Cards", true, true));
+                            yield return ContinuousController.instance.StartCoroutine(new DeckBottomBounceClass(permanents, hashtable).DeckBounce());
                         }
                     }
                 }

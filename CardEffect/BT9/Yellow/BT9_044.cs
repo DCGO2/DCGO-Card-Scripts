@@ -25,12 +25,12 @@ public class BT9_044 : CEntity_Effect
         {
             ActivateClass activateClass = new ActivateClass();
             activateClass.SetUpICardEffect("Switch attack target to this Digimon", CanUseCondition, card);
-            activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+            activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
             cardEffects.Add(activateClass);
 
-            string EffectDiscription()
+            string EffectDescription()
             {
-                return "[OpponentÅfs Turn] When an opponentÅfs Digimon attacks, if a card with [Armor Form] in its traits or [X Antibody] is in this DigimonÅfs digivolution cards, you may switch the target of attack to this Digimon.";
+                return "[Opponent's Turn] When an opponent's Digimon attacks, if a card with [Armor Form] in its traits or [X Antibody] is in this Digimon's digivolution cards, you may switch the target of attack to this Digimon.";
             }
 
             bool PermanentCondition(Permanent permanent)

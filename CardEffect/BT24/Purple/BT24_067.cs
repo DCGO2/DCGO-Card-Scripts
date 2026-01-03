@@ -58,11 +58,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 1 [Rei Katsura]", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetHashString("WhenLinked_BT24_067");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                     => "[Your Turn] [Once Per Turn] When this Digimon gets linked, if you have 1 or fewer Tamers, you may play 1 [Rei Katsura] from your hand without paying the cost.";
 
                 bool LinkPermanentCondition(Permanent permanent)
@@ -158,7 +158,7 @@ namespace DCGO.CardEffects.BT24
             #region Retaliation - Linked
             if (timing == EffectTiming.OnDestroyedAnyone)
             {
-                cardEffects.Add(CardEffectFactory.RetaliationSelfEffect((isInheritedEffect: false, card: card, condition: null, isLinkedEffect: true));
+                cardEffects.Add(CardEffectFactory.RetaliationSelfEffect(isInheritedEffect: false, card: card, condition: null, isLinkedEffect: true));
             }
             #endregion
 

@@ -40,22 +40,22 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectName() => "Reveal 3, Play cost 5- correct trait, return rest to top or bot.";
 
-            string SharedEffectDiscription(string tag) => $"[{tag}] Reveal the top 3 cards of your deck. You may play 1 play cost 5 or lower [Machine], [Cyborg] or [TS] trait card among them without paying the cost. Return the rest to the top or bottom of the deck.";
+            string SharedEffectDescription(string tag) => $"[{tag}] Reveal the top 3 cards of your deck. You may play 1 play cost 5 or lower [Machine], [Cyborg] or [TS] trait card among them without paying the cost. Return the rest to the top or bottom of the deck.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectCardCondition(Permanent permanent)
+            bool CanSelectCardCondition(CardSource cardSource)
             {
                 return cardSource.GetCostItself <= 5
                     && (cardSource.EqualsTraits("Machine")
                     || cardSource.EqualsTraits("Cyborg")
-                    || cardSource.EqualsTratits("TS"));
+                    || cardSource.EqualsTraits("TS"));
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
             {
                 List<CardSource> selectedCards = new List<CardSource>();
 

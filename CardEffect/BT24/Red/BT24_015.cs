@@ -28,7 +28,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return targetPermanent.TopCard.HasLevel && 
                         targetPermanent.TopCard.IsLevel4 &&
-                        (targetPermanent.Topcard.ContainsCardName("Greymon") ||
+                        (targetPermanent.TopCard.ContainsCardName("Greymon") ||
                             targetPermanent.TopCard.HasTSTraits);
                 }
 
@@ -48,11 +48,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play this card without battling", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 activateClass.SetIsSecurityEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[Security] If your opponent has a level 6 or higher Digimon, play this card without battling and without paying the cost.";
                 }
@@ -65,14 +65,14 @@ namespace DCGO.CardEffects.BT24
                 bool PermamentCondition(Permanent permanent)
                 {
                     return permanent.IsDigimon &&
-                        permanent.HasLevel && 
+                        permanent.TopCard.HasLevel && 
                         permanent.Level >= 6;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return card.Owner.ExecutingCards.Contains(card) &&
-                        CardEffectCommons.HasMatchConditionOpponentsPermanent(PermamentCondition) &&
+                        CardEffectCommons.HasMatchConditionOpponentsPermanent(card, PermamentCondition) &&
                         CardEffectCommons.CanPlayAsNewPermanent(cardSource: card, payCost: false, cardEffect: activateClass);
                 }
 
@@ -89,11 +89,11 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Draw 1", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetHashString("AT_BT24-015");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[All Turns] [Once Per Turn] When attack targets change, delete 1 of your opponent's Digimon with the lowest DP.";
                 }
@@ -145,12 +145,12 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Delete 1 <Blocker>", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetHashString("WAESS_BT24-015");
                 activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[When Attacking] [Once Per Turn] Delete 1 of your opponent's Digimon with ＜Blocker＞";
                 }

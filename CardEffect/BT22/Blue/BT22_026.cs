@@ -110,7 +110,13 @@ namespace DCGO.CardEffects.BT22
                                 ignoreDigivolutionRequirementFixedCost: 6,
                                 isHand: true,
                                 activateClass: activateClass,
-                                successProcess: null));
+                                successProcess: null,
+                                failedProcess: OnFail()));
+
+                            IEnumerator OnFail()
+                            {
+                                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(card));
+                            }
 
                             #endregion
                         }

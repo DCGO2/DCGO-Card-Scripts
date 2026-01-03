@@ -8,7 +8,7 @@ using UnityEngine.Pool;
 public partial class CardEffectFactory
 {
     #region Trigger effect of [Retaliation] on oneself
-    public static ICardEffect RetaliationSelfEffect(bool isInheritedEffect, CardSource card, Func<bool> condition)
+    public static ICardEffect RetaliationSelfEffect(bool isInheritedEffect, CardSource card, Func<bool> condition, bool isLinkedEffect = false)
     {
         Permanent targetPermanent = card.PermanentOfThisCard() ?? new Permanent(new List<CardSource>() { card });
 
@@ -22,12 +22,12 @@ public partial class CardEffectFactory
             return false;
         }
 
-        return RetaliationEffect(targetPermanent: targetPermanent, isInheritedEffect: isInheritedEffect, condition: CanUseCondition, rootCardEffect: null, card);
+        return RetaliationEffect(targetPermanent: targetPermanent, isInheritedEffect: isInheritedEffect, condition: CanUseCondition, rootCardEffect: null, card, isLinkedEffect);
     }
     #endregion
 
     #region Trigger effect of [Retaliation]
-    public static ActivateClass RetaliationEffect(Permanent targetPermanent, bool isInheritedEffect, Func<bool> condition, ICardEffect rootCardEffect, CardSource card)
+    public static ActivateClass RetaliationEffect(Permanent targetPermanent, bool isInheritedEffect, Func<bool> condition, ICardEffect rootCardEffect, CardSource card, bool isLinkedEffect = false)
     {
         if (targetPermanent == null) return null;
         if (targetPermanent.TopCard == null) return null;
@@ -37,6 +37,7 @@ public partial class CardEffectFactory
         activateClass.SetUpICardEffect("Retaliation", CanUseCondition, card);
         activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, DataBase.RetaliationEffectDiscription());
         activateClass.SetIsInheritedEffect(isInheritedEffect);
+        activateClass.SetIsLinkedEffect(isLinkedEffect);
 
         if (rootCardEffect != null)
         {

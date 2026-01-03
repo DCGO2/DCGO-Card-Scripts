@@ -35,10 +35,10 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Reveal top 3, add 1 [TS] card to hand, bottom deck the rest", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[Main] Reveal the top 3 cards of your deck. Add 1 [TS] trait card among them to the hand. Return the rest to the bottom of the deck. Then, place this card in the battle area.";
                 }
