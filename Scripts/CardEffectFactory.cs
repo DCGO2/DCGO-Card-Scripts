@@ -602,7 +602,8 @@ public partial class CardEffectFactory
                                                                     bool endOfAttack = false,
                                                                     bool endOfYourTurn = false,
                                                                     bool endOfOpponentTurn = false,
-                                                                    bool endOfAllTurns = false)
+                                                                    bool endOfAllTurns = false,
+                                                                    bool startOfYourMainPhase = false)
     {
         if (whenMoving && timing == EffectTiming.OnMove)
         {
@@ -637,15 +638,19 @@ public partial class CardEffectFactory
         }
         if (endOfYourTurn && timing == EffectTiming.OnEndTurn)
         {
-            cardEffects.Add(TurnTimingClass(card, effectName, activateCoroutine, effectDescription("End of Your Turn"), optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, yourTurn: true, opponentTurn: false));
+            cardEffects.Add(EndOfYourTurnClass(card, effectName, activateCoroutine, effectDescription("End of Your Turn"), optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn));
         }
         if (endOfOpponentTurn && timing == EffectTiming.OnEndTurn)
         {
-            cardEffects.Add(TurnTimingClass(card, effectName, activateCoroutine, effectDescription("End of Opponent's Turn"), optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, yourTurn: false, opponentTurn: true));
+            cardEffects.Add(EndOfYourOpponentsTurnClass(card, effectName, activateCoroutine, effectDescription("End of Opponent's Turn"), optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn));
         }
         if (endOfAllTurns && timing == EffectTiming.OnEndTurn)
         {
-            cardEffects.Add(TurnTimingClass(card, effectName, activateCoroutine, effectDescription("End of All Turns"), optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn, yourTurn: true, opponentTurn: true));
+            cardEffects.Add(EndOfAllTurnsClass(card, effectName, activateCoroutine, effectDescription("End of All Turns"), optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn));
+        }
+        if(startOfYourMainPhase && timing == EffectTiming.OnStartMainPhase)
+        {
+            cardEffects.Add(StartOfYourMainPhaseClass(card, effectName, activateCoroutine, effectDescription("Start of Your Main Phase"), optional, additionalUseCondition, additionalActivateCondition, maxCountPerTurn));
         }
         
         return cardEffects;
