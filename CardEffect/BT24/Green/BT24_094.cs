@@ -306,9 +306,9 @@ namespace DCGO.CardEffects.BT24
                         {
                             List<SelectionElement<int>> selectionElements1 = new List<SelectionElement<bool>>()
                         {
-                            new SelectionElement<int>(message: $"From hand", value : "1", spriteIndex: 0),
-                            new SelectionElement<int>(message: $"From trash", value : "2", spriteIndex: 1),
-                            new SelectionElement<int>(message: $"Don't play", value: "3", spriteIndex: 2)
+                            new SelectionElement<int>(message: $"From hand", value : 1, spriteIndex: 0),
+                            new SelectionElement<int>(message: $"From trash", value : 2, spriteIndex: 1),
+                            new SelectionElement<int>(message: $"Don't play", value: 3, spriteIndex: 2)
                         };
 
                             string selectPlayerMessage1 = "From which area will you play a card?";
