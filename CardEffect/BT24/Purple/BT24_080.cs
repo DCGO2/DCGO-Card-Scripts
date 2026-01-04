@@ -101,14 +101,17 @@ namespace DCGO.CardEffects.BT24
 
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(new PlayCardClass(
-                            cardSources: new List<CardSource> { card },
-                            hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                            payCost: false,
-                            targetPermanent: permanent,
-                            isTapped: false,
-                            root: root,
-                            activateETB: true).PlayCard);
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                                targetPermanent: permanent,
+                                cardCondition: null,
+                                payCost: false,
+                                reduceCostTuple: null,
+                                fixedCostTuple: null,
+                                ignoreDigivolutionRequirementFixedCost: -1,
+                                isHand: false,
+                                activateClass: activateClass,
+                                successProcess: null,
+                                ignoreSelection: true));
                     }
                 }
             }
