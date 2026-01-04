@@ -341,7 +341,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, PermanentCondition)
-                        && !CardEffectCommons.IsOwnerEffect(activateClass, card)
+                        && CardEffectCommons.IsOpponentEffect(activateClass, card)
                         && CardEffectCommons.CanActivateSuspendCostEffect(card);
                 }
 
