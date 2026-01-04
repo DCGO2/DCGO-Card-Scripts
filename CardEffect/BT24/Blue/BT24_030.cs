@@ -341,13 +341,13 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, PermanentCondition)
-                        && CardEffectCommons.IsOpponentEffect(activateClass, card)
-                        && CardEffectCommons.CanActivateSuspendCostEffect(card);
+                        && CardEffectCommons.IsOpponentEffect(activateClass, card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanActivateSuspendCostEffect(card);
                 }
 
                 bool PermanentCondition(Permanent permanent)
