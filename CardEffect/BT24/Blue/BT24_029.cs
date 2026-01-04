@@ -308,6 +308,7 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon
                         && cardSource.CardColors.Contains(CardColor.Blue)
                         && cardSource.HasLevel && cardSource.Level <= 4
+                        && cardSource.HasTSTraits
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass, root: SelectCardEffect.Root.DigivolutionCards);
                 }
 
