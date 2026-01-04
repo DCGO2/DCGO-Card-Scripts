@@ -170,7 +170,7 @@ namespace DCGO.CardEffects.P
 
                 string EffectDiscription()
                 {
-                    return "[End of Attack] By placing this Digimon’s top card as your top security card, unsuspend this Digimon or Tamer.";
+                    return "[End of Attack] By placing this Digimon's top card as your top security card, unsuspend this Digimon or Tamer.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -183,10 +183,9 @@ namespace DCGO.CardEffects.P
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
-                        return card.PermanentOfThisCard().DigivolutionCards.Count > 0;
-
-                    return false;
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && card.PermanentOfThisCard().DigivolutionCards.Count > 0
+                        && card.Owner.CanAddSecurity(activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
