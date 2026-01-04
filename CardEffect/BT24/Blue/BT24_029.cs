@@ -118,7 +118,7 @@ namespace DCGO.CardEffects.BT24
                             canNotSuspendClass.SetUpCanNotSuspendClass(PermanentCondition: PermanentCondition);
                             selectedPermanent.UntilOwnerTurnEndEffects.Add((_timing) => canNotSuspendClass);
 
-                            if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass)) yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateDebuffEffect(selectedPermanent));
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateDebuffEffect(selectedPermanent));
 
                             bool CanUseCondition1(Hashtable hashtable)
                             {
