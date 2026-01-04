@@ -11,6 +11,8 @@ namespace DCGO.CardEffects.BT24
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
+            #region Static Effects
+
             #region Alt Digivolution Condition
 
             if (timing == EffectTiming.None)
@@ -27,6 +29,111 @@ namespace DCGO.CardEffects.BT24
             #endregion
 
             #region Reduce Play Cost (-5)
+
+            if (timing == EffectTiming.BeforePayCost)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Reduce the play cost by 5", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetHashString("PlayCost-5_BT24_040");
+                cardEffects.Add(activateClass);
+
+                string EffectDiscription()
+                {
+                    return "When this card would be played, if your opponent has 2 or more Digimon, reduce the play cost by 5.";
+                }
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanTriggerWhenPermanentWouldPlay(hashtable, CardCondition);
+                }
+
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnHand(card)
+                        && CardEffectCommons.MatchConditionOpponentsPermanentCount(card, PermanentCondition) >= 2;
+                }
+
+                bool PermanentCondition(Permanent permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
+                }
+
+                bool CardCondition(CardSource cardSource)
+                {
+                    return cardSource == card
+                        && CardEffectCommons.IsExistOnHand(cardSource);
+                }
+
+                IEnumerator ActivateCoroutine(Hashtable _hashtable)
+                {
+                    if (card.Owner.CanReduceCost(null, card)) ContinuousController.instance.PlaySE(GManager.instance.GetComponent<Effects>().BuffSE);
+
+                    ChangeCostClass changeCostClass = new ChangeCostClass();
+                    changeCostClass.SetUpICardEffect("Play Cost -5", CanUseCondition1, card);
+                    changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
+                    card.Owner.UntilCalculateFixedCostEffect.Add((_timing) => changeCostClass);
+
+                    bool CanUseCondition1(Hashtable hashtable)
+                    {
+                        return true;
+                    }
+
+                    int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                    {
+                        if (CardSourceCondition(cardSource))
+                        {
+                            if (RootCondition(root))
+                            {
+                                if (PermanentsCondition(targetPermanents))
+                                {
+                                    Cost -= 5;
+                                }
+                            }
+                        }
+
+                        return Cost;
+                    }
+
+                    bool PermanentsCondition(List<Permanent> targetPermanents)
+                    {
+                        if (targetPermanents == null)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
+                            {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    bool CardSourceCondition(CardSource cardSource)
+                    {
+                        return cardSource == card;
+                    }
+
+                    bool RootCondition(SelectCardEffect.Root root)
+                    {
+                        return true;
+                    }
+
+                    bool isUpDown()
+                    {
+                        return true;
+                    }
+
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(_hashtable));
+                }
+            }
+
+            #endregion
+
+            #region Reduce Play Cost (-5) Not Shown
 
             if (timing == EffectTiming.None)
             {
@@ -95,6 +202,8 @@ namespace DCGO.CardEffects.BT24
                     return true;
                 }
             }
+
+            #endregion
 
             #endregion
 
