@@ -358,10 +358,10 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    Permanent selectedPermanent = card.PermanentOfThisCard();
-                    yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent>() { selectedPermanent }, hashtable).Tap());
+                    Permanent thisPermament = card.PermanentOfThisCard();
+                    yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent>() { thisPermament }, hashtable).Tap());
 
-                    if (selectedPermanent.IsSuspended)
+                    if (thisPermament.IsSuspended)
                     {
                         List<Permanent> protectedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable)
                                     .Filter(PermanentCondition);
