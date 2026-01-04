@@ -61,7 +61,8 @@ public class AutoProcessing : MonoBehaviourPunCallbacks
         if (skillInfo.CardEffect.EffectSourceCard == null) return;
         if (!(skillInfo.CardEffect is ActivateICardEffect)) return;
 
-        CardSource card = skillInfo.CardEffect.EffectSourceCard;
+        ICardEffect cardEffect = skillInfo.CardEffect;
+        CardSource card = cardEffect.EffectSourceCard;
         Permanent permanent = card.PermanentOfThisCard();
 
         #region set the flag whether it is Digimon's effect
@@ -69,13 +70,18 @@ public class AutoProcessing : MonoBehaviourPunCallbacks
         {
             if (permanent.IsDigimon)
             {
-                skillInfo.CardEffect.SetIsDigimonEffect(true);
+                cardEffect.SetIsDigimonEffect(true);
             }
+        }
+
+        if (cardEffect.IsInheritedEffect || cardEffect.IsLinkedEffect)
+        {
+            cardEffect.SetIsDigimonEffect(true);
         }
 
         if (card == GManager.instance.attackProcess.SecurityDigimon)
         {
-            skillInfo.CardEffect.SetIsDigimonEffect(true);
+            cardEffect.SetIsDigimonEffect(true);
         }
         #endregion
 
@@ -84,22 +90,22 @@ public class AutoProcessing : MonoBehaviourPunCallbacks
         {
             if (permanent.IsTamer)
             {
-                skillInfo.CardEffect.SetIsTamerEffect(true);
+                cardEffect.SetIsTamerEffect(true);
             }
         }
 
-        else if (card.IsTamer)
+        else if (card.IsTamer && !cardEffect.IsInheritedEffect)
         {
-            skillInfo.CardEffect.SetIsTamerEffect(true);
+            cardEffect.SetIsTamerEffect(true);
         }
         #endregion
 
         #region set permanent and topCard when triggered
-        ((ActivateICardEffect)skillInfo.CardEffect).PermanentWhenTriggered = permanent;
+        ((ActivateICardEffect)cardEffect).PermanentWhenTriggered = permanent;
 
         if (permanent != null)
         {
-            ((ActivateICardEffect)skillInfo.CardEffect).TopCardWhenTriggered = permanent.TopCard;
+            ((ActivateICardEffect)cardEffect).TopCardWhenTriggered = permanent.TopCard;
         }
         #endregion
 
