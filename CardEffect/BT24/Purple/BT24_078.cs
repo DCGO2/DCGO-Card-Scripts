@@ -84,7 +84,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Digivolve into this to trash top opponent security", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete opponent's lowest level, play a Digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
