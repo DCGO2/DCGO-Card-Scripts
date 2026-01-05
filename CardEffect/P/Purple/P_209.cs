@@ -211,7 +211,7 @@ namespace DCGO.CardEffects.P
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, null);
+                        && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, cardSource => cardSource.Owner == card.Owner);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
