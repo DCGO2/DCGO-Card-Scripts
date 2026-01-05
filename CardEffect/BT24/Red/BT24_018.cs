@@ -133,12 +133,9 @@ namespace DCGO.CardEffects.BT24
                     
                         IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                         {
-                            if (cardSources.Count >= 1)
-                            {
-                                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                                    player: card.Owner.Enemy,
-                                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-                            }
+                            yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
+                                player: card.Owner.Enemy,
+                                refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
                         }
                     }
                     #endregion
