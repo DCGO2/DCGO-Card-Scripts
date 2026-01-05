@@ -97,27 +97,48 @@ namespace DCGO.CardEffects.BT24
                     #region Trash Security
                     if (card.Owner.Enemy.SecurityCards.Count >= 1)
                     {
-                        List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
+                        int maxCount = 1;
+                    
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    
+                        CardSource selectedCard = null;
+                    
+                        selectCardEffect.SetUp(
+                            canTargetCondition: (cardSource) => true,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            canNoSelect: () => true,
+                            selectCardCoroutine: SelectCardCoroutine,
+                            afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                            message: "Select 1 card to trash.\n (cards to the left are at the top and cards to the right are at the bottom)",
+                            maxCount: maxCount,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            mode: SelectCardEffect.Mode.Custom,
+                            root: SelectCardEffect.Root.Security,
+                            customRootCardList: card.Owner.Enemy.SecurityCards,
+                            canLookReverseCard: false,
+                            selectPlayer: card.Owner,
+                            cardEffect: activateClass);
+                    
+                        selectCardEffect.SetUpCustomMessage_ShowCard("Return card to top of deck");
+                    
+                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                    
+                        IEnumerator SelectCardCoroutine(CardSource cardSource)
                         {
-                            new SelectionElement<bool>(message: $"Yes", value : true, spriteIndex: 0),
-                            new SelectionElement<bool>(message: $"No", value : false, spriteIndex: 1),
-                        };
-
-                        string selectPlayerMessage = "Will you trash 1 opponent's security?";
-                        string notSelectPlayerMessage = "The opponent is choosing if they will trash your security.";
-
-                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
-
-                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
-                        var selectedOption = GManager.instance.userSelectionManager.SelectedBoolValue;
-
-                        if (selectedOption)
+                            selectedCard = cardSource;
+                            yield return null;
+                        }
+                    
+                        IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
-                                player: card.Owner.Enemy,
-                                destroySecurityCount: 1,
-                                cardEffect: activateClass,
-                                fromTop: true).DestroySecurity());
+                            if (cardSources.Count >= 1)
+                            {
+                                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
+                                    player: card.Owner.Enemy,
+                                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
+                            }
                         }
                     }
                     #endregion
