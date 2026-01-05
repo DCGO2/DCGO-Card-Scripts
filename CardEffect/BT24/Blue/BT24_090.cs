@@ -167,9 +167,10 @@ namespace DCGO.CardEffects.BT24
                             card, toTop: false, faceUp: true));
                     }
 
-                    #region Set up the cost -3
+                    #region reduce play cost
+
                     ChangeCostClass changeCostClass = new ChangeCostClass();
-                    changeCostClass.SetUpICardEffect("Cost -3", CanUseCondition1, card);
+                    changeCostClass.SetUpICardEffect($"Play Cost -3", CanUseCondition1, card);
                     changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
                     Func<EffectTiming, ICardEffect> getCardEffect = GetCardEffect;
                     card.Owner.UntilCalculateFixedCostEffect.Add(getCardEffect);
@@ -207,9 +208,13 @@ namespace DCGO.CardEffects.BT24
 
                     bool PermanentsCondition(List<Permanent> targetPermanents)
                     {
-                        if (targetPermanents != null)
+                        if (targetPermanents == null)
                         {
-                            if (targetPermanents.Count(PermanentCondition) >= 1)
+                            return true;
+                        }
+                        else
+                        {
+                            if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
                             {
                                 return true;
                             }
@@ -218,14 +223,14 @@ namespace DCGO.CardEffects.BT24
                         return false;
                     }
 
-                    bool PermanentCondition(Permanent targetPermanent)
-                    {
-                        return targetPermanent == card.PermanentOfThisCard();
-                    }
-
                     bool CardSourceCondition(CardSource cardSource)
                     {
-                        return cardSource.Owner == card.Owner;
+                        if (CanSelectCardCondition(cardSource))
+                        {
+                            return true;
+                        }
+
+                        return false;
                     }
 
                     bool RootCondition(SelectCardEffect.Root root)
@@ -274,7 +279,7 @@ namespace DCGO.CardEffects.BT24
                             activateETB: true));
                     }
 
-                    #region Remove reduced cost
+                    #region Remove Cost effect after use
                     card.Owner.UntilCalculateFixedCostEffect.Remove(getCardEffect);
                     #endregion
                 }
