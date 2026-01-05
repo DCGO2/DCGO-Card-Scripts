@@ -3063,7 +3063,7 @@ public class CardSource : MonoBehaviour
 
     #region whether target permanent can App Fusion into this card
 
-    public bool CanAppFusionFromTargetPermanent(Permanent targetPermanent, bool PayCost)
+    public bool CanAppFusionFromTargetPermanent(Permanent targetPermanent, bool PayCost, SelectCardEffect.Root root = SelectCardEffect.Root.Hand)
     {
         if (targetPermanent != null)
         {
@@ -3083,7 +3083,7 @@ public class CardSource : MonoBehaviour
                                     {
                                         int cost = appFusionCondition.cost;
 
-                                        cost = GetChangedCostItselef(cost, SelectCardEffect.Root.Hand, new List<Permanent>() { targetPermanent }, checkAvailability: true);
+                                        cost = GetChangedCostItselef(cost, root, new List<Permanent>() { targetPermanent }, checkAvailability: true);
 
                                         if (Owner.MaxMemoryCost < cost)
                                         {
