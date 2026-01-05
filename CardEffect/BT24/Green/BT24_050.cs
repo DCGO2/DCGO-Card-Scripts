@@ -113,10 +113,10 @@ namespace DCGO.CardEffects.BT24
 
                         if (selectedPermanent != null)
                         {
-                            CanNotSuspendClass canNotSuspendClass = new CanNotSuspendClass();
-                            canNotSuspendClass.SetUpICardEffect("Can't Suspend", CanUseCondition1, card);
-                            canNotSuspendClass.SetUpCanNotSuspendClass(PermanentCondition: PermanentCondition);
-                            selectedPermanent.UntilOwnerTurnEndEffects.Add((_timing) => canNotSuspendClass);
+                            CanNotUnsuspendClass canNotUnsuspendClass = new CanNotUnsuspendClass();
+                            canNotUnsuspendClass.SetUpICardEffect("Can't Suspend", CanUseCondition1, card);
+                            canNotUnsuspendClass.SetUpCanNotUntapClass(PermanentCondition: PermanentCondition);
+                            selectedPermanent.UntilOwnerTurnEndEffects.Add((_timing) => canNotUnsuspendClass);
 
                             if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                             {
@@ -207,9 +207,9 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsDigimon
                         && cardSource.HasDP
-                        && cardSource.BaseDP <= 4000
+                        && cardSource.CardDP <= 4000
                         && (cardSource.HasIliadTraits
-                        || cardSource.HasBeastTraits)
+                            || cardSource.HasBeastTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
