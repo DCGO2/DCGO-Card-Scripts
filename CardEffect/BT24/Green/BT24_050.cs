@@ -207,9 +207,9 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsDigimon
                         && cardSource.HasDP
-                        && cardSource.BaseDP <= 4000
+                        && cardSource.CardDP <= 4000
                         && (cardSource.HasIliadTraits
-                        || cardSource.HasBeastTraits)
+                            || cardSource.HasBeastTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
