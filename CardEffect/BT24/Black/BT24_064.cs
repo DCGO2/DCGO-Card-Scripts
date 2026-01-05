@@ -18,7 +18,7 @@ namespace DCGO.CardEffects.BT24
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
                     return targetPermanent.TopCard.IsLevel5
-                        && (targetPermanent.TopCard.EqualsTraits("Digipolice")
+                        && (targetPermanent.TopCard.EqualsTraits("DigiPolice")
                             || targetPermanent.TopCard.EqualsTraits("SEEKERS"));
                 }
 
