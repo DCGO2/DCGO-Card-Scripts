@@ -46,16 +46,19 @@ namespace DCGO.CardEffects.BT24
                 }
 
                 #region Blocker
-                AddSkillClass addSkillClass = new AddSkillClass();
-                addSkillClass.SetUpICardEffect("Your Digimon gain <Blocker>", CanUseCondition, card);
-                addSkillClass.SetUpAddSkillClass(cardSourceCondition: CardSourceCondition, getEffects: GetEffects);
-                cardEffects.Add(addSkillClass);
-
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistInSecurity(card, false) &&
-                           CardEffectCommons.HasMatchConditionPermanent(PermanentCondition);
+                    return CardEffectCommons.IsExistInSecurity(card, false);
                 }
+
+                cardEffects.Add(CardEffectFactory.BlockerStaticEffect(permanentCondition: PermanentCondition, isInheritedEffect: false, card: card, condition: CanUseCondition));
+                #endregion
+
+                #region Alliance
+                AddSkillClass addSkillClass1 = new AddSkillClass();
+                addSkillClass1.SetUpICardEffect("Your Digimon gain <Alliance>", CanUseCondition1, card);
+                addSkillClass1.SetUpAddSkillClass(cardSourceCondition: CardSourceCondition, getEffects: GetEffects1);
+                cardEffects.Add(addSkillClass1);
 
                 bool CardSourceCondition(CardSource cardSource)
                 {
@@ -64,28 +67,6 @@ namespace DCGO.CardEffects.BT24
                            cardSource == cardSource.PermanentOfThisCard().TopCard &&
                            PermanentCondition(cardSource.PermanentOfThisCard());
                 }
-
-                List<ICardEffect> GetEffects(CardSource cardSource, List<ICardEffect> effects, EffectTiming effectTiming)
-                {
-                    if (effectTiming == EffectTiming.OnEndTurn)
-                    {
-                        bool Condition()
-                        {
-                            return CardSourceCondition(cardSource);
-                        }
-
-                        effects.Add(CardEffectFactory.BlockerSelfStaticEffect(false, cardSource, Condition));
-                    }
-
-                    return effects;
-                }
-                #endregion
-
-                #region Alliance
-                AddSkillClass addSkillClass1 = new AddSkillClass();
-                addSkillClass1.SetUpICardEffect("Your Digimon gain <Alliance>", CanUseCondition1, card);
-                addSkillClass1.SetUpAddSkillClass(cardSourceCondition: CardSourceCondition, getEffects: GetEffects1);
-                cardEffects.Add(addSkillClass1);
 
                 bool CanUseCondition1(Hashtable hashtable)
                 {
