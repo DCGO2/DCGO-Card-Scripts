@@ -65,7 +65,7 @@ namespace DCGO.CardEffects.EX11
                     #region Unsuspend 1 Digimon
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                     {
-                        selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                         selectPermanentEffect.SetUp(
                             selectPlayer: card.Owner,
@@ -88,7 +88,7 @@ namespace DCGO.CardEffects.EX11
                     #region Suspend 1 Digimon
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                     {
-                        selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                         selectPermanentEffect.SetUp(
                             selectPlayer: card.Owner,
@@ -147,7 +147,7 @@ namespace DCGO.CardEffects.EX11
                         && cardSource.HasDP
                         && cardSource.CardDP <= DP
                         && (cardSource.ContainsTraits("Avian")
-                            || cardSourced.ContainsTraits("Bird"))
+                            || cardSource.ContainsTraits("Bird"))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
@@ -163,7 +163,7 @@ namespace DCGO.CardEffects.EX11
 
                     List<CardSource> selectedCards = new List<CardSource>();
                     
-                    int maxCount = Math.min(1, card.Owner.HandCards.Count(cardSource => CanSelectCardCondition(cardSource, DP)));
+                    int maxCount = Math.Min(1, card.Owner.HandCards.Count(cardSource => CanSelectCardCondition(cardSource, DP)));
 
                     SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
