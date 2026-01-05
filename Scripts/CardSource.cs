@@ -1482,9 +1482,9 @@ public class CardSource : MonoBehaviour
         if (string.IsNullOrEmpty(trait))
             return false;
 
-        string replaced = trait.Replace(" ", "");
+        string replaced = trait.Replace(" ", "").ToLower();
 
-        return CardTraits.Some(cardTrait => cardTrait.Equals(trait) || cardTrait.Equals(replaced));
+        return CardTraits.Some(cardTrait => cardTrait.Equals(trait) || cardTrait.ToLower().Equals(replaced));
     }
 
     #endregion
@@ -1501,9 +1501,9 @@ public class CardSource : MonoBehaviour
         if (string.IsNullOrEmpty(trait))
             return false;
 
-        string replaced = trait.Replace(" ", "");
+        string replaced = trait.Replace(" ", "").ToLower();
 
-        return CardTraits.Some(cardTrait => cardTrait.Contains(trait) || cardTrait.Contains(replaced));
+        return CardTraits.Some(cardTrait => cardTrait.Contains(trait) || cardTrait.ToLower().Contains(replaced));
     }
 
     #endregion
