@@ -56,7 +56,8 @@ namespace DCGO.CardEffects.BT24
                 var sourceNames = cardSource.CardNames
                     .Select(n => n.ToLowerInvariant());
 
-                return cardSource.HasTSTraits &&
+                return cardSource.IsTamer &&
+                    cardSource.HasTSTraits &&
                     !sourceNames.Any(n => fieldNames.Contains(n)) &&
                     CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
             }
