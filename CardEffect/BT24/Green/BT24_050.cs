@@ -113,10 +113,10 @@ namespace DCGO.CardEffects.BT24
 
                         if (selectedPermanent != null)
                         {
-                            CanNotSuspendClass canNotSuspendClass = new CanNotSuspendClass();
-                            canNotSuspendClass.SetUpICardEffect("Can't Suspend", CanUseCondition1, card);
-                            canNotSuspendClass.SetUpCanNotSuspendClass(PermanentCondition: PermanentCondition);
-                            selectedPermanent.UntilOwnerTurnEndEffects.Add((_timing) => canNotSuspendClass);
+                            CanNotUnsuspendClass canNotUnsuspendClass = new CanNotUnsuspendClass();
+                            canNotUnsuspendClass.SetUpICardEffect("Can't Suspend", CanUseCondition1, card);
+                            canNotUnsuspendClass.SetUpCanNotUntapClass(PermanentCondition: PermanentCondition);
+                            selectedPermanent.UntilOwnerTurnEndEffects.Add((_timing) => canNotUnsuspendClass);
 
                             if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                             {
