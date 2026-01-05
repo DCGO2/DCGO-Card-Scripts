@@ -88,7 +88,7 @@ namespace DCGO.CardEffects.BT24
 
                         selectHandEffect.SetUpCustomMessage("Select 1 Card to trash.", "The opponent is selecting 1 card to trash from their hand.");
 
-                        yield return StartCoroutine(selectHandEffect.Activate());
+                        yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
                         IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                         {
