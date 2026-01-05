@@ -12,6 +12,36 @@ namespace DCGO.CardEffects.BT24
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
+            #region Alternate Digivolution
+            if (timing == EffectTiming.None)
+            {
+                bool Condition()
+                {
+                    return CardEffectCommons.HasMatchConditionOwnersPermanent(card, HasOwenDreadnought);
+                }
+
+                bool HasOwenDreadnought(Permanent targetPermanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(targetPermanent, card) &&
+                           targetPermanent.TopCard.EqualsCardName("Owen Dreadnought");
+                }
+
+                bool PermanentCondition(Permanent targetPermanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(targetPermanent, card)
+                        && targetPermanent.TopCard.EqualsCardName("Lamiamon");
+                }
+
+                cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(
+                    permanentCondition: PermanentCondition,
+                    digivolutionCost: 6,
+                    ignoreDigivolutionRequirement: false,
+                    card: card,
+                    condition: Condition)
+                );
+            }
+            #endregion
+
             #region Progress
             if (timing == EffectTiming.None)
             {
