@@ -54,14 +54,17 @@ namespace DCGO.CardEffects.BT24
                 {
                     Permanent selectedPermanent = GManager.instance.attackProcess.AttackingPermanent;
 
-                    yield return ContinuousController.instance.StartCoroutine(new PlayCardClass(
-                            cardSources: new List<CardSource> { card },
-                            hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                            payCost: false,
-                            targetPermanent: selectedPermanent,
-                            isTapped: false,
-                            root: root,
-                            activateETB: true).PlayCard);
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                                targetPermanent: selectedPermanent,
+                                cardCondition: null,
+                                payCost: false,
+                                reduceCostTuple: null,
+                                fixedCostTuple: null,
+                                ignoreDigivolutionRequirementFixedCost: -1,
+                                isHand: false,
+                                activateClass: activateClass,
+                                successProcess: null,
+                                ignoreSelection: true));
                     
                     if (selectedPermanent.TopCard == card)
                     {
