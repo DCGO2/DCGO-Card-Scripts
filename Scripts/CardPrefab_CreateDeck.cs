@@ -205,7 +205,7 @@ public class CardPrefab_CreateDeck : MonoBehaviour
 
             if (CostText != null)
             {
-                if (cEntity_Base.cardKind != CardKind.DigiEgg)
+                if (cEntity_Base.HasCost)
                 {
                     for (int i = CostIcons.Count-1; i > -1; i--)
                     {
