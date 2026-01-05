@@ -67,11 +67,10 @@ namespace DCGO.CardEffects.BT24
                             {
                                 return cardSource.EqualsCardName("Titamon");//If no cards selected yet, force to select a Titamon first
                             }
-                            if (cardSources.Count == 1)
+                            else
                             {
                                 return cardSource.EqualsCardName("SkullBaluchimon");//If 1 card (Titamon) chosen, force to select a SkullBaluchimon next
                             }
-                            return false;
                         }
 
                         AssemblyCondition assemblyCondition = new AssemblyCondition(
