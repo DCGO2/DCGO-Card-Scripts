@@ -112,14 +112,14 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                    return CardEffectCommons.IsExistOnBattleArea(card)
                         && (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, MyPlayedDigimonCondition)
                         || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, MyPlayedDigimonCondition));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                    return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.HasMatchConditionPermanent(IsMyProperDigimon);
                 }
 
@@ -143,7 +143,7 @@ namespace DCGO.CardEffects.BT24
             {
                 bool Condition()
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && (card.PermanentOfThisCard().TopCard.HasXAntibodyTraits
                         || card.PermanentOfThisCard().TopCard.EqualsTraits("DigiPolice")
                         || card.PermanentOfThisCard().TopCard.HasSeekersTraits);
@@ -156,7 +156,7 @@ namespace DCGO.CardEffects.BT24
             {
                 bool Condition()
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && (card.PermanentOfThisCard().TopCard.HasXAntibodyTraits
                         || card.PermanentOfThisCard().TopCard.EqualsTraits("DigiPolice")
                         || card.PermanentOfThisCard().TopCard.HasSeekersTraits);
@@ -190,12 +190,12 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && card.PermanentOfThisCard().DigivolutionCards.Count(CanSelectCardCondition) >= 1;
                 }
 
