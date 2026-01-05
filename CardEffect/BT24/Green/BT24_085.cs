@@ -48,7 +48,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEndTurn)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Play a [TS] Option that costs less than your opponent's memory", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Use a [TS] Option that costs less than your opponent's memory, 1 [TS] Digimon may attack", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
                 cardEffects.Add(activateClass);
 
