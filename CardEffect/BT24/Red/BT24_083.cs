@@ -39,7 +39,7 @@ namespace DCGO.CardEffects.BT24
                     return (cardSource.EqualsCardName("Hiroko Sagisaka")
                         || (cardSource.IsDigimon
                             && cardSource.HasDP
-                            && cardSource.BaseDP <= 5000
+                            && cardSource.CardDP <= 5000
                             && cardSource.HasTSTraits))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
