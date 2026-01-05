@@ -39,7 +39,7 @@ namespace DCGO.CardEffects.BT24
                     return (cardSource.EqualsCardName("Asuna Shiroki")
                         || (cardSource.IsDigimon
                             && cardSource.HasLevel
-                            && cardSource.Level < 4
+                            && cardSource.Level <= 4
                             && (cardSource.HasTSTraits
                                 || cardSource.HasText("Three Musketeers"))))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
