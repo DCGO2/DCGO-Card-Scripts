@@ -230,15 +230,15 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    int secCount = card.Owner.Enemy.SecurityCards.Count;
+                    CardSource secCard = card.Owner.SecurityCards[0];
 
                     yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
-                        player: card.Owner.Enemy,
+                        player: card.Owner,
                         destroySecurityCount: 1,
                         cardEffect: activateClass,
                         fromTop: true).DestroySecurity());
 
-                    if(card.Owner.Enemy.SecurityCards.Count < secCount)
+                    if(card.Owner.TrashCards.Contains(secCard))
                     {
                         List<Permanent> protectedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable)
                                     .Filter(PermanentCondition);
