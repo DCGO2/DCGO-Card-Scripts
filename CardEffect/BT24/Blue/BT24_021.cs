@@ -68,30 +68,29 @@ namespace DCGO.CardEffects.BT24
                         simplifiedSelectCardConditions:
                         new SimplifiedSelectCardConditionClass[]
                         {
-                        new SimplifiedSelectCardConditionClass(
+                        new (
                             canTargetCondition:CanSelectCardCondition,
                             message: "Select 1 Digimon with [Demon] or [Shaman] in its traits.",
                             mode: SelectCardEffect.Mode.AddHand,
                             maxCount: 1,
-                            selectCardCoroutine: SelectCardCoroutine),
-                        new SimplifiedSelectCardConditionClass(
+                            selectCardCoroutine: null),
+                        new (
                             canTargetCondition:CanSelectCardCondition1,
                             message: "Select 1 card with [Titan] in its traits.",
                             mode: SelectCardEffect.Mode.AddHand,
                             maxCount: 1,
-                            selectCardCoroutine: SelectCardCoroutine),
+                            selectCardCoroutine: null),
                         },
                         remainingCardsPlace: RemainingCardsPlace.DeckBottom,
-                        activateClass: activateClass
+                        activateClass: activateClass,
+                        revealedCardsCoroutine: RevealedCardsCoroutine
                     ));
 
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    IEnumerator RevealedCardsCoroutine(List<CardSource> revealedCards)
                     {
-                        if (cardSource != null)
-                        {
-                            addedCard = true;
-                            yield return null;
-                        }
+                        addedCard = revealedCards.Count(cardSource => CanSelectCardCondition(cardSource) || CanSelectCardCondition1(cardSource)) >= 1;
+
+                        yield return null;
                     }
 
                     if (addedCard && card.Owner.HandCards.Count >= 1)
