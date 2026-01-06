@@ -935,7 +935,8 @@ public enum EffectTiming
     WhenTopCardTrashed,
     RulesTiming,
     OnRemovedField,
-    OnLinkCardDiscarded
+    OnLinkCardDiscarded,
+    OnFaceUpSecurityIncreased
 }
 
 #endregion
