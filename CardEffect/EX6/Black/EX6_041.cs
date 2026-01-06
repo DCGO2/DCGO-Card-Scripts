@@ -35,7 +35,7 @@ namespace DCGO.CardEffects.EX6
                     return false;
                 }
 
-                bool DiaboromonHand(CardSource cardSource)
+                bool IsDiaboromon(CardSource cardSource)
                 {
                     return cardSource.EqualsCardName("Diaboromon");
                 }
@@ -93,7 +93,7 @@ namespace DCGO.CardEffects.EX6
                     {
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                                 targetPermanent: card.PermanentOfThisCard(),
-                                cardCondition: DiaboromonHand,
+                                cardCondition: IsDiaboromon,
                                 payCost: false,
                                 reduceCostTuple: null,
                                 fixedCostTuple: null,
@@ -133,7 +133,7 @@ namespace DCGO.CardEffects.EX6
                     return false;
                 }
 
-                bool DiaboromonHand(CardSource cardSource)
+                bool IsDiaboromon(CardSource cardSource)
                 {
                     return cardSource.EqualsCardName("Diaboromon");
                 }
@@ -191,7 +191,7 @@ namespace DCGO.CardEffects.EX6
                     {
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                                 targetPermanent: card.PermanentOfThisCard(),
-                                cardCondition: DiaboromonHand,
+                                cardCondition: IsDiaboromon,
                                 payCost: false,
                                 reduceCostTuple: null,
                                 fixedCostTuple: null,
