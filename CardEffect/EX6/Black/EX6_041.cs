@@ -35,9 +35,9 @@ namespace DCGO.CardEffects.EX6
                     return false;
                 }
 
-                bool HasDiaboromonInNameHand(CardSource cardSource)
+                bool DiaboromonHand(CardSource cardSource)
                 {
-                    return cardSource.ContainsCardName("Diaboromon");
+                    return cardSource.EqualsCardName("Diaboromon");
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -93,7 +93,7 @@ namespace DCGO.CardEffects.EX6
                     {
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                                 targetPermanent: card.PermanentOfThisCard(),
-                                cardCondition: HasDiaboromonInNameHand,
+                                cardCondition: DiaboromonHand,
                                 payCost: false,
                                 reduceCostTuple: null,
                                 fixedCostTuple: null,
@@ -133,9 +133,9 @@ namespace DCGO.CardEffects.EX6
                     return false;
                 }
 
-                bool HasDiaboromonInNameHand(CardSource cardSource)
+                bool DiaboromonHand(CardSource cardSource)
                 {
-                    return cardSource.ContainsCardName("Diaboromon");
+                    return cardSource.EqualsCardName("Diaboromon");
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -191,7 +191,7 @@ namespace DCGO.CardEffects.EX6
                     {
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                                 targetPermanent: card.PermanentOfThisCard(),
-                                cardCondition: HasDiaboromonInNameHand,
+                                cardCondition: DiaboromonHand,
                                 payCost: false,
                                 reduceCostTuple: null,
                                 fixedCostTuple: null,
