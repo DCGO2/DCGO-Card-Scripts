@@ -4863,7 +4863,17 @@ public class IAddSecurity
         #region "When face up cards are added"
         if (!_cardSource.IsFlipped)
         {
-            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.StackSkillInfos(hashtable, EffectTiming.OnFaceUpSecurityIncreased));
+            #region Hashtable setting
+
+            Hashtable faceUpHashtable = new Hashtable()
+            {
+                {"Player", _player},
+                {"CardSources", new List<CardSource> { _cardSource } }
+            };
+
+            #endregion
+
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.StackSkillInfos(faceUpHashtable, EffectTiming.OnFaceUpSecurityIncreased));
         }
         #endregion
     }
