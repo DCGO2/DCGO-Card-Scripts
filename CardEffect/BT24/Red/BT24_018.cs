@@ -121,7 +121,7 @@ namespace DCGO.CardEffects.BT24
                             selectPlayer: card.Owner,
                             cardEffect: activateClass);
                     
-                        selectCardEffect.SetUpCustomMessage_ShowCard("Return card to top of deck");
+                        selectCardEffect.SetUpCustomMessage_ShowCard("Send to trash");
                     
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
                     
