@@ -82,7 +82,7 @@ namespace DCGO.CardEffects.BT24
                             payCost: true,
                             reduceCostTuple: null,
                             fixedCostTuple: null,
-                            ignoreDigivolutionRequirementFixedCost: 0,
+                            ignoreDigivolutionRequirementFixedCost: -1,
                             isHand: true,
                             activateClass: activateClass,
                             successProcess: null));
