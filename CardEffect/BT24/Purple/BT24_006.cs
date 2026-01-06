@@ -15,7 +15,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.WhenLinked)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("<Draw 1>", CanUseCondition, card);
+                activateClass.SetUpICardEffect("<Draw 1>, trash 1", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetHashString("Draw_BT24_006");
                 activateClass.SetIsInheritedEffect(true);
