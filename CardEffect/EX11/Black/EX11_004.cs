@@ -27,7 +27,7 @@ namespace DCGO.CardEffects.EX11
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.IsOwnerTurn(card)
-                        && CardEffectCommons.CanTriggerOnFaceUpSecurityIncreases(hashtable, cardSource => cardSource.Owner == card.Owner.Enemy);
+                        && CardEffectCommons.CanTriggerOnFaceUpSecurityIncreases(hashtable, card.Owner.Enemy);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
