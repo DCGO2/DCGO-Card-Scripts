@@ -37,7 +37,7 @@ namespace DCGO.CardEffects.BT17
                         {
                             if (!permanent.IsToken)
                             {
-                                if (permanent.TopCard.EqualsCardName("Diaboromon"))
+                                if (permanent.TopCard.CardNames.Contains("Diaboromon"))
                                 {
                                     if (permanent.DigivolutionCards.Count(IsDoomsdayClock) == 0)
                                     {
