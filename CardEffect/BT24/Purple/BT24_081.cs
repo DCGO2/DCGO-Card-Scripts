@@ -90,27 +90,14 @@ namespace DCGO.CardEffects.BT24
 
             #region Shared OP WD WA
 
-            string SharedEffectName()
-            {
-                return "Trash a card to delete all opponent's lowest digimon.";
-            }
-
             string SharedEffectDescription(string tag)
             {
                 return $"[{tag}] By trashing 1 card in your hand, delete all of your opponent's Digimon with the lowest level.";
             }
 
-            bool SharedCanActivateCondition(Hashtable hashtable)
+            bool AdditionalActivateCondition(Hashtable hashtable)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (card.Owner.HandCards.Count >= 1)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return card.Owner.HandCards.Count >= 1;
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
@@ -164,61 +151,28 @@ namespace DCGO.CardEffects.BT24
                 }
             }
 
-            #endregion
+            CardEffectFactory.ActivateClassesForSharedEffects(cardEffects, timing, card, 
+                                                                "Trash a card to delete all opponent's lowest digimon.",
+                                                                SharedActivateCoroutine,
+                                                                SharedEffectDescription,
+                                                                optional: false,
+                                                                onPlay: true,
+                                                                whenDigivolving: true,
+                                                                whenAttacking: true,
+                                                                additionalActivateCondition: AdditionalActivateCondition);
 
-            #region On Play
-            if (timing == EffectTiming.OnEnterFieldAnyone)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-            }
-            #endregion
-
-            #region When Digivolving
-            if (timing == EffectTiming.OnAllyAttack)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
-                }
-            }
-            #endregion
-
-            #region When Attacking
-            if (timing == EffectTiming.OnAllyAttack)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Attacking"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
-                }
-            }
             #endregion
 
             #region On Deletion
 
             if (timing == EffectTiming.OnDestroyedAnyone)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("You may play 1 Titamon or level 5 or lower Titan Digimon", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
-                cardEffects.Add(activateClass);
+                cardEffects.Add(CardEffectFactory.OnDeletionClass(card,
+                                                                    "You may play 1 Titamon or level 5 or lower Titan Digimon",
+                                                                    ActivateCoroutine,
+                                                                    EffectDescription(),
+                                                                    false,
+                                                                    additionalActivateCondition: AdditionalActivateCondition));
 
                 string EffectDescription()
                 {
@@ -230,9 +184,9 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.CanTriggerOnDeletion(hashtable, card);
                 }
 
-                bool CanActivateCondition(Hashtable hashtable)
+                bool AdditionalActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(card) && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, HasCorrectTrait);
+                    return CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, HasCorrectTrait);
                 }
 
                 bool HasCorrectTrait(CardSource cardSource)
