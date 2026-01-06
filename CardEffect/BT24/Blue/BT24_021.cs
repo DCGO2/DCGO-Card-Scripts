@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 // SnowGoblimon
 namespace DCGO.CardEffects.BT24
@@ -115,7 +117,7 @@ namespace DCGO.CardEffects.BT24
 
                         selectHandEffect.SetUpCustomMessage("Select 1 Card to trash.", "The opponent is selecting 1 card to trash from their hand.");
 
-                        yield return ContinousController.instance.StartCoroutine(selectHandEffect.Activate());
+                        yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
                     }
                 }
             }
@@ -145,7 +147,7 @@ namespace DCGO.CardEffects.BT24
                         cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, 
                                                             true, 
                                                             activateClass, 
-                                                            fixedCost: Math.max(0, cardSource.CostList(card.PermanentOfThisCard(), false, true).Min() -1));
+                                                            fixedCost: Math.Max(0, cardSource.CostList(card.PermanentOfThisCard(), false, true).Min() -1));
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
