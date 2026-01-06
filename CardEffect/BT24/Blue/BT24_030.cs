@@ -300,7 +300,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, PermanentCondition)
-                        && CardEffectCommons.IsOpponentEffect(activateClass, card);
+                        && CardEffectCommons.IsByEffect(hashtable, cardEffect => CardEffectCommons.IsOpponentEffect(cardEffect, card));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
