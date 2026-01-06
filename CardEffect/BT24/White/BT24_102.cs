@@ -164,7 +164,10 @@ namespace DCGO.CardEffects.BT24
                     {
                         List<ICardEffect> candidateEffects = selectedPermanent.EffectList(EffectTiming.OnEnterFieldAnyone)
                                     .Clone()
-                                    .Filter(CanBeEffectCandidate);
+                                    .Filter(CanBeEffectCandidate)
+                                    .GroupBy(effect => effect.EffectName)
+                                    .Select(group => group.FirstOrDefault())
+                                    .ToList();
 
                         if (candidateEffects.Count >= 1)
                         {
