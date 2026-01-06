@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
                         && CardEffectCommons.IsOwnerTurn(card);
                 }
 
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
                     
