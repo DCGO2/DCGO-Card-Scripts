@@ -133,11 +133,31 @@ namespace DCGO.CardEffects.BT24
                     
                         IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                                player: card.Owner.Enemy,
-                                refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-                        
-                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(new List<CardSource>() { selectedCard }));
+                            if (cardSources.Count >= 1)
+                            {
+                                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
+                                    player: card.Owner.Enemy,
+                                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
+                            }
+                        }
+
+                        if (selectedCard != null)
+                        {
+                            #region
+                            selectedCard.Owner.securityObject.securityBreakGlass.ShowBlueMatarial();
+
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().BreakSecurityEffect(selectedCard.Owner));
+
+                            yield return new WaitForSeconds(0.1f);
+
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().EnterSecurityCardEffect(selectedCard));
+
+                            yield return new WaitForSeconds(0.5f);
+
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().DestroySecurityEffect(selectedCard));
+                            #endregion
+
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(selectedCard));
                         }
                     }
                     #endregion
