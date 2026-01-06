@@ -61,7 +61,7 @@ namespace DCGO.CardEffects.BT24
                         {
                             if (trash.appFusionCondition != null)
                             {
-                                if (trash.CanAppFusionFromTargetPermanent(permanent, true))
+                                if (trash.CanAppFusionFromTargetPermanent(permanent, true, SelectCardEffect.Root.Trash))
                                     return true;
                             }
                         }
@@ -72,7 +72,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCard(CardSource cardSource, Permanent permanent)
                 {
                     return cardSource.appFusionCondition != null
-                        && cardSource.CanAppFusionFromTargetPermanent(permanent, true)
+                        && cardSource.CanAppFusionFromTargetPermanent(permanent, true, SelectCardEffect.Root.Trash)
                         && (cardSource.EqualsTraits("System")
                             || cardSource.EqualsTraits("Life")
                             || cardSource.EqualsTraits("Transmutation"));
@@ -149,7 +149,7 @@ namespace DCGO.CardEffects.BT24
 
                                 #region Select App Fusion Hand Target
 
-                                int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionOwnersCardCountInHand(card, trashCard => CanSelectCard(trashCard, selectedPermanent)));
+                                int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, trashCard => CanSelectCard(trashCard, selectedPermanent)));
                                 List<CardSource> selectedCards = new List<CardSource>();
 
                                 SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
@@ -167,6 +167,7 @@ namespace DCGO.CardEffects.BT24
                                             isShowOpponent: true,
                                             mode: SelectCardEffect.Mode.Custom,
                                             root: SelectCardEffect.Root.Trash,
+                                            customRootCardList: null,
                                             canLookReverseCard: true,
                                             selectPlayer: card.Owner,
                                             cardEffect: activateClass);
@@ -182,9 +183,10 @@ namespace DCGO.CardEffects.BT24
                                     yield return null;
                                 }
 
-                                selectHandEffect.SetUpCustomMessage("Select digimon to app fuse into.", "The opponent is selecting digimon to app fuse into.");
-                                selectHandEffect.SetUpCustomMessage_ShowCard("Selected digimon");
-                                yield return StartCoroutine(selectHandEffect.Activate());
+                                selectCardEffect.SetUpCustomMessage("Select digimon to app fuse into.", "The opponent is selecting digimon to app fuse into.");
+                                selectCardEffect.SetUpCustomMessage_ShowCard("Selected digimon");
+
+                                yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
                                 #endregion
 

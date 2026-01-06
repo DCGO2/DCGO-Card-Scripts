@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // Icemon
 namespace DCGO.CardEffects.P
@@ -140,12 +142,13 @@ namespace DCGO.CardEffects.P
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             canNoSelect: () => true,
-                            selectCardCoroutine: null,
-                            afterSelectCardCoroutine: SelectCardCoroutine,
+                            selectCardCoroutine: SelectCardCoroutine,
+                            afterSelectCardCoroutine: null,
+                            message:"Select 1 card to place as digivolution source",
                             maxCount: maxCount,
                             canEndNotMax: false,
                             isShowOpponent: true,
-                            mode: SelectCardEffect.Mode.AddHand,
+                            mode: SelectCardEffect.Mode.Custom,
                             root: SelectCardEffect.Root.Trash,
                             customRootCardList: null,
                             canLookReverseCard: true,
@@ -158,17 +161,10 @@ namespace DCGO.CardEffects.P
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
                     }
 
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
-                    {
-                        selectedCards.Add(cardSource);
-
-                        yield return null;
-                    }
-
-                    if (selectedCards.Count >= 1)
+                    if (selectedCard != null)
                     {
                         yield return ContinuousController.instance.StartCoroutine(card.PermanentOfThisCard().AddDigivolutionCardsBottom(
-                            selectedCards,
+                            new List<CardSource> { selectedCard },
                             activateClass));
 
                         if (CardEffectCommons.HasMatchConditionOwnersPermanent(card, PermanentSelectCondition))

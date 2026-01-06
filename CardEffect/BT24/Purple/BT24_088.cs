@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 // Asuna Shiroki
 namespace DCGO.CardEffects.BT24
@@ -29,7 +31,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && card.Owner.Memory <= 4;
+                        && card.Owner.MemoryForPlayer <= 4;
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
@@ -37,7 +39,7 @@ namespace DCGO.CardEffects.BT24
                     return (cardSource.EqualsCardName("Asuna Shiroki")
                         || (cardSource.IsDigimon
                             && cardSource.HasLevel
-                            && cardSource.Level < 4
+                            && cardSource.Level <= 4
                             && (cardSource.HasTSTraits
                                 || cardSource.HasText("Three Musketeers"))))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);

@@ -36,7 +36,7 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    if (card.Owner.CanAddMemory(activateClass) && card.Owner.Memory <= 4) 
+                    if (card.Owner.CanAddMemory(activateClass) && card.Owner.MemoryForPlayer <= 4) 
                         yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
                 }
             }
@@ -49,7 +49,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Digivolve an [Aegiomon] into an [Aegiochusmon]", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
                 cardEffects.Add(activateClass);
 
                 string EffectDescription() => "[All Turns] When your security stack is removed from, by suspending this Tamer, 1 of your [Aegiomon] may digivolve into a Digimon card with [Aegiouchusmon] in its name in the hand without paying the cost.";
@@ -68,7 +68,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return permanent.TopCard.EqualsCardName("Aegiomon");
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                        && permanent.TopCard.EqualsCardName("Aegiomon");
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)

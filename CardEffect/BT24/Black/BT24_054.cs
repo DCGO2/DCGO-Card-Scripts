@@ -20,8 +20,8 @@ namespace DCGO.CardEffects.BT24
                 {
                     return targetPermanent.TopCard.EqualsCardName("Kyokyomon")
                         || (targetPermanent.TopCard.IsLevel2
-                        && (targetPermanent.TopCard.EqualsTraits("DigiPolice")
-                        || (targetPermanent.TopCard.EqualsTraits("SEEKERS"));
+                            && (targetPermanent.TopCard.EqualsTraits("DigiPolice")
+                                || targetPermanent.TopCard.EqualsTraits("SEEKERS")));
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 0, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -46,6 +46,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, PlayedPermanentCondition);
                 }
 
@@ -102,9 +103,8 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
-                        && permanent.TopCard.GetChangedCostItselef <= card.PermanentOfThisCard().TopCard.GetChangedCostItselef
-                        && (permanent.TopCard.IsDigimon
-                        || permanent.TopCard.IsTamer);
+                        && permanent.TopCard.GetCostItself <= card.PermanentOfThisCard().TopCard.GetCostItself
+                        && (permanent.TopCard.IsDigimon || permanent.TopCard.IsTamer);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)

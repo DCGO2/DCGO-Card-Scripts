@@ -1482,9 +1482,9 @@ public class CardSource : MonoBehaviour
         if (string.IsNullOrEmpty(trait))
             return false;
 
-        string replaced = trait.Replace(" ", "");
+        string replaced = trait.Replace(" ", "").ToLower();
 
-        return CardTraits.Some(cardTrait => cardTrait.Equals(trait) || cardTrait.Equals(replaced));
+        return CardTraits.Some(cardTrait => cardTrait.Equals(trait) || cardTrait.ToLower().Equals(replaced));
     }
 
     #endregion
@@ -1501,9 +1501,9 @@ public class CardSource : MonoBehaviour
         if (string.IsNullOrEmpty(trait))
             return false;
 
-        string replaced = trait.Replace(" ", "");
+        string replaced = trait.Replace(" ", "").ToLower();
 
-        return CardTraits.Some(cardTrait => cardTrait.Contains(trait) || cardTrait.Contains(replaced));
+        return CardTraits.Some(cardTrait => cardTrait.Contains(trait) || cardTrait.ToLower().Contains(replaced));
     }
 
     #endregion
@@ -3063,7 +3063,7 @@ public class CardSource : MonoBehaviour
 
     #region whether target permanent can App Fusion into this card
 
-    public bool CanAppFusionFromTargetPermanent(Permanent targetPermanent, bool PayCost)
+    public bool CanAppFusionFromTargetPermanent(Permanent targetPermanent, bool PayCost, SelectCardEffect.Root root = SelectCardEffect.Root.Hand)
     {
         if (targetPermanent != null)
         {
@@ -3083,7 +3083,7 @@ public class CardSource : MonoBehaviour
                                     {
                                         int cost = appFusionCondition.cost;
 
-                                        cost = GetChangedCostItselef(cost, SelectCardEffect.Root.Hand, new List<Permanent>() { targetPermanent }, checkAvailability: true);
+                                        cost = GetChangedCostItselef(cost, root, new List<Permanent>() { targetPermanent }, checkAvailability: true);
 
                                         if (Owner.MaxMemoryCost < cost)
                                         {

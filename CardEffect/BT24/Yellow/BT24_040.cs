@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 // Venusmon
 namespace DCGO.CardEffects.BT24
@@ -26,14 +27,13 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
-            #region Reduce Play Cost (-5)
+            #region Reduce Play Cost
 
             if (timing == EffectTiming.BeforePayCost)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Reduce the play cost by 5", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Reduce play cost (5)", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
-                activateClass.SetHashString("PlayCost-5_BT24_040");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -41,21 +41,14 @@ namespace DCGO.CardEffects.BT24
                     return "When this card would be played, if you have 3 or fewer security cards, reduce the play cost by 5.";
                 }
 
-                bool CardCondition(CardSource cardSource)
-                {
-                    return cardSource == card 
-                        && CardEffectCommons.IsExistOnHand(cardSource);
-                }
-
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenPermanentWouldPlay(hashtable, CardCondition);
+                    return CardEffectCommons.CanTriggerWhenPermanentWouldPlay(hashtable, cardSource => cardSource == card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnHand(card) 
-                        && card.Owner.SecurityCards.Count <= 3;
+                    return card.Owner.SecurityCards.Count <= 3;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -66,46 +59,28 @@ namespace DCGO.CardEffects.BT24
                     }
 
                     ChangeCostClass changeCostClass = new ChangeCostClass();
-                    changeCostClass.SetUpICardEffect("Play Cost -5", CanUseCondition1, card);
+                    changeCostClass.SetUpICardEffect("Play Cost -5", hashtable => true, card);
                     changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
-                    card.Owner.UntilCalculateFixedCostEffect.Add((_timing) => changeCostClass);
+                    card.Owner.UntilCalculateFixedCostEffect.Add(_ => changeCostClass);
 
-                    bool CanUseCondition1(Hashtable hashtable)
-                    {
-                        return true;
-                    }
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(_hashtable));
 
-                    int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                    int ChangeCost(CardSource cardSource, int cost, SelectCardEffect.Root root,
+                        List<Permanent> targetPermanents)
                     {
-                        if (CardSourceCondition(cardSource))
+                        if (CardSourceCondition(cardSource) &&
+                            RootCondition(root) &&
+                            PermanentsCondition(targetPermanents))
                         {
-                            if (RootCondition(root))
-                            {
-                                if (PermanentsCondition(targetPermanents))
-                                {
-                                    Cost -= 5;
-                                }
-                            }
+                            cost -= 5;
                         }
 
-                        return Cost;
+                        return cost;
                     }
 
                     bool PermanentsCondition(List<Permanent> targetPermanents)
                     {
-                        if (targetPermanents == null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
-                            {
-                                return true;
-                            }
-                        }
-
-                        return false;
+                        return targetPermanents == null || targetPermanents.Count(targetPermanent => targetPermanent != null) == 0;
                     }
 
                     bool CardSourceCondition(CardSource cardSource)
@@ -122,61 +97,42 @@ namespace DCGO.CardEffects.BT24
                     {
                         return true;
                     }
-
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(_hashtable));
                 }
             }
 
             #endregion
 
-            #region Reduce Play Cost (-5) Not Shown
+            #region Reduce Play Cost - Not Shown
 
             if (timing == EffectTiming.None)
             {
                 ChangeCostClass changeCostClass = new ChangeCostClass();
-                changeCostClass.SetUpICardEffect($"Reduce Play Cost (-5)", CanUseCondition, card);
-                changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
+                changeCostClass.SetUpICardEffect("Play Cost -5", CanUseCondition, card);
+                changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => true, isChangePayingCost: () => true);
                 changeCostClass.SetNotShowUI(true);
                 cardEffects.Add(changeCostClass);
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return card.PermanentOfThisCard() == null
-                        && card.Owner.SecurityCards.Count <= 3;
+                    return card.Owner.SecurityCards.Count <= 3;
                 }
 
-                int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                int ChangeCost(CardSource cardSource, int cost, SelectCardEffect.Root root,
+                        List<Permanent> targetPermanents)
                 {
-                    if (CardSourceCondition(cardSource))
+                    if (CardSourceCondition(cardSource) &&
+                        RootCondition(root) &&
+                        PermanentsCondition(targetPermanents))
                     {
-                        if (RootCondition(root))
-                        {
-                            if (PermanentsCondition(targetPermanents))
-                            {
-                                Cost -= 5;
-                            }
-                        }
+                        cost -= 5;
                     }
 
-                    return Cost;
+                    return cost;
                 }
 
                 bool PermanentsCondition(List<Permanent> targetPermanents)
                 {
-                    if (targetPermanents == null)
-                    {
-                        return true;
-                    }
-
-                    else
-                    {
-                        if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return targetPermanents == null || targetPermanents.Count(targetPermanent => targetPermanent != null) == 0;
                 }
 
                 bool CardSourceCondition(CardSource cardSource)
@@ -210,12 +166,12 @@ namespace DCGO.CardEffects.BT24
 
             bool CanTrashDigivolutionCardsCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent);
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
             bool CanFreezeCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permament)
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && (permanent.TopCard.IsDigimon || permanent.TopCard.IsTamer);
             }
 
@@ -284,7 +240,7 @@ namespace DCGO.CardEffects.BT24
                         DisableEffectClass invalidationClass = new DisableEffectClass();
                         invalidationClass.SetUpICardEffect("Ignore [When Digivolving] Effect", CanUseConditionDebuff, card);
                         invalidationClass.SetUpDisableEffectClass(DisableCondition: InvalidateCondition);
-                        selectedPermanent.UntilOwnerTurnEndEffects.Add(_ => invalidationClass);
+                        permanent.UntilOwnerTurnEndEffects.Add(_ => invalidationClass);
 
                         bool CanUseConditionDebuff(Hashtable hashtableDebuff)
                         {
@@ -293,13 +249,13 @@ namespace DCGO.CardEffects.BT24
 
                         bool InvalidateCondition(ICardEffect cardEffect)
                         {
-                            return selectedPermanent.TopCard != null
+                            return permanent.TopCard != null
                                 && cardEffect != null
                                 && cardEffect.EffectSourceCard != null
                                 && isExistOnField(cardEffect.EffectSourceCard)
-                                && cardEffect.EffectSourceCard.PermanentOfThisCard() == selectedPermanent
+                                && cardEffect.EffectSourceCard.PermanentOfThisCard() == permanent
                                 && cardEffect.IsWhenDigivolving
-                                && !selectedPermanent.TopCard.CanNotBeAffected(activateClass);
+                                && !permanent.TopCard.CanNotBeAffected(activateClass);
                         }
                         #endregion
                     }
@@ -389,7 +345,7 @@ namespace DCGO.CardEffects.BT24
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     Permanent selectedPermanent = null;
-                    int maxCount = Math.min(1, CardEffectCommons.MatchConditionPermanentCount(CanPlaceToSecurityCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanPlaceToSecurityCondition));
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -419,7 +375,7 @@ namespace DCGO.CardEffects.BT24
 
                     if (selectedPermanent != null)
                     {
-                        if (!selectedPermament.TopCard.CanNotBeAffected(activateClass))
+                        if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                         {
                             #region hashtable
                             Hashtable _hashtable = new Hashtable()
@@ -431,7 +387,7 @@ namespace DCGO.CardEffects.BT24
                             CardSource toSecCard = selectedPermanent.TopCard;
 
                             yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
-                                permanent: selectedPermament,
+                                permanent: selectedPermanent,
                                 hashtable: _hashtable,
                                 toTop: false).PutSecurity()
                             );

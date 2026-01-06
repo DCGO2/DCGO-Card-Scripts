@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 // Hadesmon
 namespace DCGO.CardEffects.BT24
@@ -72,7 +74,7 @@ namespace DCGO.CardEffects.BT24
                         && cardSource.Level <= 4
                         && (cardSource.EqualsTraits("System")
                             || cardSource.EqualsTraits("Life"))
-                        && CardEffectCommons.CanPlayAsNewPermament(cardSource, false, activateClass);
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
                 bool CanSelectLinkCard(CardSource cardSource)
@@ -97,7 +99,7 @@ namespace DCGO.CardEffects.BT24
                                     canTargetCondition_ByPreSelecetedList: null,
                                     canEndSelectCondition: null,
                                     canNoSelect: () => true,
-                                    selectCardCoroutine: SelectCardCoroutine,
+                                    selectCardCoroutine: SelectCardPlayCoroutine,
                                     afterSelectCardCoroutine: null,
                                     message: "Select 1 card to play.",
                                     maxCount: maxCount,
@@ -113,9 +115,9 @@ namespace DCGO.CardEffects.BT24
                         selectCardEffect.SetUpCustomMessage("Select 1 card to play.", "The opponent is selecting 1 card to play.");
                         selectCardEffect.SetUpCustomMessage_ShowCard("Played Card");
 
-                        yield return StartCoroutine(selectCardEffect.Activate());
+                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
-                        IEnumerator SelectCardCoroutine(CardSource cardSource)
+                        IEnumerator SelectCardPlayCoroutine(CardSource cardSource)
                         {
                             selectedCards.Add(cardSource);
 
@@ -303,7 +305,7 @@ namespace DCGO.CardEffects.BT24
                         !cardEffect.IsSecurityEffect && 
                         cardEffect.IsWhenDigivolving)
                     {
-                        Hashtable digivolvingHashtable = CardEffectCommons.WhenDigivolvingCheckHashtableOfCard(cardEffect);
+                        Hashtable digivolvingHashtable = CardEffectCommons.WhenDigivolvingCheckHashtableOfCard(cardEffect.EffectSourceCard);
 
                         return cardEffect.CanUse(digivolvingHashtable);
                     }

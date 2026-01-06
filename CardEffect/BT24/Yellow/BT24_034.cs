@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.BT24
 
             bool ValidTamer(CardSource cardSource, ActivateClass activateClass)
             {
-                var tamersOnField = card.Owner.GetFieldPermanents().filter(x => x.IsTamer).Select(x => x.TopCard);
+                var tamersOnField = card.Owner.GetFieldPermanents().Filter(x => x.IsTamer).Select(x => x.TopCard);
                 
                 var fieldNames = tamersOnField
                         .SelectMany(x => x.CardNames)
@@ -56,7 +56,8 @@ namespace DCGO.CardEffects.BT24
                 var sourceNames = cardSource.CardNames
                     .Select(n => n.ToLowerInvariant());
 
-                return cardSource.HasTSTraits &&
+                return cardSource.IsTamer &&
+                    cardSource.HasTSTraits &&
                     !sourceNames.Any(n => fieldNames.Contains(n)) &&
                     CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
             }
@@ -68,7 +69,7 @@ namespace DCGO.CardEffects.BT24
                 yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddHandCards(new List<CardSource>() { topCard }, false, activateClass));
                 yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(player: card.Owner, refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
 
-                if (owner.HandCards.Contains(topCard) && card.Owner.HandCards.Count((cardSource) => ValidTamer(cardSource, activateClass)) >= 1)
+                if (card.Owner.HandCards.Contains(topCard) && card.Owner.HandCards.Count((cardSource) => ValidTamer(cardSource, activateClass)) >= 1)
                 {
                     List<CardSource> selectedCards = new List<CardSource>();
 

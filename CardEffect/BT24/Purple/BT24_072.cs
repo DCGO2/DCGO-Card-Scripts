@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // SkullGreymon
 namespace DCGO.CardEffects.BT24
@@ -46,7 +48,7 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.EqualsTraits("Titan"));
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass))
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 bool discarded = false;
 
@@ -183,7 +185,7 @@ namespace DCGO.CardEffects.BT24
                         && cardSource.Level <= 4
                         && (cardSource.EqualsTraits("Demon")
                         || cardSource.EqualsTraits("Titan"))
-                        && CardEffectCommons.CanPlayAsNewPermament(cardSource, false, activateClass);
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

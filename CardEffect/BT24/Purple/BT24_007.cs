@@ -28,31 +28,31 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, CardCondition)
                         && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                         
                 }
 
-                bool CardCondition(CardSource card)
+                bool CardCondition(CardSource cardSource)
                 {
-                    return card.IsDigimon
-                        && card.HasLevel && card.Level >= 4
-                        && (card.EqualsTraits("Demon") || card.EqualsTraits("Titan"))
-                        && CardEffectCommons.CanPlayAsNewPermanent(card, false, activateClass);
+                    return cardSource.IsDigimon
+                        && cardSource.HasLevel && cardSource.Level >= 4
+                        && (cardSource.EqualsTraits("Demon") || cardSource.EqualsTraits("Titan"))
+                        && card.Owner.MaxMemoryCost >= cardSource.GetCostItself - 2
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    var trashedCards = CardEffectCommons.GetDiscardedCardsFromHashtable(hashtable)
-                        .Filter(CardCondition);
+                    List<CardSource> trashedCards = CardEffectCommons.GetDiscardedCardsFromHashtable(hashtable).Filter(CardCondition);
 
-                    if (trashedCards.Any())
+                    if (trashedCards.Count > 0)
                     {
                         CardSource selectedCard = null;
 
@@ -94,7 +94,7 @@ namespace DCGO.CardEffects.BT24
                             isTapped: false,
                             root: SelectCardEffect.Root.Trash,
                             activateETB: true,
-                            fixedCost: selectedCard.BasePlayCostFromEntity - 2));
+                            fixedCost: selectedCard.GetCostItself - 2));
                     }
 
                 }

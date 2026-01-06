@@ -36,7 +36,7 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    if (card.Owner.CanAddMemory(activateClass) && card.Owner.Memory <= 4) 
+                    if (card.Owner.CanAddMemory(activateClass) && card.Owner.MemoryForPlayer <= 4) 
                         yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
                 }
             }
@@ -48,7 +48,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEndTurn)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Play a [TS] Option that costs less than your opponent's memory", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Use a [TS] Option that costs less than your opponent's memory, 1 [TS] Digimon may attack", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
                 cardEffects.Add(activateClass);
 
@@ -63,32 +63,32 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.CanActivateSuspendCostEffect(card)
-                        && card.Owner.Memory <= 0;
+                        && card.Owner.MemoryForPlayer <= 0;
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsOption
                         && cardSource.HasTSTraits
-                        && cardSource.GetCostItself <= card.Owner.Enemy.Memory;
+                        && cardSource.GetCostItself <= card.Owner.Enemy.MemoryForPlayer;
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.HasTSTraits;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent> { card.PermanentOfThisCard() }, hashtable).Tap());
+                    yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent> { card.PermanentOfThisCard() }, _hashtable).Tap());
 
                     if (card.PermanentOfThisCard().IsSuspended)
                     {
                         #region use option
                         List<CardSource> selectedCards = new List<CardSource>();
 
-                        int maxCount = Math.min(1, CardEffectCommons.MatchConditionOwnersCardCountInHand(card, CanSelectCardCondition));
+                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersCardCountInHand(card, CanSelectCardCondition));
 
                         SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 

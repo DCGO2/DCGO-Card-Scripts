@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Hisyaryumon
 namespace DCGO.CardEffects.BT24
@@ -138,12 +140,12 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermamentCondition(Permanent permanant)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanant);
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanant, card);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    int maxCount = math.min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermamentCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermamentCondition));
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -155,7 +157,7 @@ namespace DCGO.CardEffects.BT24
                         maxCount: maxCount,
                         canNoSelect: false,
                         canEndNotMax: false,
-                        selectPermanentCoroutine: SelectPermanentCoroutine,
+                        selectPermanentCoroutine: null,
                         afterSelectPermanentCoroutine: null,
                         mode: SelectPermanentEffect.Mode.Tap,
                         cardEffect: activateClass);
@@ -169,7 +171,7 @@ namespace DCGO.CardEffects.BT24
                         SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
 
                         selectAttackEffect.SetUp(
-                            attacker: selectedPermanent,
+                            attacker: card.PermanentOfThisCard(),
                             canAttackPlayerCondition: () => false,
                             defenderCondition: _ => true,
                             cardEffect: activateClass);

@@ -99,17 +99,16 @@ namespace DCGO.CardEffects.BT24
             bool SharedCanActivateCondition(Hashtable hashtable, ActivateClass activateClass)
             {
                 return CardEffectCommons.IsExistOnBattleArea(card)
-                    && card.PermanentOfThisCard().DigivolutionCards.Any(cardSource => CanSelectCardCondition(cardSource, activateClass));
+                    && card.PermanentOfThisCard().DigivolutionCards.Any(cardSource => CanSelectCardCondition(cardSource));
             } 
 
-            bool CanSelectCardCondition(CardSource cardSource, ActivateClass activateClass)
+            bool CanSelectCardCondition(CardSource cardSource)
             {
                 return cardSource.HasPlayCost
                     && cardSource.GetCostItself <= 5
                     && (cardSource.HasTSTraits
                         || cardSource.EqualsTraits("Machine")
-                        || cardSource.EqualsTraits("Cyborg"))
-                    && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
+                        || cardSource.EqualsTraits("Cyborg"));
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -118,7 +117,7 @@ namespace DCGO.CardEffects.BT24
                 
                 List<CardSource> selectedCards = new List<CardSource>();
 
-                int maxCount = Math.min(1, selectedPermanent.DigivolutionCards.Count(CanSelectCardCondition));
+                int maxCount = Math.Min(1, selectedPermanent.DigivolutionCards.Count(CanSelectCardCondition));
 
                 SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 

@@ -37,11 +37,11 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnTrash(card) 
-                        && CardEffectCommons.IsOwnerTurn(Card)
+                        && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.CanTriggerOnPermanentAttack(hashtable, PermanentCondition);
                 }
 
-                bool PermanentCondition(Permanent permanent) => targetPermanent.TopCard.EqualsCardName("Creepymon");
+                bool PermanentCondition(Permanent permanent) => permanent.TopCard.EqualsCardName("Creepymon");
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
@@ -54,14 +54,17 @@ namespace DCGO.CardEffects.BT24
                 {
                     Permanent selectedPermanent = GManager.instance.attackProcess.AttackingPermanent;
 
-                    yield return ContinuousController.instance.StartCoroutine(new PlayCardClass(
-                            cardSources: new List<CardSource> { card },
-                            hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                            payCost: false,
-                            targetPermanent: selectedPermanent,
-                            isTapped: false,
-                            root: root,
-                            activateETB: true).PlayCard);
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                                targetPermanent: selectedPermanent,
+                                cardCondition: null,
+                                payCost: false,
+                                reduceCostTuple: null,
+                                fixedCostTuple: null,
+                                ignoreDigivolutionRequirementFixedCost: -1,
+                                isHand: false,
+                                activateClass: activateClass,
+                                successProcess: null,
+                                ignoreSelection: true));
                     
                     if (selectedPermanent.TopCard == card)
                     {
@@ -81,7 +84,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Digivolve into this to trash top opponent security", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete opponent's lowest level, play a Digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 

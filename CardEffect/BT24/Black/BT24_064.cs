@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 // Ouryumon
 namespace DCGO.CardEffects.BT24
@@ -17,7 +18,7 @@ namespace DCGO.CardEffects.BT24
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
                     return targetPermanent.TopCard.IsLevel5
-                        && (targetPermanent.TopCard.EqualsTraits("Digipolice")
+                        && (targetPermanent.TopCard.EqualsTraits("DigiPolice")
                             || targetPermanent.TopCard.EqualsTraits("SEEKERS"));
                 }
 
@@ -51,14 +52,14 @@ namespace DCGO.CardEffects.BT24
 
                 string EffectDiscription()
                 {
-                    return "[When Digivolving] Reveal the top 3 cards of your deck. You may play 1 play cost 7 or lower [DigiPolice] or [SEEKERS] trait card among them without paying the cost. Return the rest to the top or bottom of the deck.";
+                    return "[When Digivolving] Reveal the top 3 cards of your deck. You may play 1 play cost 7 or lower [Digi] or [SEEKERS] trait card among them without paying the cost. Return the rest to the top or bottom of the deck.";
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.HasPlayCost
                         && cardSource.GetCostItself <= 7
-                        && (cardSource.EqualsTraits("Digipolice")
+                        && (cardSource.EqualsTraits("DigiPolice")
                             || cardSource.EqualsTraits("SEEKERS"))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
@@ -142,7 +143,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && (permanent.IsTamer || permanent.IsDigimon);
                 }
 

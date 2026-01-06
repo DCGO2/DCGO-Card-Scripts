@@ -108,10 +108,10 @@ namespace DCGO.CardEffects.BT24
                             canEndNotMax: false,
                             isShowOpponent: true,
                             mode: SelectCardEffect.Mode.Custom,
-                            root: SelectCardEffect.Root.Trash,
-                            customRootCardList: null,
+                            root: SelectCardEffect.Root.Custom,
+                            customRootCardList: card.Owner.Enemy.TrashCards,
                             canLookReverseCard: true,
-                            selectPlayer: card.Owner.Enemy,
+                            selectPlayer: card.Owner,
                             cardEffect: activateClass);
 
                         IEnumerator SelectCardCoroutine(CardSource cardSource)
@@ -124,10 +124,45 @@ namespace DCGO.CardEffects.BT24
                         selectCardEffect.SetUpCustomMessage_ShowCard("Selected Cards");
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
+                        #endregion
+
                         if (selectedCards.Count == 2)
                         {
+                            #region Opponent chooses deck bottom order and return to deck
+                            List<CardSource> orderedSelectedCards = new List<CardSource>();
+
+                            SelectCardEffect selectCardEffect1 = GManager.instance.GetComponent<SelectCardEffect>();
+
+                            selectCardEffect1.SetUp(
+                                canTargetCondition: (card) => true,
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                canNoSelect: () => false,
+                                selectCardCoroutine: SelectCardCoroutine1,
+                                afterSelectCardCoroutine: null,
+                                message: "Select 2 cards to bottom deck",
+                                maxCount: 2,
+                                canEndNotMax: false,
+                                isShowOpponent: true,
+                                mode: SelectCardEffect.Mode.Custom,
+                                root: SelectCardEffect.Root.Custom,
+                                customRootCardList: selectedCards,
+                                canLookReverseCard: true,
+                                selectPlayer: card.Owner.Enemy,
+                                cardEffect: activateClass);
+
+                            IEnumerator SelectCardCoroutine1(CardSource cardSource)
+                            {
+                                orderedSelectedCards.Add(cardSource);
+                                yield return null;
+                            }
+
+                            selectCardEffect1.SetUpCustomMessage("Select order of cards to bottom deck", "Your opponent the order of cards to bottom deck");
+                            selectCardEffect1.SetUpCustomMessage_ShowCard("Selected Cards");
+                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect1.Activate());
+
                             yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ReturnRevealedCardsToLibraryBottom(
-                                remainingCards: selectedCards,
+                                remainingCards: orderedSelectedCards,
                                 activateClass: activateClass));
                         
                             #endregion

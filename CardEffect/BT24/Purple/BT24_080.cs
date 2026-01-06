@@ -46,6 +46,7 @@ namespace DCGO.CardEffects.BT24
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("1 [Dark Dragon] or [Evil Dragon] may digivolve into this", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
+                activateClass.SetIsDigimonEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -100,14 +101,17 @@ namespace DCGO.CardEffects.BT24
 
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(new PlayCardClass(
-                            cardSources: new List<CardSource> { card },
-                            hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                            payCost: false,
-                            targetPermanent: permanent,
-                            isTapped: false,
-                            root: root,
-                            activateETB: true).PlayCard);
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                                targetPermanent: permanent,
+                                cardCondition: null,
+                                payCost: false,
+                                reduceCostTuple: null,
+                                fixedCostTuple: null,
+                                ignoreDigivolutionRequirementFixedCost: -1,
+                                isHand: false,
+                                activateClass: activateClass,
+                                successProcess: null,
+                                ignoreSelection: true));
                     }
                 }
             }
@@ -131,7 +135,7 @@ namespace DCGO.CardEffects.BT24
 
             bool SharedCanSelectPermanentCondition(Permanent permanent) => CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy);
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable, Activateclass activateclass)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 List<Permanent> destroyTargetPermanents = card.Owner.Enemy.GetBattleAreaDigimons().Filter(SharedCanSelectPermanentCondition);
                 yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(destroyTargetPermanents, CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
@@ -191,7 +195,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(hashtable, card);
+                    return CardEffectCommons.CanActivateOnDeletion(card);
                 }
             }
 

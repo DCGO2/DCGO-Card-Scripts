@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 // SkullBaluchimon
 namespace DCGO.CardEffects.BT24
@@ -40,13 +41,13 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectLevel3Condition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                     && permanent.TopCard.IsLevel3;
             }
 
             bool CanSelectLevel4Condition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                     && permanent.TopCard.IsLevel4;
             }
 
@@ -88,6 +89,8 @@ namespace DCGO.CardEffects.BT24
 
                 if (discarded)
                 {
+                    List<Permanent> selectedPermanents = new List<Permanent>();
+
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectLevel3Condition))
                     {
                         int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectLevel3Condition));

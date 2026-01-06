@@ -62,7 +62,7 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectPermanentConditionShared(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && (permanent.TopCard.EqualsTraits("System")
@@ -76,12 +76,12 @@ namespace DCGO.CardEffects.BT24
 
                 #region Select Permanent
 
-                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersPermanentCount(card, MyDigimonCondition));
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersPermanentCount(card, CanSelectPermanentConditionShared));
                 SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                 selectPermanentEffect.SetUp(
                     selectPlayer: card.Owner,
-                    canTargetCondition: CanSelectPermanentCondition,
+                    canTargetCondition: CanSelectPermanentConditionShared,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     maxCount: maxCount,
@@ -176,7 +176,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.HasPlayCost
-                        && permanent.TopCard.GetChangedCostItselef <= 5;
+                        && permanent.TopCard.GetCostItself <= 5;
                 }
 
                 bool CanUseCondition(Hashtable hashtable)

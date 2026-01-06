@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 // Kokatorimon
 namespace DCGO.CardEffects.BT24
@@ -81,12 +82,11 @@ namespace DCGO.CardEffects.BT24
 
                     if (ownDigimon)
                     {
-                        Permanent selectedPermanent = null;
                         bool unsuspend = false;
 
                         int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectUnsuspendPermanentCondition));
 
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                        selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                         selectPermanentEffect.SetUp(
                             selectPlayer: card.Owner,
@@ -116,18 +116,18 @@ namespace DCGO.CardEffects.BT24
                             selectedPermanent.IsSuspended)
                         {
                             yield return ContinuousController.instance.StartCoroutine(
-                                new IUnuspendPermanents(new List<Permanent>() { selectedPermanent },
-                                    CardEffectCommons.CardEffectHashtable(activateClass)).Unsuspend());
+                                new IUnsuspendPermanents(new List<Permanent>() { selectedPermanent },
+                                    activateClass).Unsuspend());
                             
                             unsuspend = !selectedPermanent.IsSuspended;
                         }
 
-                        if(unsuspend && selectedPermament.CanAttack(activateClass))
+                        if(unsuspend && selectedPermanent.CanAttack(activateClass))
                         {
                             SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
 
                             selectAttackEffect.SetUp(
-                                attacker: selectedPermament,
+                                attacker: selectedPermanent,
                                 canAttackPlayerCondition: () => true,
                                 defenderCondition: _ => true,
                                 cardEffect: activateClass);

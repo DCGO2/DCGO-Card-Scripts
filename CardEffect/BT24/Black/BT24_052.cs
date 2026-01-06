@@ -47,7 +47,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, true, EffectDescriptionShared("When Moving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, true, EffectDescriptionShared("When Moving"));
                 cardEffects.Add(activateClass);
 
                 bool PermanentCondition(Permanent permanent)
@@ -68,7 +68,7 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => ActivateCoroutineShared(hashtable, activateClass), -1, true, EffectDescriptionShared("When Digivolving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, true, EffectDescriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)

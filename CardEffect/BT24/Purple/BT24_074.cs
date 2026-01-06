@@ -19,7 +19,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return targetPermanent.TopCard.IsLevel4
                         && (targetPermanent.TopCard.HasTSTraits
-                        || targetPermanent.Topcard.HasAquaTraits);
+                        || targetPermanent.TopCard.HasAquaTraits);
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -38,16 +38,9 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectPermanentCondition(Permanent permanent)
-            {
-                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
-                    && permanent.DigivolutionCards.Count(CanSelectCardCondition) >= 1;
-            }
+            
 
-            bool CanSelectCardCondition(CardSource cardSource)
-            {
-                return !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
-            }
+            
 
             bool CanSelectNoSourcePermanentCondition(Permanent permanent)
             {
@@ -55,8 +48,19 @@ namespace DCGO.CardEffects.BT24
                     && permanent.HasNoDigivolutionCards;
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                bool CanSelectCardCondition(CardSource cardSource)
+                {
+                    return !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
+                }
+
+                bool CanSelectPermanentCondition(Permanent permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
+                        && permanent.DigivolutionCards.Count(CanSelectCardCondition) >= 1;
+                }
+
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                 {
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
@@ -165,7 +169,7 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectCardCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, CanSelectCardCondition));
 
                     List<CardSource> selectedCards = new List<CardSource>();
 

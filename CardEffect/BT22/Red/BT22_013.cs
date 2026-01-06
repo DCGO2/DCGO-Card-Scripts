@@ -113,7 +113,13 @@ namespace DCGO.CardEffects.BT22
                             isHand: true,
                             activateClass: activateClass,
                             successProcess: null,
+                            failedProcess: OnFail(),
                             ignoreRequirements: CardEffectCommons.IgnoreRequirement.All));
+                    }
+
+                    IEnumerator OnFail()
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(card));
                     }
                 }
             }

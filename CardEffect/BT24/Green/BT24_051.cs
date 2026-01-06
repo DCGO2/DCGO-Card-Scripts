@@ -20,8 +20,9 @@ namespace DCGO.CardEffects.BT24
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.HasLevel && targetPermanent.TopCard.Level == 5
-                        && targetPermanent.TopCard.EqualsTraits("Beastkin") || targetPermanent.TopCard.EqualsTraits("TS");
+                    return targetPermanent.TopCard.IsLevel5
+                        && (targetPermanent.TopCard.EqualsTraits("Beastkin")
+                            || targetPermanent.TopCard.EqualsTraits("TS"));
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -403,12 +404,35 @@ namespace DCGO.CardEffects.BT24
                     card: card,
                     condition: CanUseCondition));
 
-                cardEffects.Add(CardEffectFactory.PierceSelfEffect(
-                    isInheritedEffect: false,
-                    card: card,
-                    condition: CanUseCondition));
-            }
+                AddSkillClass addSkillClass = new AddSkillClass();
+                addSkillClass.SetUpICardEffect("[Your Turn] All of your [Iliad] trait Digimon gain <Rush> and <Piercing>.", CanUseCondition, card);
+                addSkillClass.SetUpAddSkillClass(cardSourceCondition: CardSourceCondition, getEffects: GetEffects);
+                cardEffects.Add(addSkillClass);
 
+                bool CardSourceCondition(CardSource cardSource)
+                {
+                    return PermanentCondition(cardSource.PermanentOfThisCard())
+                        && cardSource == cardSource.PermanentOfThisCard().TopCard;
+                }
+
+                List<ICardEffect> GetEffects(CardSource cardSource, ref List<ICardEffect> cardEffects, EffectTiming _timing)
+                {
+                    if (_timing == EffectTiming.OnDetermineDoSecurityCheck)
+                    {
+                        bool Condition()
+                        {
+                            return CardSourceCondition(cardSource);
+                        }
+
+                        cardEffects.Add(CardEffectFactory.PierceSelfEffect(
+                            isInheritedEffect: false,
+                            card: cardSource,
+                            condition: Condition));
+                    }
+
+                    return cardEffects;
+                }
+            }
             #endregion
 
             return cardEffects;

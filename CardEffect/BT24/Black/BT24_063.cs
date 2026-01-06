@@ -47,15 +47,15 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
-            bool CanSelectCardCondition(Permanent permanent)
+            bool CanSelectCardCondition(CardSource cardSource)
             {
                 return cardSource.GetCostItself <= 5
                     && (cardSource.EqualsTraits("Machine")
                     || cardSource.EqualsTraits("Cyborg")
-                    || cardSource.EqualsTratits("TS"));
+                    || cardSource.EqualsTraits("TS"));
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable _hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
             {
                 List<CardSource> selectedCards = new List<CardSource>();
 

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // WereGarurumon
 namespace DCGO.CardEffects.BT24
@@ -60,13 +62,13 @@ namespace DCGO.CardEffects.BT24
                     || permanent.TopCard.IsTamer);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                 {
                     int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
@@ -111,10 +113,10 @@ namespace DCGO.CardEffects.BT24
 
                         if (selectedPermanent != null)
                         {
-                            CanNotSuspendClass canNotSuspendClass = new CanNotSuspendClass();
-                            canNotSuspendClass.SetUpICardEffect("Can't Suspend", CanUseCondition1, card);
-                            canNotSuspendClass.SetUpCanNotSuspendClass(PermanentCondition: PermanentCondition);
-                            selectedPermanent.UntilOwnerTurnEndEffects.Add((_timing) => canNotSuspendClass);
+                            CanNotUnsuspendClass canNotUnsuspendClass = new CanNotUnsuspendClass();
+                            canNotUnsuspendClass.SetUpICardEffect("Can't Suspend", CanUseCondition1, card);
+                            canNotUnsuspendClass.SetUpCanNotUntapClass(PermanentCondition: PermanentCondition);
+                            selectedPermanent.UntilOwnerTurnEndEffects.Add((_timing) => canNotUnsuspendClass);
 
                             if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                             {
@@ -203,11 +205,11 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return (cardSource.IsDigimon
+                    return cardSource.IsDigimon
                         && cardSource.HasDP
-                        && cardSource.BaseDP <= 4000
+                        && cardSource.CardDP <= 4000
                         && (cardSource.HasIliadTraits
-                        || cardSource.HasBeastTraits)
+                            || cardSource.HasBeastTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 

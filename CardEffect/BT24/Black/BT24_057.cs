@@ -63,22 +63,22 @@ namespace DCGO.CardEffects.BT24
 
             string SharedEffectDescription(string tag) => $"[{tag}] Until your opponent's turn ends, 1 of their Digimon can't attack players.";
 
-            bool CanSelectPermanentCondition(Permanent permanent)
+            bool CanSelectPermanentConditionShared(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
-            IEnumerator SharedActivateCoroutine(Hashtable hashtable)
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentConditionShared))
                 {
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentConditionShared));
 
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
+                        canTargetCondition: CanSelectPermanentConditionShared,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: maxCount,
@@ -193,7 +193,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                     {
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                        int maxCount1 = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
 
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -201,8 +201,8 @@ namespace DCGO.CardEffects.BT24
                             selectPlayer: card.Owner,
                             canTargetCondition: CanSelectPermanentCondition,
                             canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: CanEndSelectCondition,
-                            maxCount: maxCount,
+                            canEndSelectCondition: null,
+                            maxCount: maxCount1,
                             canNoSelect: false,
                             canEndNotMax: false,
                             selectPermanentCoroutine: SelectPermanentCoroutine,
@@ -211,24 +211,13 @@ namespace DCGO.CardEffects.BT24
                             cardEffect: activateClass);
 
                         selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to De-Digivolve.", "The opponent is selecting 1 Digimon to De-Digivolve.");
-
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                        bool CanEndSelectCondition(List<Permanent> permanents)
-                        {
-                            return permanents.Count <= 0;
-                        }
 
                         IEnumerator SelectPermanentCoroutine(Permanent permanent)
                         {
                             Permanent selectedPermanent = permanent;
 
-                            if (selectedPermanent != null)
-                            {
-                                yield return ContinuousController.instance.StartCoroutine(new IDegeneration(selectedPermanent, 1, activateClass).Degeneration());
-                            }
-
-                            yield return null;
+                            yield return ContinuousController.instance.StartCoroutine(new IDegeneration(selectedPermanent, 1, activateClass).Degeneration());
                         }
                     }
                 }

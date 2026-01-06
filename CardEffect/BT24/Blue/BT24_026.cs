@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // Hyogamon
 namespace DCGO.CardEffects.BT24
 {
-    public class BT24_036 : CEntity_Effect
+    public class BT24_026 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -121,7 +121,7 @@ namespace DCGO.CardEffects.BT24
 
                     selectHandEffect.SetUpCustomMessage("Select 1 Card to trash.", "The opponent is selecting 1 card to trash from their hand.");
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
                     IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                     {
