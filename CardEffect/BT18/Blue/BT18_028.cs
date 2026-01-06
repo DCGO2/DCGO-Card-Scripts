@@ -100,7 +100,7 @@ namespace DCGO.CardEffects.BT18
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Trash 2 bottom digivolution cards from all opponent's Digimon. Their digimon with no digivolution cards can't suspend.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Trash 2 bottom sources from all opponent's Digimon. Their sourceless digimon can't suspend", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
