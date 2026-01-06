@@ -392,6 +392,12 @@ namespace DCGO.CardEffects.BT24
                         && CardEffectCommons.IsOwnerTurn(card);
                 }
 
+                bool CanUseConditionSkill(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleArea(card)
+                        && CardEffectCommons.IsOwnerTurn(card);
+                }
+
                 bool PermanentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
@@ -405,7 +411,7 @@ namespace DCGO.CardEffects.BT24
                     condition: CanUseCondition));
 
                 AddSkillClass addSkillClass = new AddSkillClass();
-                addSkillClass.SetUpICardEffect("[Your Turn] All of your [Iliad] trait Digimon gain <Rush> and <Piercing>.", CanUseCondition, card);
+                addSkillClass.SetUpICardEffect("[Your Turn] All of your [Iliad] trait Digimon gain <Rush> and <Piercing>.", CanUseConditionSkill, card);
                 addSkillClass.SetUpAddSkillClass(cardSourceCondition: CardSourceCondition, getEffects: GetEffects);
                 cardEffects.Add(addSkillClass);
 
@@ -415,7 +421,7 @@ namespace DCGO.CardEffects.BT24
                         && cardSource == cardSource.PermanentOfThisCard().TopCard;
                 }
 
-                List<ICardEffect> GetEffects(CardSource cardSource, ref List<ICardEffect> cardEffects, EffectTiming _timing)
+                List<ICardEffect> GetEffects(CardSource cardSource, List<ICardEffect> cardEffects, EffectTiming _timing)
                 {
                     if (_timing == EffectTiming.OnDetermineDoSecurityCheck)
                     {

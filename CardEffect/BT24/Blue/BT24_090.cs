@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.BT24
                 }
 
                 #region Blocker
-                bool CanUseCondition(Hashtable hashtable)
+                bool CanUseCondition()
                 {
                     return CardEffectCommons.IsExistInSecurity(card, false);
                 }
