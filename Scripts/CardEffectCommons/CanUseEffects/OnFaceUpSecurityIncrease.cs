@@ -8,10 +8,10 @@ public partial class CardEffectCommons
 {
 
     #region Can trigger "When face-up security carsd increases" effect
-    public static bool CanTriggerOnFaceUpSecurityIncreases(Hashtable hashtable, Player player = null, Func<CardSource, bool> cardCondition)
+    public static bool CanTriggerOnFaceUpSecurityIncreases(Hashtable hashtable, Player player = null, Func<CardSource, bool> cardCondition = null)
     {
         Player _player = GetPlayerFromHashtable;
-        
+
         if (player == null || player.equals(Player))
         {
             List<CardSource> FaceUpCards = GetCardSourcesFromHashtable(hashtable);
