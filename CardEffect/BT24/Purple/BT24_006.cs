@@ -15,7 +15,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.WhenLinked)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("<Draw 1>", CanUseCondition, card);
+                activateClass.SetUpICardEffect("<Draw 1>, trash 1", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetHashString("Draw_BT24_006");
                 activateClass.SetIsInheritedEffect(true);
@@ -25,20 +25,11 @@ namespace DCGO.CardEffects.BT24
                 {
                     return "[Your Turn] [Oncer Per Turn] When this Digimon gets linked, <Draw 1> and trash 1 card in your hand.";
                 }
-
-                bool PermanentCondition(Permanent permanent)
-                {
-                    return permanent == card.PermanentOfThisCard();
-                }
-
-                bool CardCondition(CardSource source)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                }
-
+                
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenLinked(hashtable, PermanentCondition, CardCondition);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
+                           CardEffectCommons.CanTriggerWhenLinked(hashtable, permament => permament == card.PermanentOfThisCard(), null);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
