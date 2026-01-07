@@ -157,6 +157,8 @@ namespace DCGO.CardEffects.EX10
 
             IEnumerator SecondActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                List<CardSource> selectedCards = new List<CardSource>();
+                
                 bool cardsAdded = false;
 
                 if (card.Owner.TrashCards.Count >= 10)
