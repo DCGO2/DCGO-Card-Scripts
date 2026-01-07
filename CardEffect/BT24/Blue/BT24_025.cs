@@ -122,7 +122,8 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectPermamentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && permanent.TopCard.HasTSTraits;
+                        && permanent.TopCard.HasTSTraits
+                        && permanent != card.PermanentOfThisCard();
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
