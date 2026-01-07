@@ -50,8 +50,7 @@ namespace DCGO.CardEffects.BT24
             bool CanSelectCardCondition(CardSource cardSource)
             {
                 return cardSource.GetCostItself <= 5
-                    && (cardSource.IsTamer
-                        || cardSource.IsDigimon)
+                    && cardSource.HasPlayCost
                     && (cardSource.EqualsTraits("Machine")
                         || cardSource.EqualsTraits("Cyborg")
                         || cardSource.EqualsTraits("TS"));
