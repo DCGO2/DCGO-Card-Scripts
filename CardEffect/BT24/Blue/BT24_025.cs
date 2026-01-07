@@ -49,8 +49,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent)
-                        && permanent.IsDigimon
+                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
+                        && permanent.TopCard.CardColors.Contains(CardColor.Blue)
                         && permanent != card.PermanentOfThisCard()
                         && permanent.TopCard.HasTSTraits;
                 }
@@ -109,7 +109,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -121,7 +122,8 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectPermamentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && permanent.TopCard.HasTSTraits;
+                        && permanent.TopCard.HasTSTraits
+                        && permanent != card.PermanentOfThisCard();
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

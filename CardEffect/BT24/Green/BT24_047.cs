@@ -30,7 +30,7 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectUnsuspendPermanentCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && (permanent.TopCard.ContainsTraits("Avian")
                     || permanent.TopCard.ContainsTraits("Bird")
                     || permanent.TopCard.EqualsTraits("Vortex Warrior"));
