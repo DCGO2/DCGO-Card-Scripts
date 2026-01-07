@@ -19,8 +19,8 @@ namespace DCGO.CardEffects.BT24
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
                     return targetPermanent.TopCard.IsLevel4
-                        && (targetPermanent.TopCard.EqualsTraits("Digipolice")
-                            || targetPermanent.TopCard.EqualsTraits("SEEKERS"));
+                        && (targetPermanent.TopCard.HasDigiPoliceTraits
+                            || targetPermanent.TopCard.HasSeekersTraits);
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -45,8 +45,8 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon
-                        && (cardSource.EqualsTraits("Digipolice")
-                            || cardSource.EqualsTraits("SEEKERS"))
+                        && (cardSource.HasSeekersTraits
+                            || cardSource.HasSeekersTraits)
                         && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, false, activateClass);
                 }
 
@@ -216,15 +216,15 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && permanent.TopCard.IsDigimon
-                        && (permanent.TopCard.EqualsTraits("Digipolice")
-                            || permanent.TopCard.EqualsTraits("SEEKERS"));
+                        && (permanent.TopCard.HasSeekersTraits
+                            || permanent.TopCard.HasSeekersTraits);
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsTamer
-                        && (cardSource.EqualsTraits("Digipolice")
-                            || cardSource.EqualsTraits("SEEKERS"))
+                        && (cardSource.HasSeekersTraits
+                            || cardSource.HasSeekersTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
