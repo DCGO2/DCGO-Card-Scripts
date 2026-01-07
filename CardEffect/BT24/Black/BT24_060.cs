@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsDigimon
                         && (cardSource.HasSeekersTraits
-                            || cardSource.HasSeekersTraits)
+                            || cardSource.HasDigiPoliceTraits)
                         && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, false, activateClass);
                 }
 
@@ -217,14 +217,14 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && permanent.TopCard.IsDigimon
                         && (permanent.TopCard.HasSeekersTraits
-                            || permanent.TopCard.HasSeekersTraits);
+                            || permanent.TopCard.HasDigiPoliceTraits);
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsTamer
                         && (cardSource.HasSeekersTraits
-                            || cardSource.HasSeekersTraits)
+                            || cardSource.HasDigiPoliceTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
