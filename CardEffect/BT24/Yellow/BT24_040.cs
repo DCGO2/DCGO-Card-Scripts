@@ -212,7 +212,7 @@ namespace DCGO.CardEffects.BT24
                     canTargetCondition: CanFreezeCondition,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
-                    maxCount: maxCount,
+                    maxCount: maxCount1,
                     canNoSelect: false,
                     canEndNotMax: false,
                     selectPermanentCoroutine: SelectPermanentCoroutine1,
@@ -279,7 +279,7 @@ namespace DCGO.CardEffects.BT24
                         && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
                 }
 
-                
+
             }
 
             #endregion
@@ -308,7 +308,8 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By placing a sourceless Digimon to Security, your [TS] digimon won't leave the field", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
+                activateClass.SetHashString("BT24_040_AT");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -392,7 +393,7 @@ namespace DCGO.CardEffects.BT24
                                 toTop: false).PutSecurity()
                             );
 
-                            if (card.Owner.SecurityCards.Contains(toSecCard))
+                            if (card.Owner.SecurityCards.Contains(toSecCard) || card.Owner.Enemy.SecurityCards.Contains(toSecCard))
                             {
                                 List<Permanent> protectedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable)
                                     .Filter(PermanentCondition);
