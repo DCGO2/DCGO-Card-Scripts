@@ -173,7 +173,7 @@ namespace DCGO.CardEffects.EX10
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     canNoSelect: () => true,
-                    selectCardCoroutine: null,
+                    selectCardCoroutine: SelectCardCoroutine,
                     afterSelectCardCoroutine: AfterSelectCardCoroutine,
                     message: "Select cards to place at the top of the deck\n(cards will be placed back to the bottom of the deck so that cards with lower numbers are on top).",
                     maxCount: 2,
@@ -188,10 +188,17 @@ namespace DCGO.CardEffects.EX10
 
                     yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    {
+                        selectedCards.Add(cardSource);
+                        yield return null;
+                    }
+
                     IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                     {
                         if (cardSources.Count == 2)
                         {
+                            selectedCards.Reverse();
                             yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(cardSources));
                             yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(cardSources, "Deck Top Cards", true, true));
                             cardsAdded = true;
