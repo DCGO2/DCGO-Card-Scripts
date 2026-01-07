@@ -75,7 +75,7 @@ namespace DCGO.CardEffects.BT24
                         foreach (Permanent removed in removedPermanents)
                         {
                             removed.willBeRemoveField = false;
-
+                            removed.HideDeleteEffect();
                             removed.HideHandBounceEffect();
                             removed.HideDeckBounceEffect();
                             removed.HideWillRemoveFieldEffect();
