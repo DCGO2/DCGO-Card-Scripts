@@ -196,7 +196,7 @@ namespace DCGO.CardEffects.EX10
 
                     IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                     {
-                        if (cardSources.Count == 2)
+                        if (selectedCards.Count == 2)
                         {
                             selectedCards.Reverse();
                             yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(selectedCards));
