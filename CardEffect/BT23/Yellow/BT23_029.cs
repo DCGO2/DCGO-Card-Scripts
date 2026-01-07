@@ -70,7 +70,7 @@ namespace DCGO.CardEffects.BT23
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && (permanent.TopCard.EqualsTraits("Beast") || permanent.TopCard.EqualsTraits("Beastkin") || permanent.TopCard.HasCSTraits);
                 }
 
