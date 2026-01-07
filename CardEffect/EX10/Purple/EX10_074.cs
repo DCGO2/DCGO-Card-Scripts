@@ -43,7 +43,7 @@ namespace DCGO.CardEffects.EX10
 
             #region Trash, then Delete effect
 
-            string FirstEffectShortText() => "Trash top 2 from deck, Delete 1 play cost 6 or higher";
+            string FirstEffectShortText() => "Trash top 2 from deck, Delete 1 play cost 6 or lower";
             string FirstEffectDiscription(string tag)
             {
                 return $"[{tag}] Trash the top 2 cards of your deck. Then, delete 1 of your opponent's play cost 6 or lower Digimon. For every 10 cards in your trash, add 3 to the play cost maximum.";
