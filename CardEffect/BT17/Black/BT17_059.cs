@@ -196,7 +196,7 @@ namespace DCGO.CardEffects.BT17
                 bool DefendingPermanent(Permanent permanent)
                 {
                     if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
-                        return permanent.TopCard.EqualsCardName("Diaboromon");
+                        return permanent.TopCard.CardNames.Contains("Diaboromon");
 
                     return false;
                 }
