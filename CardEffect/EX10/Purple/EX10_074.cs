@@ -199,7 +199,7 @@ namespace DCGO.CardEffects.EX10
                         if (cardSources.Count == 2)
                         {
                             selectedCards.Reverse();
-                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(cardSources));
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(selectedCards));
                             yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(cardSources, "Deck Top Cards", true, true));
                             cardsAdded = true;
                         }
