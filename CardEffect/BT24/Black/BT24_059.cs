@@ -228,7 +228,8 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    List<CardSource> selectedCards = new List<CardSource>();
+                    CardSource placedCard = null;
+                    Permanent thisPermanent = card.PermanentOfThisCard();
 
                     SelectPermanentEffect selectPermanentEffect =
                         GManager.instance.GetComponent<SelectPermanentEffect>();
@@ -250,22 +251,22 @@ namespace DCGO.CardEffects.BT24
                         "Select 1 card to place on bottom of digivolution cards.",
                         "The opponent is selecting 1 card to place on bottom of digivolution cards.");
 
-                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                    
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        selectedCards.Add(permanent.TopCard);
+                        placedCard = permanent.TopCard;
 
                         yield return ContinuousController.instance.StartCoroutine(new IPlacePermanentToDigivolutionCards(
-                            new List<Permanent[]>() { new Permanent[] { permanent, card.PermanentOfThisCard() } },
+                            new List<Permanent[]>() { new Permanent[] { permanent, thisPermanent } },
                             false,
                             activateClass).PlacePermanentToDigivolutionCards());
                     }
 
-                    if (selectedCards.Count >= 1)
+                    if (thisPermanent.DigivolutionCards.Contains(placedCard))
                     {
                         yield return ContinuousController.instance.StartCoroutine(
-                            new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() },
+                            new IUnsuspendPermanents(new List<Permanent>() { thisPermanent },
                                 activateClass).Unsuspend());
                     }
                 }
