@@ -37,7 +37,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent))
+                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
                         && permanent.TopCard.HasLevel
                         && permanent.TopCard.Level <= 6;
                 }
