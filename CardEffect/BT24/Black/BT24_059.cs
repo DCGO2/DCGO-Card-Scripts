@@ -250,13 +250,11 @@ namespace DCGO.CardEffects.BT24
                         "Select 1 card to place on bottom of digivolution cards.",
                         "The opponent is selecting 1 card to place on bottom of digivolution cards.");
 
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                    CardSource placedCard = null;
-                    
+                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        placedCard = permanent.TopCard;
-                        selectedCards.Add(placedCard);
+                        selectedCards.Add(permanent.TopCard);
 
                         yield return ContinuousController.instance.StartCoroutine(new IPlacePermanentToDigivolutionCards(
                             new List<Permanent[]>() { new Permanent[] { permanent, card.PermanentOfThisCard() } },
@@ -264,7 +262,7 @@ namespace DCGO.CardEffects.BT24
                             activateClass).PlacePermanentToDigivolutionCards());
                     }
 
-                    if (card.PermanentOfThisCard().DigivolutionCards.Contains(placedCard))
+                    if (selectedCards.Count >= 1)
                     {
                         yield return ContinuousController.instance.StartCoroutine(
                             new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() },
