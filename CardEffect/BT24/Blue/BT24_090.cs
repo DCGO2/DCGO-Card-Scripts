@@ -84,12 +84,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (effectTiming == EffectTiming.OnAllyAttack)
                     {
-                        bool Condition()
-                        {
-                            return CardSourceCondition(cardSource);
-                        }
-
-                        effects.Add(CardEffectFactory.AllianceSelfEffect(false, cardSource, Condition));
+                        effects.Add(CardEffectFactory.AllianceSelfEffect(false, cardSource, null));
                     }
 
                     return effects;
