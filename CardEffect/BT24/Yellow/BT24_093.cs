@@ -83,7 +83,8 @@ namespace DCGO.CardEffects.BT24
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && (permanent.TopCard.ContainsCardName("Aegiochusmon")
-                        || permanent.TopCard.ContainsCardName("Jupitermon"));
+                            || permanent.TopCard.ContainsCardName("Jupitermon"))
+                        && permanent.DigivolutionCards.Count  > 0;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
