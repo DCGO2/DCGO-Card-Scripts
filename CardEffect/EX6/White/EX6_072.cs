@@ -72,8 +72,7 @@ namespace DCGO.CardEffects.EX6
 
                 bool HasLevel6HandSource(CardSource cardSource)
                 {
-                    return cardSource.IsDigimon &&
-                           cardSource.HasLevel && cardSource.Level == 6;
+                    return true;
                 }
 
                 bool HasLevel6Permanent(Permanent permanent)
