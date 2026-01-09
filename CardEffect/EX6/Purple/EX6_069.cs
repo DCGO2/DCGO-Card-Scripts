@@ -228,7 +228,7 @@ namespace DCGO.CardEffects.EX6
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    if(CardEffectCommons.IsOwnerPermanent(permanent, card))
+                    if(CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
                     {
                         return HasSevenGreatDemonLordTrait(permanent.TopCard);
                     }
