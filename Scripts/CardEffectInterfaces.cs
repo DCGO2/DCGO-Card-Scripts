@@ -511,3 +511,10 @@ public interface IChangeEndTurnMinMemoryEffect
     int GetMinMemory(int minMemory);
 }
 #endregion
+
+#region "Vortex may attack Players" effect
+public interface IVortexCanAttackPlayersEffect
+{
+    bool VortexCanAttackPlayersPermanent(Permanent Attacker);
+}
+#endregion
