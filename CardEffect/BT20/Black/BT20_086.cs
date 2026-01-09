@@ -181,8 +181,7 @@ namespace DCGO.CardEffects.BT20
                                     if (!source.IsFlipped)
                                         continue;
 
-                                    source.SetFace();
-                                    GManager.OnSecurityStackChanged?.Invoke(card.Owner.Enemy);
+                                    yield return ContinuousController.instance.StartCoroutine(new IFlipSecurity(source).FlipFaceUp());
 
                                     break;
                                 }
