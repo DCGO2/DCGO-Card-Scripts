@@ -57,7 +57,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanDeleteCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy);
+                    return CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy);
                 }       
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
