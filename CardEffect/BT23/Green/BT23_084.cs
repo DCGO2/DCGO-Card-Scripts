@@ -194,6 +194,25 @@ namespace DCGO.CardEffects.BT23
 
             #endregion
 
+            #region Blank ESS
+
+            if (timing == EffectTiming.OnEndTurn)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Placeholder to mark as having inheritable", _ => false, card);
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, true, "No Effect");
+                activateClass.SetIsInheritedEffect(true);
+                activateClass.SetIsBackgroundProcess(true);
+                cardEffects.Add(activateClass);
+
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
+                {
+                    yield return null;
+                }
+            }
+
+            #endregion
+
             return cardEffects;
         }
     }
