@@ -53,7 +53,7 @@ namespace DCGO.CardEffects.BT15
 
             string SharedEffectDescription(string tag)
             {
-                return $"[{tag}] Return 1 of your opponent's level 5 or lower Digimon to the bottom of their deck.";
+                return $"[{tag}] Return 1 of your opponent's level 5 or lower Digimon to hand.";
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
