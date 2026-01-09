@@ -16,7 +16,7 @@ namespace DCGO.CardEffects.BT15
             {
                 bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.CardNames.Contains("Rosemon");
+                    return targetPermanent.TopCard.EqualsCardName("Rosemon");
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(
@@ -253,7 +253,7 @@ namespace DCGO.CardEffects.BT15
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        if (card.PermanentOfThisCard().DigivolutionCards.Count((cardSource) => cardSource.CardNames.Contains("Rosemon") || cardSource.CardNames.Contains("X Antibody") || cardSource.CardNames.Contains("XAntibody")) >= 1)
+                        if (card.PermanentOfThisCard().DigivolutionCards.Count((cardSource) => cardSource.EqualsCardName("Rosemon") || cardSource.EqualsCardName("X Antibody")) >= 1)
                         {
                             return true;
                         }
