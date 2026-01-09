@@ -107,6 +107,8 @@ namespace DCGO.CardEffects.BT24
                 {
                     return (cardSource.EqualsTraits("Evil")
                             || cardSource.EqualsTraits("Fallen Angel"))
+                        && cardSource.GetCostItself <= maxCost
+                        && cardSource.HasPlayCost
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
@@ -123,7 +125,7 @@ namespace DCGO.CardEffects.BT24
                     selectCardEffect.SetUp(
                         canTargetCondition: CanSelectCardCondition,
                         canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
-                        canEndSelectCondition: null,
+                        canEndSelectCondition: CanEndSelectCondition,
                         canNoSelect: () => true,
                         selectCardCoroutine: SelectCardCoroutine,
                         afterSelectCardCoroutine: null,
@@ -159,6 +161,28 @@ namespace DCGO.CardEffects.BT24
                         sumCost += cardSource.GetCostItself;
 
                         if (sumCost > totalCost)
+                        {
+                            return false;
+                        }
+
+                        return true;
+                    }
+
+                    bool CanEndSelectCondition(List<CardSource> cardSources)
+                    {
+                        if (cardSources.Count <= 0)
+                        {
+                            return false;
+                        }
+
+                        int sumCost = 0;
+
+                        foreach (CardSource cardSource1 in cardSources)
+                        {
+                            sumCost += cardSource1.GetCostItself;
+                        }
+
+                        if (sumCost > maxCost)
                         {
                             return false;
                         }
