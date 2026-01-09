@@ -44,58 +44,33 @@ namespace DCGO.CardEffects.BT15
 
             #endregion
 
-            #region On Play/When Attacking Shared
+            #region Shared OP/WA
+
+            string SharedEffectName()
+            {
+                return "Return 1 level 5 or lower Digimon to hand.";
+            }
+
+            string SharedEffectDescription(string tag)
+            {
+                return $"[{tag}] Return 1 of your opponent's level 5 or lower Digimon to the bottom of their deck.";
+            }
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                if (CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card))
-                {
-                    if (permanent.TopCard.HasLevel)
-                    {
-                        if (permanent.Level <= 5)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
+                    && permanent.TopCard.HasLevel
+                    && permanent.Level <= 5;
             }
 
-            bool CanActivateSharedCondition(Hashtable hashtable)
+            bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return CardEffectCommons.IsExistOnBattleArea(card);
             }
 
-            #endregion
-
-            #region On Play
-
-            if (timing == EffectTiming.OnEnterFieldAnyone)
+            IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Return 1 level 5 or lower Digimon to hand", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateSharedCondition, ActivateCoroutine, -1, false, EffectDescription());
-                cardEffects.Add(activateClass);
-
-                string EffectDescription()
-                {
-                    return "[On Play] Return 1 of your opponent's level 5 or lower Digimon to the bottom of their deck.";
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
+                if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                 {
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                     {
@@ -118,6 +93,24 @@ namespace DCGO.CardEffects.BT15
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                     }
+                }
+            }
+
+            #endregion
+
+            #region On Play
+
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
 
@@ -128,43 +121,14 @@ namespace DCGO.CardEffects.BT15
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Return 1 level 5 or lower Digimon to hand", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateSharedCondition, ActivateCoroutine, -1, false, EffectDescription());
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Attacking"));
                 cardEffects.Add(activateClass);
-
-                string EffectDescription()
-                {
-                    return "[When Attacking] Return 1 of your opponent's level 5 or lower Digimon to the bottom of their deck.";
-                }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
-                {
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                    {
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
-
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermanentCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: false,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: null,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Bounce,
-                            cardEffect: activateClass);
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                    }
+                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
 
