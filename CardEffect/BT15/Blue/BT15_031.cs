@@ -72,27 +72,24 @@ namespace DCGO.CardEffects.BT15
             {
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                 {
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
-                    {
-                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition));
 
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectPermanentCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: false,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: null,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Bounce,
-                            cardEffect: activateClass);
+                    selectPermanentEffect.SetUp(
+                        selectPlayer: card.Owner,
+                        canTargetCondition: CanSelectPermanentCondition,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        maxCount: maxCount,
+                        canNoSelect: false,
+                        canEndNotMax: false,
+                        selectPermanentCoroutine: null,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.Bounce,
+                        cardEffect: activateClass);
 
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                    }
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                 }
             }
 
