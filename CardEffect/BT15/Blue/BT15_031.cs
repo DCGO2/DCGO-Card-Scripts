@@ -243,9 +243,12 @@ namespace DCGO.CardEffects.BT15
 
             #endregion
 
-            //Inherited Effect
+            #region Inherited Effect
+            
             if (timing == EffectTiming.None)
                 cardEffects.Add(CardEffectFactory.BlockerSelfStaticEffect(isInheritedEffect: true, card: card, condition: null));
+
+            #endregion
 
             return cardEffects;
         }
