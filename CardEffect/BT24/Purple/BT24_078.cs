@@ -128,7 +128,7 @@ namespace DCGO.CardEffects.BT24
                         canNoSelect: () => true,
                         selectCardCoroutine: SelectCardCoroutine,
                         afterSelectCardCoroutine: null,
-                        message: "Select 1 digimon to play",
+                        message: $"Select up to {totalCost} worth of digimon to play",
                         maxCount: maxCount, 
                         canEndNotMax: true,
                         isShowOpponent: true,
