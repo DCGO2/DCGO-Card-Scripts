@@ -48,8 +48,7 @@ namespace DCGO.CardEffects.BT24
                 #region +2k DP
                 bool CanUseCondition()
                 {
-                    return CardEffectCommons.IsExistInSecurity(card, false) &&
-                           CardEffectCommons.HasMatchConditionPermanent(PermanentCondition);
+                    return CardEffectCommons.IsExistInSecurity(card, false);
                 }
 
                 cardEffects.Add(CardEffectFactory.ChangeDPStaticEffect(
@@ -91,12 +90,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (effectTiming == EffectTiming.OnAllyAttack)
                     {
-                        bool Condition()
-                        {
-                            return CardSourceCondition(cardSource);
-                        }
-
-                        effects.Add(CardEffectFactory.AllianceSelfEffect(false, cardSource, Condition));
+                        effects.Add(CardEffectFactory.AllianceSelfEffect(false, cardSource, null));
                     }
 
                     return effects;
