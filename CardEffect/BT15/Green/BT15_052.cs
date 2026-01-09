@@ -235,9 +235,12 @@ namespace DCGO.CardEffects.BT15
 
             #endregion
 
-            //Inhereted Effect
+            #region Inhereted Effect
+            
             if (timing == EffectTiming.OnDetermineDoSecurityCheck)
                 cardEffects.Add(CardEffectFactory.PierceSelfEffect(isInheritedEffect: true, card: card, condition: null));
+
+            #endregion
 
             return cardEffects;
         }
