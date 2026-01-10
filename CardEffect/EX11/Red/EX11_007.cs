@@ -10,6 +10,20 @@ namespace DCGO.CardEffects.EX11
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
+            #region Digivolution Condition
+            
+            if (timing == EffectTiming.None)
+            {
+                bool PermanentCondition(Permanent targetPermanent)
+                {
+                    return targetPermanent.TopCard.EqualsCardName("Koromon");
+                }
+
+                cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 0, ignoreDigivolutionRequirement: false, card: card, condition: null));
+            }
+            
+            #endregion
+
             #region Shared WM/OP
 
             string SharedEffectName() => "1 Digimon gains <Raid> and <Piercing> for turn.";
