@@ -17,7 +17,7 @@ namespace DCGO.CardEffects.EX11
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.HasLevel && targetPermanent.TopCard.IsLevel3 &&
+                    return targetPermanent.TopCard.IsLevel3 &&
                            (targetPermanent.TopCard.EqualsTraits("Cyborg") || targetPermanent.TopCard.EqualsTraits("Machine"));
                 }
 
