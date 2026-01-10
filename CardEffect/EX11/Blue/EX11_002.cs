@@ -1,0 +1,51 @@
+using System.Collections;
+using System.Collections.Generic;
+
+// Hiyarimon
+namespace DCGO.CardEffects.EX11
+{
+    public class EX11_002 : CEntity_Effect
+    {
+        public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
+        {
+            List<ICardEffect> cardEffects = new List<ICardEffect>();
+
+            if (timing == EffectTiming.None)
+            {
+                CanAttackTargetDefendingPermanentClass canAttackTargetDefendingPermanentClass = new CanAttackTargetDefendingPermanentClass();
+                canAttackTargetDefendingPermanentClass.SetUpICardEffect($"Can attack to unsuspended Digimon", CanUseCondition, card);
+                canAttackTargetDefendingPermanentClass.SetUpCanAttackTargetDefendingPermanentClass(attackerCondition: AttackerCondition, defenderCondition: DefenderCondition, cardEffectCondition: CardEffectCondition);
+
+                cardEffects.Add(canAttackTargetDefendingPermanentClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleArea(card)
+                        && card.Owner.Enemy.GetBattleAreaDigimons().Count((permanent) => permanent.DigivolutionCards.Count >= 1) == 0;
+                }
+
+                bool AttackerCondition(Permanent permanent)
+                {
+                    return permanent == card.PermanentOfThisCard();
+                }
+
+                bool DefenderCondition(Permanent permanent)
+                {
+                    return permanent != null
+                        && permanent.TopCard != null
+                        && permanent.TopCard.Owner == card.Owner.Enemy
+                        && permanent.IsDigimon
+                        && !permanent.IsSuspended
+                        && permanent.TopCard.Owner.GetBattleAreaPermanents().Contains(permanent);
+                }
+
+                bool CardEffectCondition(ICardEffect cardEffect)
+                {
+                    return true;
+                }
+            }
+            
+            return cardEffects;
+        }
+    }
+}
