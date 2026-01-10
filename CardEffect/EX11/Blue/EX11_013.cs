@@ -18,13 +18,15 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                    && card.Owner.HandCards.Count <= 7;
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                if (card.Owner.HandCards.Count <= 7)
+                {
+                    yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                }
             }
 
             #endregion
