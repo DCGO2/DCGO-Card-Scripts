@@ -63,8 +63,7 @@ namespace DCGO.CardEffects.BT24
                 bool CardSourceCondition(CardSource cardSource)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(cardSource) &&
-                           cardSource.Owner == card.Owner &&
-                           cardSource == cardSource.PermanentOfThisCard().TopCard &&
+                           cardSource == cardSource.PermanentOfThisCard()?.TopCard &&
                            PermanentCondition(cardSource.PermanentOfThisCard());
                 }
 
