@@ -69,13 +69,12 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition1(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistInSecurity(card, false) &&
-                           CardEffectCommons.HasMatchConditionPermanent(HasOXII);
+                           CardEffectCommons.HasMatchConditionOwnersPermanent(card, HasOXII);
                 }
 
                 bool CardSourceCondition(CardSource cardSource)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(cardSource) &&
-                           cardSource.Owner == card.Owner &&
                            cardSource == cardSource.PermanentOfThisCard().TopCard &&
                            PermanentCondition(cardSource.PermanentOfThisCard());
                 }
