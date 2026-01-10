@@ -5,7 +5,7 @@ using System.Collections.Generic;
 // Sonic Shot
 namespace DCGO.CardEffects.BT24
 {
-    public class ST24_095 : CEntity_Effect
+    public class BT24_095 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
