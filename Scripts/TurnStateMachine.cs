@@ -676,6 +676,17 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
         yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
         //ターン終了チェック
         yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.EndTurnCheck());
+
+        //Handle attacks by effect caused in this phase
+        while (GManager.instance.attackProcess.ActiveAttack())
+        {
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.attackProcess.ProcessNextState());
+
+            //自動処理チェックタイミング
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
+            //ターン終了チェック
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.EndTurnCheck());
+        }
     }
     #endregion
 
@@ -803,6 +814,17 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
         //ターン終了チェック
         yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.EndTurnCheck());
 
+        //Handle attacks by effect caused in this phase
+        while (GManager.instance.attackProcess.ActiveAttack())
+        {
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.attackProcess.ProcessNextState());
+
+            //自動処理チェックタイミング
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
+            //ターン終了チェック
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.EndTurnCheck());
+        }
+
         if (gameContext.TurnPhase == GameContext.phase.End)
         {
             yield break;
@@ -913,6 +935,16 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
             yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
             //ターン終了チェック
             yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.EndTurnCheck());
+
+            while (GManager.instance.attackProcess.ActiveAttack())
+            {
+                yield return ContinuousController.instance.StartCoroutine(GManager.instance.attackProcess.ProcessNextState());
+
+                //自動処理チェックタイミング
+                yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
+                //ターン終了チェック
+                yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.EndTurnCheck());
+            }
 
             #region パラメータリセット
             ResetMainPhaseParameter();
@@ -1232,7 +1264,7 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
                 yield return ContinuousController.instance.StartCoroutine(GManager.instance.attackProcess.Attack(AttackingPermanent, DefendingPermanent, null));
             }
             #endregion
-        }
+        }//end of loop
     #endregion
 
     EndMainPhase:;
