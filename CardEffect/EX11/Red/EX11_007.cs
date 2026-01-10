@@ -32,15 +32,15 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
             bool PermanentDigimonCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && (permanent.TopCard.ContainsCardName("Tyrannomon")
-                        || permanent.TopCard.EqualTraits("Reptile")
-                        || permanent.TopCard.EqualTraits("Dinosaur"));
+                        || permanent.TopCard.EqualsTraits("Reptile")
+                        || permanent.TopCard.EqualsTraits("Dinosaur"));
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)

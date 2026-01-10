@@ -41,7 +41,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.EqualsCardName("Suzune Kazuki")
+                    return cardSource.EqualsCardName("Suzune Kazuki");
                 }
 
                 bool CanSelectCardCondition1(CardSource cardSource)

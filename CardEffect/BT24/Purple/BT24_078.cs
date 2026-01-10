@@ -117,7 +117,7 @@ namespace DCGO.CardEffects.BT24
 
                     List<CardSource> selectedCards = new List<CardSource>();
                     int totalCost = 4 * (1 + (card.Owner.Enemy.TrashCards.Count / 10));
-                    int maxCount = CardEffectCommons.MatchConditionOwnersCardCountInTrash(CanSelectCardCondition);
+                    int maxCount = CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, CanSelectCardCondition);
 
                     SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
@@ -162,7 +162,7 @@ namespace DCGO.CardEffects.BT24
                             sumCost += source.GetCostItself;
                         }
 
-                        if (sumCost > maxCost)
+                        if (sumCost > totalCost)
                         {
                             return false;
                         }
