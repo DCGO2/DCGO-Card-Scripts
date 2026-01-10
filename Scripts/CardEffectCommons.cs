@@ -1282,6 +1282,29 @@ public partial class CardEffectCommons
 
     #endregion
 
+    #region Check if effect has been used
+
+    bool HasExpendedOtherEffect(CardSource card, EffectTiming timing, string hashValue)
+    {
+        ICardEffect activateClass = null;
+
+        if (card.EffectList(timing).Count >= 1)
+        {
+            foreach (ICardEffect cardEffect in card.EffectList(timing))
+            {
+                if (cardEffect.HashString == hashValue)
+                {
+                    activateClass = cardEffect;
+                    break;
+                }
+            }
+        }
+
+        return activateClass != null && card.cEntity_EffectController.isOverMaxCountPerTurn(activateClass, activateClass.MaxCountPerTurn);
+    }
+
+    #endregion
+
     #region Draw cards and trash cards
 
     public static IEnumerator DrawAndDiscardCards((Player drawPlayer, Player trashPlayer) player,
