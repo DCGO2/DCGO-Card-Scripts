@@ -5,7 +5,7 @@ using System.Collections.Generic;
 //Soul Fear
 namespace DCGO.CardEffects.BT24
 {
-    public class ST24_097 : CEntity_Effect
+    public class BT24_097 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {

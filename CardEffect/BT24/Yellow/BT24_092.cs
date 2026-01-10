@@ -5,7 +5,7 @@ using System.Collections.Generic;
 //Shock Plasma
 namespace DCGO.CardEffects.BT24
 {
-    public class ST24_092 : CEntity_Effect
+    public class BT24_092 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
