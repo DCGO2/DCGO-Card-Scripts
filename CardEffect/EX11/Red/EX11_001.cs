@@ -14,12 +14,12 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Digivolve this Digimon into [Tyrannnomon] in name or [Dinosaur] trait.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetHashString("Digivolve_EX8_073");
                 activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                     => "[When Attacking] [Once Per Turn] This Digimon may digivolve into a Digimon card with [Tyrannomon] in its name or the [Dinosaur] trait in the hand.";
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -32,7 +32,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectCardCondition(CardSource cardSource)
                     => (cardSource.EqualsTraits("Dinosaur")
-                    || cardSource.ContainsCardName("Tyrannomon")}
+                    || cardSource.ContainsCardName("Tyrannomon"))
                     && cardSource.IsDigimon
                     && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, true, activateClass, root: SelectCardEffect.Root.Hand);
 
