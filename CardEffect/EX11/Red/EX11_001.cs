@@ -40,49 +40,17 @@ namespace DCGO.CardEffects.EX11
                 {
                     if (card.Owner.HandCards.Exists(CanSelectCardCondition))
                     {
-                        List<CardSource> selectedCards = new List<CardSource>();
-                        SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
-
-                        selectHandEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: CanSelectCardCondition,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: 1,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            isShowOpponent: true,
-                            selectCardCoroutine: SelectCardCoroutine,
-                            afterSelectCardCoroutine: null,
-                            mode: SelectHandEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectHandEffect.SetUpCustomMessage("Select 1 card to digivolve.", "The opponent is selecting 1 card to digivolve.");
-                        selectHandEffect.SetUpCustomMessage_ShowCard("Selected card");
-
-                        yield return StartCoroutine(selectHandEffect.Activate());
-
-                        IEnumerator SelectCardCoroutine(CardSource cardSource)
-                        {
-                            selectedCards.Add(cardSource);
-                            yield return null;
-                        }
-
-                        if (selectedCards.Count >= 1)
-                        {
-                            CardSource selectedCard = selectedCards[0];
-                            if (CardEffectCommons.IsExistOnBattleArea(card))
-                            {
-                                yield return ContinuousController.instance.StartCoroutine(new PlayCardClass(
-                                    cardSources: new List<CardSource>() { selectedCard },
-                                    hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                                    payCost: true,
-                                    targetPermanent: card.PermanentOfThisCard(),
-                                    isTapped: false,
-                                    root: SelectCardEffect.Root.Hand,
-                                    activateETB: true).PlayCard());
-                            }
-                        }
+                        yield return ContinuousController.instance.StartCoroutine(
+                        CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                            targetPermanent: card.PermanentOfThisCard(),
+                            cardCondition: CanSelectCardCondition,
+                            payCost: true,
+                            reduceCostTuple: null,
+                            fixedCostTuple: null,
+                            ignoreDigivolutionRequirementFixedCost: -1,
+                            isHand: true,
+                            activateClass: activateClass,
+                            successProcess: null));
                     }
                 }
             }
