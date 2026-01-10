@@ -914,11 +914,11 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
             //ターン終了チェック
             yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.EndTurnCheck());
 
-            if(GManager.instance.attackProcess.IsAttacking)
+            if(GManager.instance.attackProcess.ActiveAttack())
             {
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.attackProcess.CounterTiming());
+                yield return ContinuousController.instance.StartCoroutine(GManager.instance.attackProcess.ProcessNextState());
 
-                continue;//Return back to start of while
+                continue;//Return back to start of while to perform AutoProcessCheck again
             }
 
             #region パラメータリセット

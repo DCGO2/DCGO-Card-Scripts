@@ -20,7 +20,42 @@ public class AttackProcess : MonoBehaviourPunCallbacks
 
     public bool UsedBlitz { get; set; } = false;
 
-    public Hashtable CounterEffectHashtable {get; set; } = null;
+    public Hashtable CounterEffectHashtable { get; set; } = null;
+    public AttackState State { get; set; } = AttackState.None;
+    public enum AttackState
+    {
+        None,
+        Counter,
+        Block,
+        Battle,
+        End
+    }
+
+    public bool ActiveAttack()
+    {
+        return State != null && State != AttackState.None;
+    }
+
+    public IEnumerator ProcessNextState()
+    {
+        switch (State)
+        {
+            case AttackState.Counter:
+                yield return ContinuousController.instance.StartCoroutine(CounterTiming());
+                break;
+            case AttackState.Block:
+                yield return ContinuousController.instance.StartCoroutine(BlockTiming());
+                break;
+            case AttackState.Battle:
+                yield return ContinuousController.instance.StartCoroutine(DetermineAttackOutcome());
+                break;
+            case AttackState.End:
+                yield return ContinuousController.instance.StartCoroutine(EndAttack());
+                break;
+            default:
+                yield break;
+        }
+    }
 
     void SetAttackerDefender(Permanent attackingPermanent, Permanent defendingPermanent)
     {
@@ -69,7 +104,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
         // force to end attack
         if (IsEndAttack)
         {
-            yield return ContinuousController.instance.StartCoroutine(EndAttack());
+            State = AttackState.End;
 
             yield break;
         }
@@ -221,7 +256,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
             // force to end attack
             if (IsEndAttack)
             {
-                yield return ContinuousController.instance.StartCoroutine(EndAttack());
+                State = AttackState.End;
             
                 yield break;
             }
@@ -240,6 +275,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
                     DefendingPermanent.ShowingPermanentCard.Outline_Select.gameObject.SetActive(true);
                 }
             }
+            State = AttackState.Counter;
         }
         else
         {
@@ -247,7 +283,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
             {
                 yield return ContinuousController.instance.StartCoroutine(beforeOnAttackCoroutine());
             }
-            yield return ContinuousController.instance.StartCoroutine(EndAttack());
+            State = AttackState.End;
         }
     }
 
@@ -268,7 +304,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
         // force to end attack
         if (IsEndAttack)
         {
-            yield return ContinuousController.instance.StartCoroutine(EndAttack());
+            State = AttackState.End;
         
             yield break;
         }
@@ -293,7 +329,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
         // force to end attack
         if (IsEndAttack || AttackingPermanent.TopCard == null || !AttackingPermanent.IsDigimon)
         {
-            yield return ContinuousController.instance.StartCoroutine(EndAttack());
+            State = AttackState.End;
         
             yield break;
         }
@@ -310,7 +346,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
             }
         }
 
-        yield return ContinuousController.instance.StartCoroutine(BlockTiming());
+        State = AttackState.Block;
     }
 
     IEnumerator BlockTiming()
@@ -379,7 +415,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
         //end attack
         if (IsEndAttack || AttackingPermanent.TopCard == null)
         {
-            yield return ContinuousController.instance.StartCoroutine(EndAttack());
+            State = AttackState.End;
         
             yield break;
         }
@@ -395,7 +431,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
                 DefendingPermanent.ShowingPermanentCard.Outline_Select.gameObject.SetActive(true);
             }
         }
-        yield return ContinuousController.instance.StartCoroutine(DetermineAttackOutcome());
+        State = AttackState.Battle;
     }
 
     IEnumerator DetermineAttackOutcome()
@@ -422,7 +458,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
         {
             if (!CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(DefendingPermanent) || !CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(AttackingPermanent))
             {
-                yield return ContinuousController.instance.StartCoroutine(EndAttack());
+                State = AttackState.End;
         
                 yield break;
             }
@@ -458,7 +494,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
 
         if (AttackingPermanent.TopCard == null)
         {
-            yield return ContinuousController.instance.StartCoroutine(EndAttack());
+            State = AttackState.End;
         
             yield break;
         }
@@ -472,6 +508,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
                 player: GManager.instance.turnStateMachine.gameContext.NonTurnPlayer).SecurityCheck());
         }
         #endregion
+        State = AttackState.End;
     }
     #endregion
 
@@ -506,6 +543,7 @@ public class AttackProcess : MonoBehaviourPunCallbacks
         IsAttacking = false;
         IsEndAttack = false;
         CounterEffectHashtable = null;
+        State = AttackState.None;
     }
 
     public IEnumerator SwitchDefender(ICardEffect cardEffect, bool isBlock, Permanent newDefendingPermanent)
