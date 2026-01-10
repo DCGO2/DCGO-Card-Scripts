@@ -240,8 +240,6 @@ public class AttackProcess : MonoBehaviourPunCallbacks
                     DefendingPermanent.ShowingPermanentCard.Outline_Select.gameObject.SetActive(true);
                 }
             }
-
-            yield return ContinuousController.instance.StartCoroutine(CounterTiming());
         }
         else
         {
