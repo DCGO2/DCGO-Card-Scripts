@@ -30,9 +30,6 @@ public class BT5_109 : CEntity_Effect
 
             IEnumerator ActivateCoroutine(Hashtable _hashtable)
             {
-
-                #region Reduce evo cost
-
                 ContinuousController.instance.PlaySE(GManager.instance.GetComponent<Effects>().BuffSE);
 
                 yield return new WaitForSeconds(0.2f);
@@ -49,6 +46,16 @@ public class BT5_109 : CEntity_Effect
                 activateClass2.SetUpActivateClass(null, ActivateCoroutine2, -1, false, "");
                 activateClass2.SetIsBackgroundProcess(true);
                 CardEffectCommons.AddEffectToPlayer(effectDuration: EffectDuration.UntilEachTurnEnd, card: card, cardEffect: null, timing: EffectTiming.None, getCardEffect: getCardEffect1);
+
+                Permanent playedPermanent = ;
+
+                ActivateClass activateClass3 = new ActivateClass();
+                activateClass3.SetUpICardEffect("Delete the Digimon", CanUseCondition2, playedPermanent.TopCard);
+                activateClass3.SetUpActivateClass(CanActivateCondition1, ActivateCoroutine3, -1, false, EffectDiscription2());
+                activateClass3.SetEffectSourcePermanent(playedPermanent);
+                playedPermanent.UntilOwnerTurnEndEffects.Add(GetCardEffect);
+
+                #region Reduce evo cost
 
                 string EffectDiscription1()
                 {
@@ -80,7 +87,7 @@ public class BT5_109 : CEntity_Effect
                 }
 
                 IEnumerator ActivateCoroutine1(Hashtable _hashtable1)
-                {       
+                {
                     ContinuousController.instance.PlaySE(GManager.instance.GetComponent<Effects>().BuffSE);
 
                     ChangeCostClass changeCostClass = new ChangeCostClass();
@@ -150,9 +157,6 @@ public class BT5_109 : CEntity_Effect
                     return null;
                 }
 
-                #endregion
-
-                #region Bot deck end of turn
 
                 IEnumerator ActivateCoroutine2(Hashtable _hashtable1)
                 {
@@ -179,15 +183,9 @@ public class BT5_109 : CEntity_Effect
 
                 yield return new WaitForSeconds(0.2f);
 
-                #region Delete Digimon Played
+                #endregion
 
-                Permanent playedPermanent = ;
-
-                ActivateClass activateClass3 = new ActivateClass();
-                activateClass3.SetUpICardEffect("Delete the Digimon", CanUseCondition2, playedPermanent.TopCard);
-                activateClass3.SetUpActivateClass(CanActivateCondition1, ActivateCoroutine3, -1, false, EffectDiscription2());
-                activateClass3.SetEffectSourcePermanent(playedPermanent);
-                playedPermanent.UntilOwnerTurnEndEffects.Add(GetCardEffect);
+                #region Bot deck end of turn
 
                 if (!playedPermanent.TopCard.CanNotBeAffected(activateClass))
                 {
@@ -244,8 +242,6 @@ public class BT5_109 : CEntity_Effect
 
                     return null;
                 }
-
-                #endregion
 
                 #endregion
             }
