@@ -1433,6 +1433,10 @@ public class PlayPermanentClass
                         .Map(evoRootPermanent => evoRootPermanent.StackCards)
                         .Flat();
 
+                    List<CardSource> linkCards = evoRootPermanents
+                        .Map(evoRootPermanent => evoRootPermanent.LinkedCards)
+                        .Flat();
+
                     foreach (Permanent evoRootPermanent in evoRootPermanents)
                     {
                         oldLevels.Add(evoRootPermanent.Level);
@@ -1445,6 +1449,11 @@ public class PlayPermanentClass
                         yield return ContinuousController.instance.StartCoroutine(evoRootPermanent.DiscardEvoRoots(ignoreOverflow: true, putToTrash: false));
 
                         yield return ContinuousController.instance.StartCoroutine(CardObjectController.RemoveField(evoRootPermanent, ignoreOverflow: true));
+                    }
+
+                    foreach(CardSource linkCard in linkCards)
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(linkCard));
                     }
 
                     PlayLog.OnAddLog?.Invoke($"\nJogress:\n{card.BaseENGCardNameFromEntity}({card.CardID})\n");
