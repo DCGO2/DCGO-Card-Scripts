@@ -17,7 +17,7 @@ namespace DCGO.CardEffects.EX11
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.EqualsTraits("Ice-Snow") && targetPermanent.TopCard.HasLevel && targetPermanent.TopCard.Level == 3;
+                    return targetPermanent.TopCard.EqualsTraits("Ice-Snow") && targetPermanent.TopCard.IsLevel3;
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 2, ignoreDigivolutionRequirement: false, card: card, condition: null));
