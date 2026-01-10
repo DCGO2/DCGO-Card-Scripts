@@ -35,24 +35,24 @@ namespace DCGO.CardEffects.EX11
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
             }
 
-            bool PermanentCondition(Permanent permanent)
+            bool PermanentDigimonCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && (permanent.TopCard.ContainsCardName("Tyrannomon")
                         || permanent.TopCard.EqualTraits("Reptile")
-                        || permanent.TopCard.EqualTraits("Dinosaur");
+                        || permanent.TopCard.EqualTraits("Dinosaur"));
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionPermanent(PermanentCondition))
+                if (CardEffectCommons.HasMatchConditionPermanent(PermanentDigimonCondition))
                 {
                     Permanent selectedPermanent = null;
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: PermanentCondition,
+                        canTargetCondition: PermanentDigimonCondition,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: 1,
