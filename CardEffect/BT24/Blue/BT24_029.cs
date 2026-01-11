@@ -219,7 +219,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CardCondition(CardSource cardSource)
                 {
-                    return cardSource.HasPlayCost && cardSource.GetCostItself <= 5 && cardSource.GetCostItself >=1
+                    return cardSource.HasPlayCost && cardSource.GetCostItself <= 5
                         && cardSource.HasTSTraits
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass, root: SelectCardEffect.Root.DigivolutionCards);
                 }
