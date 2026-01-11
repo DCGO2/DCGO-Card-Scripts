@@ -55,6 +55,25 @@ public class BT7_089 : CEntity_Effect
             cardEffects.Add(CardEffectFactory.PierceSelfEffect(isInheritedEffect: true, card: card, condition: null));
         }
 
+        #region Blank ESS
+
+            if (timing == EffectTiming.OnEndTurn)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("Placeholder to mark as having inheritable", _ => false, card);
+                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, true, "No Effect");
+                activateClass.SetIsInheritedEffect(true);
+                activateClass.SetIsBackgroundProcess(true);
+                cardEffects.Add(activateClass);
+
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
+                {
+                    yield return null;
+                }
+            }
+
+            #endregion
+
         return cardEffects;
     }
 }
