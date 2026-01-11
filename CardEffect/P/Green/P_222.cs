@@ -360,10 +360,15 @@ namespace DCGO.CardEffects.P
                         && CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy);
                 }
 
+                bool CanTriggerPermanent(Permanent permanent)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                }
+
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerWhenSelfPermanentSuspends(hashtable, card);
+                        && CardEffectCommons.CanTriggerWhenPermanentSuspends(hashtable, CanTriggerPermanent);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
