@@ -33,7 +33,7 @@ namespace DCGO.CardEffects.BT24
             {
                 bool CardCondition(CardSource cardSource)
                 {
-                    return cardSource.HasPlayCost && cardSource.BasePlayCostFromEntity <= 5
+                    return cardSource.HasPlayCost && cardSource.GetCostItself <= 5
                         && (cardSource.HasAquaTraits || cardSource.HasSeaBeastTraits || cardSource.HasTSTraits);
                 }
 
