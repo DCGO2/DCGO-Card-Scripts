@@ -356,63 +356,67 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    Permanent selectedPermanent = null;
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanPlaceToSecurityCondition));
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CanPlaceToSecurityCondition,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: maxCount,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        selectPermanentCoroutine: SelectPermanentCoroutine,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Custom,
-                        cardEffect: activateClass);
-
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to place in security.", "The opponent is selecting 1 Digimon to place in security.");
-
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanPlaceToSecurityCondition))
                     {
-                        selectedPermanent = permanent;
-
-                        yield return null;
-                    }
-
-                    if (selectedPermanent != null)
-                    {
-                        if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
+                        Permanent selectedPermanent = null;
+                        
+                        int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanPlaceToSecurityCondition));
+    
+                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+    
+                        selectPermanentEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: CanPlaceToSecurityCondition,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: maxCount,
+                            canNoSelect: false,
+                            canEndNotMax: false,
+                            selectPermanentCoroutine: SelectPermanentCoroutine,
+                            afterSelectPermanentCoroutine: null,
+                            mode: SelectPermanentEffect.Mode.Custom,
+                            cardEffect: activateClass);
+    
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to place in security.", "The opponent is selecting 1 Digimon to place in security.");
+    
+                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+    
+                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
                         {
-                            #region hashtable
-                            Hashtable _hashtable = new Hashtable()
+                            selectedPermanent = permanent;
+    
+                            yield return null;
+                        }
+    
+                        if (selectedPermanent != null)
+                        {
+                            if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                             {
-                                {"CardEffect", activateClass}
-                            };
-                            #endregion
-
-                            CardSource toSecCard = selectedPermanent.TopCard;
-
-                            yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
-                                permanent: selectedPermanent,
-                                hashtable: _hashtable,
-                                toTop: false).PutSecurity()
-                            );
-
-                            if (card.Owner.SecurityCards.Contains(toSecCard) || card.Owner.Enemy.SecurityCards.Contains(toSecCard))
-                            {
-                                foreach (Permanent permanent in removedPermanents)
+                                #region hashtable
+                                Hashtable _hashtable = new Hashtable()
                                 {
-                                    permanent.willBeRemoveField = false;
-                                    permanent.HideDeleteEffect();
-                                    permanent.HideHandBounceEffect();
-                                    permanent.HideDeckBounceEffect();
-                                    permanent.HideWillRemoveFieldEffect();
+                                    {"CardEffect", activateClass}
+                                };
+                                #endregion
+    
+                                CardSource toSecCard = selectedPermanent.TopCard;
+    
+                                yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
+                                    permanent: selectedPermanent,
+                                    hashtable: _hashtable,
+                                    toTop: false).PutSecurity()
+                                );
+    
+                                if (card.Owner.SecurityCards.Contains(toSecCard) || card.Owner.Enemy.SecurityCards.Contains(toSecCard))
+                                {
+                                    foreach (Permanent permanent in removedPermanents)
+                                    {
+                                        permanent.willBeRemoveField = false;
+                                        permanent.HideDeleteEffect();
+                                        permanent.HideHandBounceEffect();
+                                        permanent.HideDeckBounceEffect();
+                                        permanent.HideWillRemoveFieldEffect();
+                                    }
                                 }
                             }
                         }
