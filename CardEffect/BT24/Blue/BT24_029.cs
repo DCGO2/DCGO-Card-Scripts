@@ -220,6 +220,7 @@ namespace DCGO.CardEffects.BT24
                 bool CardCondition(CardSource cardSource)
                 {
                     return cardSource.HasPlayCost && cardSource.BasePlayCostFromEntity <= 5
+                        && cardSource.HasLevel
                         && cardSource.HasTSTraits
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass, root: SelectCardEffect.Root.DigivolutionCards);
                 }
