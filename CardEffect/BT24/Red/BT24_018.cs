@@ -123,6 +123,8 @@ namespace DCGO.CardEffects.BT24
                             cardEffect: activateClass);
                     
                         selectCardEffect.SetUpCustomMessage_ShowCard("Send to trash");
+
+                        selectCardEffect.SetUseFaceDown();
                     
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
                     
