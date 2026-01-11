@@ -109,7 +109,7 @@ namespace DCGO.CardEffects.BT24
 
                 if (CardEffectCommons.IsByEffect(hashtable, null))
                 {
-                    if (CardEffectCommons.HasMatchConditionPermanent(card, CanSelectPermanentCondition1))
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition1))
                     {
                         int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectPermanentCondition1));
 

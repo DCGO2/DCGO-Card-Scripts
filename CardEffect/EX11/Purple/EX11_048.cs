@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 // Ghostmon
 namespace DCGO.CardEffects.EX11
@@ -18,13 +19,13 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                    &&  permanent.TopCard.EqualTraits("Ghost");
+                    &&  permanent.TopCard.EqualsTraits("Ghost");
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)

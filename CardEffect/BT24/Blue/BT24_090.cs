@@ -70,7 +70,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition1(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistInSecurity(card, false) &&
-                           CardEffectCommons.HasMatchConditionOwnersPermanent(HasOXII);
+                           CardEffectCommons.HasMatchConditionOwnersPermanent(card, HasOXII);
                 }
 
                 bool HasOXII(Permanent permanent)

@@ -222,7 +222,7 @@ namespace DCGO.CardEffects.P
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerWhenAttacking(hashtable, card);
+                        && CardEffectCommons.CanTriggerOnAttack(hashtable, card);
                 }
             }
 

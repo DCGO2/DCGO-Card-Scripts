@@ -224,7 +224,7 @@ namespace DCGO.CardEffects.BT22
                     removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(IsEaterDigimon);
 
                     return CardEffectCommons.IsExistOnBreedingArea(card)
-                        && removedPermanents.some(permanent => CardEffectCommons.IsExistOnBattleAreaDigimon(permanent));
+                        && removedPermanents.Some(permanent => CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent));
                 }
 
                 bool IsEaterDigimon(Permanent permanent)
