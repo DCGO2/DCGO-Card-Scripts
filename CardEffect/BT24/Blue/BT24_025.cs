@@ -85,8 +85,7 @@ namespace DCGO.CardEffects.BT24
                             ignoreDigivolutionRequirementFixedCost: -1,
                             isHand: true,
                             activateClass: activateClass,
-                            successProcess: null,
-                            ignoreRequirements: CardEffectCommons.IgnoreRequirement.Level));
+                            successProcess: null));
                 }
             }
 
