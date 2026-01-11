@@ -7,7 +7,7 @@ using UnityEngine;
 // Styracomon
 namespace DCGO.CardEffects.BT24
 {
-    public class BT24_018: CEntity_Effect
+    public class BT24_018 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -96,14 +96,23 @@ namespace DCGO.CardEffects.BT24
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
                     #region Trash Security
+
                     if (card.Owner.Enemy.SecurityCards.Count >= 1)
                     {
+                        if (card.Owner.isYou)
+                        {
+                            foreach (CardSource cardSource in card.Owner.Enemy.SecurityCards)
+                            {
+                                cardSource.SetReverse();
+                            }
+                        }
+
                         int maxCount = 1;
-                    
+
                         SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-                    
+
                         CardSource selectedCard = null;
-                    
+
                         selectCardEffect.SetUp(
                             canTargetCondition: (cardSource) => true,
                             canTargetCondition_ByPreSelecetedList: null,
@@ -121,17 +130,17 @@ namespace DCGO.CardEffects.BT24
                             canLookReverseCard: false,
                             selectPlayer: card.Owner,
                             cardEffect: activateClass);
-                    
+
                         selectCardEffect.SetUpCustomMessage_ShowCard("Send to trash");
-                    
+
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-                    
+
                         IEnumerator SelectCardCoroutine(CardSource cardSource)
                         {
                             selectedCard = cardSource;
                             yield return null;
                         }
-                    
+
                         IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                         {
                             if (cardSources.Count >= 1)
@@ -144,7 +153,6 @@ namespace DCGO.CardEffects.BT24
 
                         if (selectedCard != null)
                         {
-                            #region
                             selectedCard.Owner.securityObject.securityBreakGlass.ShowBlueMatarial();
 
                             yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().BreakSecurityEffect(selectedCard.Owner));
@@ -156,7 +164,6 @@ namespace DCGO.CardEffects.BT24
                             yield return new WaitForSeconds(0.5f);
 
                             yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().DestroySecurityEffect(selectedCard));
-                            #endregion
 
                             yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(selectedCard));
                         }
@@ -245,7 +252,7 @@ namespace DCGO.CardEffects.BT24
                             mode: SelectPermanentEffect.Mode.Destroy,
                             cardEffect: activateClass);
 
-                            selectPermanentEffect.SetUpCustomMessage("Select 1 digimon to send to delete.", "Your opponent is selecting 1 digimon to delete.");
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 digimon to send to delete.", "Your opponent is selecting 1 digimon to delete.");
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                     }
@@ -271,7 +278,7 @@ namespace DCGO.CardEffects.BT24
                 bool IsReptileKin(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && (permanent.TopCard.EqualsTraits("Reptile") || 
+                        && (permanent.TopCard.EqualsTraits("Reptile") ||
                             permanent.TopCard.EqualsTraits("Dragonkin"));
                 }
 
@@ -316,7 +323,7 @@ namespace DCGO.CardEffects.BT24
                             mode: SelectPermanentEffect.Mode.Custom,
                             cardEffect: activateClass);
 
-                            selectPermanentEffect.SetUpCustomMessage("Select 1 digimon to send to delete.", "Your opponent is selecting 1 digimon to delete.");
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 digimon to send to delete.", "Your opponent is selecting 1 digimon to delete.");
 
                         selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to delete.", "The opponent is selecting 1 Digimon to delete.");
 
@@ -337,7 +344,7 @@ namespace DCGO.CardEffects.BT24
 
                                     removed.HideHandBounceEffect();
                                     removed.HideDeckBounceEffect();
-                                    removed.HideDeleteEffect(); 
+                                    removed.HideDeleteEffect();
                                     removed.HideWillRemoveFieldEffect();
                                 }
 
