@@ -69,13 +69,12 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition1(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistInSecurity(card, false) &&
-                           CardEffectCommons.HasMatchConditionPermanent(HasOXII);
+                           CardEffectCommons.HasMatchConditionOwnersPermanent(card, HasOXII);
                 }
 
                 bool CardSourceCondition(CardSource cardSource)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(cardSource) &&
-                           cardSource.Owner == card.Owner &&
                            cardSource == cardSource.PermanentOfThisCard().TopCard &&
                            PermanentCondition(cardSource.PermanentOfThisCard());
                 }
@@ -90,7 +89,12 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (effectTiming == EffectTiming.OnAllyAttack)
                     {
-                        effects.Add(CardEffectFactory.AllianceSelfEffect(false, cardSource, null));
+                        bool Condition()
+                        {
+                            return CardSourceCondition(cardSource);
+                        }
+
+                        effects.Add(CardEffectFactory.AllianceSelfEffect(false, cardSource, Condition));
                     }
 
                     return effects;
