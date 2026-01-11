@@ -81,7 +81,7 @@ namespace DCGO.CardEffects.EX6
                     {
                         if (permanent.TopCard.HasLevel && permanent.Level == 6)
                         {
-                            if (permanent.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, true, activateClass);
+                            if (!card.CanNotEvolve(permanent));
                             {
                                 return true;
                             }
