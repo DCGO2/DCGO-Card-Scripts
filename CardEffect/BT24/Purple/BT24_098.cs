@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-// Super Hacking
+// Invasion of the Titans
 namespace DCGO.CardEffects.BT24
 {
     public class BT24_098 : CEntity_Effect
@@ -57,7 +57,7 @@ namespace DCGO.CardEffects.BT24
 
                         selectHandEffect.SetUpCustomMessage("Select 2 cards to trash.", "Opponent is selecting 2 cards to trash.");
 
-                        yield return StartCoroutine(selectHandEffect.Activate());
+                        yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
                     }
 
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
