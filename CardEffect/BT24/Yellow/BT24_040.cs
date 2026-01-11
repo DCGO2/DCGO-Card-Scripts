@@ -328,8 +328,14 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.HasMatchConditionPermanent(CanPlaceToSecurityCondition);
+                    if (CardEffectCommons.IsExistOnBattleArea(card))
+                    {
+                        removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(PermanentCondition);
+
+                        return CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanPlaceToSecurityCondition);
+                    }
+                        
+                    return false;
                 }
 
                 bool PermanentCondition(Permanent permanent)
