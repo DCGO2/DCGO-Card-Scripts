@@ -306,6 +306,8 @@ namespace DCGO.CardEffects.BT24
 
             if (timing == EffectTiming.WhenRemoveField)
             {
+                List<Permanent> removedPermanents = new List<Permanent>();
+                
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("By placing a sourceless Digimon to Security, your [TS] digimon won't leave the field", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
@@ -338,9 +340,12 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanPlaceToSecurityCondition(Permanent permanent)
                 {
-                    return permanent != card.PermanentOfThisCard()
-                        && CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
-                        && permanent.DigivolutionCards.Count == 0;
+                    foreach (Permanent removed in removedPermanents)
+                    {
+                        if (removed != permanent)
+                            return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
+                                && permanent.DigivolutionCards.Count == 0;;
+                    }
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -395,10 +400,7 @@ namespace DCGO.CardEffects.BT24
 
                             if (card.Owner.SecurityCards.Contains(toSecCard) || card.Owner.Enemy.SecurityCards.Contains(toSecCard))
                             {
-                                List<Permanent> protectedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable)
-                                    .Filter(PermanentCondition);
-
-                                foreach (Permanent permanent in protectedPermanents)
+                                foreach (Permanent permanent in removedPermanents)
                                 {
                                     permanent.willBeRemoveField = false;
                                     permanent.HideDeleteEffect();
