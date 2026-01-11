@@ -129,9 +129,11 @@ namespace DCGO.CardEffects.BT24
                 {
                     yield return ContinuousController.instance.StartCoroutine(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOptionEffect(card, activateClass));
 
-                    int maxCount = Math.Min(1, card.Owner.HandCards.Count(CanSelectCardCondition));
+                    #region Hand Card Selection
 
+                    CardSource selectedCard = null;
                     SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+                    int maxCount = Math.Min(1, card.Owner.HandCards.Count(CanSelectCardCondition));
 
                     selectHandEffect.SetUp(
                         selectPlayer: card.Owner,
@@ -147,25 +149,28 @@ namespace DCGO.CardEffects.BT24
                         mode: SelectHandEffect.Mode.Custom,
                         cardEffect: activateClass);
 
+
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    {
+                        selectedCard = cardSource;
+                        yield return null;
+                    }
+
                     selectHandEffect.SetUpCustomMessage("Select 1 card to play.", "The opponent is selecting 1 card to play.");
                     selectHandEffect.SetUpCustomMessage_ShowCard("Played Card");
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
-                    
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                            cardSources: new List<CardSource>() { cardSource },
+                    yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
+
+                    #endregion
+
+                    if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                            cardSources: new List<CardSource>() { selectedCard },
                             activateClass: activateClass,
                             payCost: true,
                             isTapped: false,
                             root: SelectCardEffect.Root.Hand,
-                            activateETB: true));
-                    }
+                            activateETB: true,
 
-                    #region Remove Cost effect after use
-                    card.Owner.UntilCalculateFixedCostEffect.Remove(getCardEffect);
-                    #endregion
                 }
             }
 
@@ -191,9 +196,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanPlayCondition(CardSource cardSource)
                 {
-                    return cardSource.IsDigimon && cardSource.HasLevel && cardSource.Level <= 4 
+                    return cardSource.IsDigimon && cardSource.HasLevel && cardSource.Level <= 4
                         && (cardSource.CardColors.Contains(CardColor.Blue) || cardSource.CardColors.Contains(CardColor.Yellow))
-                        && cardSource.HasTSTraits 
+                        && cardSource.HasTSTraits
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 
