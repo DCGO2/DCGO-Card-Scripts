@@ -65,7 +65,7 @@ namespace DCGO.CardEffects.ST20
             #region Main Effect
             if (timing == EffectTiming.OptionSkill)
             {
-                cardEffects.Add(CardEffectFactory.ReplaceTopSecurityWithFaceUpOption(card));
+                cardEffects.Add(CardEffectFactory.ReplaceTopSecurityWithFaceUpOptionMainEffect(card));
             }
             #endregion
 
