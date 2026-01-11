@@ -301,7 +301,7 @@ public partial class CardEffectFactory
                             {
                                 if (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(playedDigimon, playedDigimon.TopCard))
                                 {
-                                    if(deleteDigimon == EffectDuration.UntilOwnerTurnEnd)
+                                    if (deleteDigimon == EffectDuration.UntilOwnerTurnEnd)
                                     {
                                         return CardEffectCommons.IsOwnerTurn(card);
                                     }
@@ -506,13 +506,13 @@ public partial class CardEffectFactory
 
     #endregion
 
-    #region Option's Effect to replace bottom security card with this card face up
+    #region Option's Main Effect to replace bottom security card with this card face up
 
-    public static ICardEffect ReplaceBottomSecurityWithFaceUpOption(CardSource card)
+    public static ICardEffect ReplaceBottomSecurityWithFaceUpOptionMainEffect(CardSource card)
     {
         ActivateClass activateClass = new ActivateClass();
         activateClass.SetUpICardEffect("Replace your bottom security card with this face-up card", CanUseCondition, card);
-        activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
+        activateClass.SetUpActivateClass(null, _ => ReplaceBottomSecurityWithFaceUpOptionEffect(card, activateClass), -1, false, EffectDescription());
 
         string EffectDescription()
         {
@@ -530,7 +530,7 @@ public partial class CardEffectFactory
             {
                 #region Add Bottom Security Card to Hand
 
-                CardSource bottomCard = card.Owner.SecurityCards[^1];
+                CardSource bottomCard = card.Owner.SecurityCards.Last();
 
                 yield return ContinuousController.instance.StartCoroutine(
                     CardObjectController.AddHandCards(new List<CardSource>() { bottomCard }, false, activateClass));
@@ -565,11 +565,11 @@ public partial class CardEffectFactory
 
     #region Option's Effect to replace top security card with this card face up
 
-    public static ICardEffect ReplaceTopSecurityWithFaceUpOption(CardSource card)
+    public static ICardEffect ReplaceTopSecurityWithFaceUpOptionMainEffect(CardSource card)
     {
         ActivateClass activateClass = new ActivateClass();
         activateClass.SetUpICardEffect("Replace your top security card with this face-up card", CanUseCondition, card);
-        activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
+        activateClass.SetUpActivateClass(null, _ => ReplaceTopSecurityWithFaceUpOptionEffect(card, activateClass), -1, false, EffectDescription());
 
         string EffectDescription()
         {
@@ -587,7 +587,7 @@ public partial class CardEffectFactory
             {
                 #region Add Bottom Security Card to Hand
 
-                CardSource topCard = card.Owner.SecurityCards[0];
+                CardSource topCard = card.Owner.SecurityCards.First();
 
                 yield return ContinuousController.instance.StartCoroutine(
                     CardObjectController.AddHandCards(new List<CardSource>() { topCard }, false, activateClass));
@@ -600,7 +600,7 @@ public partial class CardEffectFactory
             }
 
             #region Place Face up as Top Security Card
-            
+
             if (card.Owner.CanAddSecurity(activateClass))
             {
                 yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
