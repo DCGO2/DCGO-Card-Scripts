@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 // Abyss Sanctuary: Throne Room
 namespace DCGO.CardEffects.BT24
@@ -40,7 +40,7 @@ namespace DCGO.CardEffects.BT24
             {
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) 
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && (permanent.TopCard.CardColors.Contains(CardColor.Blue) || permanent.TopCard.CardColors.Contains(CardColor.Yellow))
                         && permanent.TopCard.HasTSTraits;
                 }
@@ -127,103 +127,7 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    if (card.Owner.SecurityCards.Count >= 1)
-                    {
-                        // Add your bottom security card to the hand
-                        CardSource bottomCard = card.Owner.SecurityCards[^1];
-
-                        yield return ContinuousController.instance.StartCoroutine(
-                            CardObjectController.AddHandCards(new List<CardSource>() { bottomCard }, false, activateClass));
-
-                        yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                            player: card.Owner,
-                            refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-                    }
-
-                    // Place this card face up as the bottom security card
-                    if (card.Owner.CanAddSecurity(activateClass))
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                            card, toTop: false, faceUp: true));
-                    }
-
-                    #region reduce play cost
-
-                    ChangeCostClass changeCostClass = new ChangeCostClass();
-                    changeCostClass.SetUpICardEffect($"Play Cost -3", CanUseCondition1, card);
-                    changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
-                    Func<EffectTiming, ICardEffect> getCardEffect = GetCardEffect;
-                    card.Owner.UntilCalculateFixedCostEffect.Add(getCardEffect);
-
-                    ICardEffect GetCardEffect(EffectTiming _timing)
-                    {
-                        if (_timing == EffectTiming.None)
-                        {
-                            return changeCostClass;
-                        }
-
-                        return null;
-                    }
-
-                    bool CanUseCondition1(Hashtable hashtable)
-                    {
-                        return true;
-                    }
-
-                    int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
-                    {
-                        if (CardSourceCondition(cardSource))
-                        {
-                            if (RootCondition(root))
-                            {
-                                if (PermanentsCondition(targetPermanents))
-                                {
-                                    Cost -= 3;
-                                }
-                            }
-                        }
-
-                        return Cost;
-                    }
-
-                    bool PermanentsCondition(List<Permanent> targetPermanents)
-                    {
-                        if (targetPermanents == null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
-                            {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    }
-
-                    bool CardSourceCondition(CardSource cardSource)
-                    {
-                        if (CanSelectCardCondition(cardSource))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    }
-
-                    bool RootCondition(SelectCardEffect.Root root)
-                    {
-                        return true;
-                    }
-
-                    bool isUpDown()
-                    {
-                        return true;
-                    }
-
-                    #endregion
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOptionEffect(card, activateClass));
 
                     int maxCount = Math.Min(1, card.Owner.HandCards.Count(CanSelectCardCondition));
 
