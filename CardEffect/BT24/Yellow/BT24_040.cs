@@ -328,11 +328,13 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.IsExistOnBattleArea(card))
+                    if (CardEffectCommons.IsExistOnBattleArea(card)
+                        && CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanPlaceToSecurityCondition)
+                        && card.Owner.CanAddSecurity(activateClass))
                     {
                         removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(PermanentCondition);
 
-                        return CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanPlaceToSecurityCondition);
+                        return true;
                     }
                         
                     return false;
