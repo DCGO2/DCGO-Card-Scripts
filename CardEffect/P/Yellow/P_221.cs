@@ -141,7 +141,7 @@ namespace DCGO.CardEffects.P
             string EffectNameShared()
                => "Give 1 opponent's Digimon -10000 DP";
 
-            string EffectDiscriptionShared(string tag)
+            string EffectDescriptionShared(string tag)
             {
                 return $"[{tag}] 1 of your opponent's Digimon gets -10000 DP until their turn ends";
             }
@@ -192,37 +192,37 @@ namespace DCGO.CardEffects.P
 
             #endregion
 
-            #region On Play
-
-            if (timing == EffectTiming.OnEnterFieldAnyone)
-            {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("On Play"));
-                cardEffects.Add(activateClass);
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
-                }
-            }
-
-            #endregion
-
             #region When Digivolving 2
 
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, true, EffectDiscriptionShared("When Digivolving"));
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, false, EffectDescriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                }
+            }
+
+            #endregion
+
+            #region When Attacking
+
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateConditionShared, hash => ActivateCoroutineShared(hash, activateClass), -1, false, EffectDescriptionShared("When Attacking"));
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleArea(card)
+                        && CardEffectCommons.CanTriggerWhenAttacking(hashtable, card);
                 }
             }
 
