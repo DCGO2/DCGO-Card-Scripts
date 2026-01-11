@@ -350,7 +350,7 @@ namespace DCGO.CardEffects.BT24
                     {
                         if (removed != permanent)
                             return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
-                                && permanent.DigivolutionCards.Count == 0;;
+                                && permanent.DigivolutionCards.Count == 0;
                     }
                 }
 
