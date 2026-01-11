@@ -170,6 +170,7 @@ namespace DCGO.CardEffects.BT24
                             isTapped: false,
                             root: SelectCardEffect.Root.Hand,
                             activateETB: true,
+                            fixedCost: selectedCard.GetCostItself - 3));
 
                 }
             }
