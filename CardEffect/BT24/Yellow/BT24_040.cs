@@ -349,10 +349,12 @@ namespace DCGO.CardEffects.BT24
                 {
                     foreach (Permanent removed in removedPermanents)
                     {
-                        if (removed != permanent)
-                            return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
-                                && permanent.DigivolutionCards.Count == 0;
-                    }
+                        if (removed != permanent
+                            && CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
+                            && permanent.DigivolutionCards.Count == 0)
+                            return true;
+                        }
+                        return false;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
