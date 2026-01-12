@@ -191,7 +191,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsDigimon
                         && cardSource.HasLevel
-                        && cardSource.Level <= 5
+                        && cardSource.Level <= 4
                         && (cardSource.EqualsTraits("Dark Dragon") || cardSource.EqualsTraits("Evil Dragon"))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
