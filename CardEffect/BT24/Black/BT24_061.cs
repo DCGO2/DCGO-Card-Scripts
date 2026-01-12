@@ -63,7 +63,7 @@ namespace DCGO.CardEffects.BT24
                         canNoSelect: false,
                         canEndNotMax: false,
                         selectPermanentCoroutine: null,
-                        afterSelectPermanentCoroutine: AfterSelectCardCoroutinse,
+                        afterSelectPermanentCoroutine: AfterSelectCardCoroutine,
                         mode: SelectPermanentEffect.Mode.PutLibraryTop,
                         cardEffect: activateClass);
 
