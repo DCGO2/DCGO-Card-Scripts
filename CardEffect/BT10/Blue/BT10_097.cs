@@ -108,9 +108,9 @@ namespace DCGO.CardEffects.BT10
                             isTapped: false,
                             root: SelectCardEffect.Root.Library,
                             activateETB: true));
-    
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
                     }
+                    
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
                 }
             }
 
