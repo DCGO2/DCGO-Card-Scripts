@@ -411,7 +411,8 @@ namespace DCGO.CardEffects.BT18
 
                                     if (selectedPermanent.TopCard == null)
                                     {
-                                        if (!CardEffectCommons.IsExistOnBattleArea(securityCard))
+                                        if (securityCard.Owner.SecurityCards.Contains(securityCard) 
+                                            || (securityCard.IsToken && !CardEffectCommons.IsExistOnBattleArea(securityCard)))
                                         {
                                             if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, IsCardLucemonChaosModeCondition))
                                             {
