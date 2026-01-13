@@ -219,7 +219,7 @@ namespace DCGO.CardEffects.LM
 
                 string EffectDiscription()
                 {
-                    return "";
+                    return "[All Turns] [Once Per Turn] When one of your Digimon with [Angoramon] in their texts deletes an opponent's Digimon in battle, trash the top card of their security stack.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
