@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// Tsunomon
 namespace DCGO.CardEffects.EX4
 {
     public class EX4_003 : CEntity_Effect
@@ -47,7 +48,7 @@ namespace DCGO.CardEffects.EX4
                     {
                         if (CardEffectCommons.IsOwnerTurn(card))
                         {
-                            if (CardEffectCommons.CanTriggerWhenPermanentWouldDigivolve(hashtable, PermanentCondition, CardSourceCondition))//.CanTriggerWhenPermanentDigivolving(hashtable, PermanentCondition))
+                            if (CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, PermanentCondition, CardSourceCondition))
                             {
                                 return true;
 
