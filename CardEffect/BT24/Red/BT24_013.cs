@@ -214,9 +214,8 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon && 
                         (cardSource.EqualsCardName("Titamon") || cardSource.EqualsTraits("Titan")) && 
                         cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, 
-                                                            true, 
-                                                            activateClass, 
-                                                            fixedCost: Math.Max(0, cardSource.CostList(card.PermanentOfThisCard(), false, true).Min() -1));
+                                                            false, 
+                                                            activateClass);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
