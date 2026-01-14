@@ -31,12 +31,8 @@ namespace DCGO.CardEffects.EX11
 
                 bool DefenderCondition(Permanent permanent)
                 {
-                    return permanent != null
-                        && permanent.TopCard != null
-                        && permanent.TopCard.Owner == card.Owner.Enemy
-                        && permanent.IsDigimon
-                        && !permanent.IsSuspended
-                        && permanent.TopCard.Owner.GetBattleAreaPermanents().Contains(permanent);
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(card, permanent)
+                        && !permanent.IsSuspended;
                 }
 
                 bool CardEffectCondition(ICardEffect cardEffect)
