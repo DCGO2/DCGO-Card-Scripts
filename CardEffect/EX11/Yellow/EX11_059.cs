@@ -118,112 +118,27 @@ namespace DCGO.CardEffects.EX11
                     return "[All Turns] When any of your [NSo] trait Digimon are deleted, by suspending this Tamer, 1 of your [NSo] trait Digimon and 1 [NSo] trait Digimon card in the trash may DNA digivolve into a Digimon card with the [NSo] trait in the hand.";
                 }
 
-                bool HasNSoPermanent(Permanent permanent)
+                bool IsNSoPermanent(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) 
                         && IsNSo(permanent.TopCard);
                 }
 
-                bool HasDNAPermanent(Permanent permanent, CardSource jogressTarget, Permanent firstCondition)
-                {
-                    if(HasNSoPermanent(permanent))
-                    {
-                        if (firstCondition == null)
-                        {
-                            foreach (JogressCondition DNACondition in jogressTarget.jogressCondition)
-                            {
-                                if (DNACondition.elements[0].EvoRootCondition(permanent))
-                                {
-                                    foreach(CardSource cardSource in card.Owner.TrashCards.Filter(HasNSoCard))
-                                    {
-                                        Permanent tempPermanent = PlayTempPermanent(cardSource);
-                                        bool isValid = DNACondition.elements[1].EvoRootCondition(tempPermanent);
-                                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(selectedCardSource));
-
-                                        if(isValid)
-                                            return true;
-
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (permanent == firstCondition)
-                            {
-                                return false;
-                            }
-                            foreach (JogressCondition DNACondition in jogressTarget.jogressCondition)
-                            {
-                                if (DNACondition.elements[0].EvoRootCondition(firstCondition) && DNACondition.elements[1].EvoRootCondition(permanent))
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-
-                    return false;
-                }
-
-                bool HasNSoCard(CardSource source)
+                bool IsNSoDigimonCard(CardSource source)
                 {
                     return source.IsDigimon 
                         && IsNSo(source);
                 }
 
-                bool HasDNACardInTrash(CardSource cardSource, CardSource jogressTarget, Permanent firstCondition)
-                {
-                    bool isValid = false;
-                    if(HasNSoCard(cardSource))
-                    {
-                        Permanent tempPermanent = PlayTempPermanent(cardSource);
-                        foreach (JogressCondition DNACondition in jogressTarget.jogressCondition)
-                        {
-                            if(isValid)
-                                break;
-                            if (firstCondition == null)
-                            {
-                                foreach (JogressCondition DNACondition in jogressTarget.jogressCondition)
-                                {
-                                    if (DNACondition.elements[0].EvoRootCondition(tempPermanent))
-                                    {
-                                        foreach(Permanent permanent in card.Owner.GetBattleAreaDigimons().Filter(HasNSoPermanent))
-                                        {
-                                            if(DNACondition.elements[1].EvoRootCondition(tempPermanent))
-                                            {
-                                                isValid = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (JogressCondition DNACondition in jogressTarget.jogressCondition)
-                                {
-                                    if (DNACondition.elements[0].EvoRootCondition(firstCondition) && DNACondition.elements[1].EvoRootCondition(tempPermanent))
-                                    {
-                                        isValid = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(selectedCardSource));
-                    }
-
-                    return isValid;
-                }
-
                 bool HasNSoJogress(CardSource source)
                 {
-                    return CardEffectCommons.IsExistOnHand(source) 
-                        && IsNSo(source) 
-                        && source.jogressCondition.Count > 0
-                        && (CardEffectCommons.HasMatchConditionPermanent(permanent => HasDNAPermanent(permanent, source, null)) 
-                            || CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, cardSource => HasDNACardInTrash(cardSource, source, null)));
+                    return CardEffectCommons.CanJogressWithHandOrTrash(
+                        source: source, 
+                        isWithHandCard: false, 
+                        isIntoHandCard: true, 
+                        targetCardCondition: IsNSoDigimonCard, 
+                        permanentCondition: IsNSoPermanent,
+                        digivolutionCardCondition: IsNSoDigimonCard);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -238,242 +153,19 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.HasMatchConditionOwnersHand(card, HasNSoJogress);
                 }
 
-                Permanent SelectPermanent(CardSource jogressTarget, Permanent firstCondition)
-                {
-                    Permanent selectedPermanent = null;
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: permanent => HasDNAPermanent(permanent, firstCondition),
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: 1,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        selectPermanentCoroutine: SelectPermanentCoroutine,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Custom,
-                        cardEffect: activateClass);
-
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to DNA digivolve.", "The opponent is selecting 1 Digimon to DNA digivolve.");
-
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                    {
-                        selectedPermanent = permanent;
-
-                        yield return null;
-                    }
-
-                    return selectedPermanent;
-                }
-
-                CardSource SelectTrashCard(CardSource jogressTarget, Permanent firstCondition)
-                {
-                    CardSource selectedCardSource = null;
-
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-
-                    selectCardEffect.SetUp(
-                    canTargetCondition: cardSource => HasDNACardInTrash(cardSource, firstCondition),
-                    canTargetCondition_ByPreSelecetedList: null,
-                    canEndSelectCondition: null,
-                    canNoSelect: () => false,
-                    selectCardCoroutine: SelectCardCoroutine,
-                    afterSelectCardCoroutine: null,
-                    message: "Select 1 Digimon to DNA digivolve.",
-                    maxCount: 1,
-                    canEndNotMax: false,
-                    isShowOpponent: false,
-                    mode: SelectCardEffect.Mode.Custom,
-                    root: SelectCardEffect.Root.Custom,
-                    customRootCardList: card.Owner.TrashCards.clone(),
-                    canLookReverseCard: true,
-                    selectPlayer: card.Owner,
-                    cardEffect: activateClass);
-
-                    selectCardEffect.SetNotShowCard();
-                    selectCardEffect.SetNotAddLog();
-
-                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
-                    {
-                        selectedCardSource = cardSource;
-
-                        yield return null;
-
-                    }
-
-                    return selectedCardSource;
-                }
-
-                Permament PlayTempPermanent(CardSource card)
-                {
-                    Permanent playedPermanent = null;
-                    if (card = null)
-                    {
-                        int frameID = selectedCardSource.PreferredFrame;
-
-                        if (0 <= frameID && frameID < card.Owner.fieldCardFrames.Count)
-                        {
-                            playedPermanent = new Permanent(new List<CardSource>() { selectedCardSource }) { IsSuspended = false };
-                            
-                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.CreateNewPermanent(playedPermanent, frameID));
-                        }
-                    }
-                    return playedPermanent;
-                }
-
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    CardSource dnaTarget = null;
-                    Permanent selectedPermanent = null;
-                    CardSource selectedCardSource = null;
-                    Permanent playedPermanent = null;
-
-                    SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
-
-                    selectHandEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: HasNSoJogress,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: 1,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        selectCardCoroutine: SelectDNACardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        mode: SelectHandEffect.Mode.Custom,
-                        cardEffect: activateClass);
-
-                    selectHandEffect.SetUpCustomMessage("Select 1 Digimon to DNA digivolve.", "The opponent is selecting 1 Digimon to DNA digivolve.");
-
-                    yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
-
-                    IEnumerator SelectDNACardCoroutine(CardSource source)
-                    {
-                        dnaTarget = source;
-
-                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-
-                        selectCardEffect.SetUp(
-                        canTargetCondition: HasNSoCard,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        canNoSelect: () => false,
-                        selectCardCoroutine: SelectCardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        message: "Select 1 Digimon to DNA digivolve.",
-                        maxCount: 1,
-                        canEndNotMax: false,
-                        isShowOpponent: false,
-                        mode: SelectCardEffect.Mode.Custom,
-                        root: SelectCardEffect.Root.Trash,
-                        customRootCardList: null,
-                        canLookReverseCard: true,
-                        selectPlayer: card.Owner,
-                        cardEffect: activateClass);
-
-                        selectCardEffect.SetNotShowCard();
-                        selectCardEffect.SetNotAddLog();
-
-                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                        IEnumerator SelectCardCoroutine(CardSource cardSource)
-                        {
-                            selectedCardSource = cardSource;
-
-                            yield return null;
-
-                        }
-
-                        yield return null;
-                    }
-
-                    bool validPermanent = false;
-                    bool validTrash = false;
-
-                    if(validPermanent || validTrash)
-                    {
-                        #region select source cards
-                        if (validPermanent && validTrash)
-                        {
-                            List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
-                            {
-                                new SelectionElement<bool>(message: $"From Battle Area", value : true, spriteIndex: 0),
-                                new SelectionElement<bool>(message: $"From Trash", value : false, spriteIndex: 1),
-                            };
-
-                            string selectPlayerMessage = "From where will you select the first digimon?";
-                            string notSelectPlayerMessage = "The opponent is selecting 1 Digimon to DNA digivolve.";
-
-                            GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
-                        }
-                        else
-                        {
-                            GManager.instance.userSelectionManager.SetBool(validPermanent);
-                        }
-
-                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
-
-                        bool isPermanentFirst = GManager.instance.userSelectionManager.SelectedBoolValue;
-                        if (isPermanentFirst)
-                        {
-                            selectedPermanent = SelectPermanent(dnaTarget, null);
-
-                            if (selectedPermanent != null)
-                            {
-                                selectedCardSource = SelectTrashCard(dnaTarget, selectedPermanent.TopCard);
-
-                                playedPermanent = PlayTempPermanent(selectedCardSource);
-                            }
-                        }
-                        else
-                        {
-                            selectedCardSource = SelectTrashCard(dnaTarget, null);
-
-                            if(selectedCardSource != null)
-                            {
-                                playedPermanent = PlayTempPermanent(selectedCardSource);
-
-                                selectedPermanent = SelectPermanent(dnaTarget, selectedCardSource);
-                            }
-                        }
-                        #endregion
-
-                        if (selectedPermanent != null && selectedCardSource != null)
-                        {
-                            int[] JogressEvoRootsFrameIDs = { playedPermanent.PermanentFrame.FrameID, selectedPermanent.PermanentFrame.FrameID };
-
-                            if (dnaTarget.CanPlayJogress(true))
-                            {
-                                PlayCardClass playCard = new PlayCardClass(
-                                    cardSources: new List<CardSource>() { dnaTarget },
-                                    hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                                    payCost: true,
-                                    targetPermanent: null,
-                                    isTapped: false,
-                                    root: SelectCardEffect.Root.Hand,
-                                    activateETB: true);
-
-                                playCard.SetJogress(JogressEvoRootsFrameIDs);
-
-                                yield return ContinuousController.instance.StartCoroutine(playCard.PlayCard());
-                            }
-                        }
-                    }
-                    if (dnaTarget == null || dnaTarget.PermanentOfThisCard() == null)
-                    {
-                        if (playedPermanent != null)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(selectedCardSource));
-                        }
-                    }
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DNADigivolveWithHandOrTrashCardIntoHandOrTrash(
+                        targetCardCondition: IsNSoDigimonCard, 
+                        permanentCondition: IsNSoPermanent, 
+                        digivolutionCardCondition: IsNSoDigimonCard,
+                        payCost: true,
+                        isWithHandCard: false, 
+                        isIntoHandCard: true,
+                        activateClass: activateClass,
+                        successProcess: null,
+                        failedProcess: null,
+                        isOptional: true));
                 }
             }
             #endregion
