@@ -40,7 +40,7 @@ namespace DCGO.CardEffects.BT24
             {
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) 
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && (permanent.TopCard.CardColors.Contains(CardColor.Green) || permanent.TopCard.CardColors.Contains(CardColor.Yellow))
                         && permanent.TopCard.HasTSTraits;
                 }
@@ -133,107 +133,13 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    if (card.Owner.SecurityCards.Count >= 1)
-                    {
-                        // Add your bottom security card to the hand
-                        CardSource bottomCard = card.Owner.SecurityCards[^1];
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOptionEffect(card, activateClass));
 
-                        yield return ContinuousController.instance.StartCoroutine(
-                            CardObjectController.AddHandCards(new List<CardSource>() { bottomCard }, false, activateClass));
+                    #region Hand Card Selection
 
-                        yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                            player: card.Owner,
-                            refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-                    }
-
-                    // Place this card face up as the bottom security card
-                    if (card.Owner.CanAddSecurity(activateClass))
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                            card, toTop: false, faceUp: true));
-                    }
-
-                    #region reduce play cost
-
-                    ChangeCostClass changeCostClass = new ChangeCostClass();
-                    changeCostClass.SetUpICardEffect($"Play Cost -3", CanUseCondition1, card);
-                    changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
-                    Func<EffectTiming, ICardEffect> getCardEffect = GetCardEffect;
-                    card.Owner.UntilCalculateFixedCostEffect.Add(getCardEffect);
-
-                    ICardEffect GetCardEffect(EffectTiming _timing)
-                    {
-                        if (_timing == EffectTiming.None)
-                        {
-                            return changeCostClass;
-                        }
-
-                        return null;
-                    }
-
-                    bool CanUseCondition1(Hashtable hashtable)
-                    {
-                        return true;
-                    }
-
-                    int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
-                    {
-                        if (CardSourceCondition(cardSource))
-                        {
-                            if (RootCondition(root))
-                            {
-                                if (PermanentsCondition(targetPermanents))
-                                {
-                                    Cost -= 3;
-                                }
-                            }
-                        }
-
-                        return Cost;
-                    }
-
-                    bool PermanentsCondition(List<Permanent> targetPermanents)
-                    {
-                        if (targetPermanents == null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            if (targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0)
-                            {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    }
-
-                    bool CardSourceCondition(CardSource cardSource)
-                    {
-                        if (CanSelectCardCondition(cardSource))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    }
-
-                    bool RootCondition(SelectCardEffect.Root root)
-                    {
-                        return true;
-                    }
-
-                    bool isUpDown()
-                    {
-                        return true;
-                    }
-
-                    #endregion
-
-                    int maxCount = Math.Min(1, card.Owner.HandCards.Count(CanSelectCardCondition));
-
+                    CardSource selectedCard = null;
                     SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+                    int maxCount = Math.Min(1, card.Owner.HandCards.Count(CanSelectCardCondition));
 
                     selectHandEffect.SetUp(
                         selectPlayer: card.Owner,
@@ -249,25 +155,29 @@ namespace DCGO.CardEffects.BT24
                         mode: SelectHandEffect.Mode.Custom,
                         cardEffect: activateClass);
 
+
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    {
+                        selectedCard = cardSource;
+                        yield return null;
+                    }
+
                     selectHandEffect.SetUpCustomMessage("Select 1 card to play.", "The opponent is selecting 1 card to play.");
                     selectHandEffect.SetUpCustomMessage_ShowCard("Played Card");
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
-                    
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                            cardSources: new List<CardSource>() { cardSource },
+                    yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
+
+                    #endregion
+
+                    if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                            cardSources: new List<CardSource>() { selectedCard },
                             activateClass: activateClass,
                             payCost: true,
                             isTapped: false,
                             root: SelectCardEffect.Root.Hand,
-                            activateETB: true));
-                    }
+                            activateETB: true,
+                            fixedCost: selectedCard.GetCostItself - 3));
 
-                    #region Remove Cost effect after use
-                    card.Owner.UntilCalculateFixedCostEffect.Remove(getCardEffect);
-                    #endregion
                 }
             }
 
@@ -293,9 +203,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanPlayCondition(CardSource cardSource)
                 {
-                    return cardSource.IsDigimon && cardSource.HasLevel && cardSource.Level <= 4 
+                    return cardSource.IsDigimon && cardSource.HasLevel && cardSource.Level <= 4
                         && (cardSource.CardColors.Contains(CardColor.Green) || cardSource.CardColors.Contains(CardColor.Yellow))
-                        && cardSource.HasTSTraits 
+                        && cardSource.HasTSTraits
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
                 }
 
