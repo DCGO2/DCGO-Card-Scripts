@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// Tsunomon
 namespace DCGO.CardEffects.EX4
 {
     public class EX4_003 : CEntity_Effect
