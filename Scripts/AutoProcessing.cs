@@ -347,14 +347,14 @@ public class AutoProcessing : MonoBehaviourPunCallbacks
         #endregion
 
         #region Is it necessary to deal with Digimon's Link Cards?
-        if (CardEffectCommons.HasMatchConditionPermanent(IsDigimonLackLinkCondition))
+        if (CardEffectCommons.HasMatchConditionPermanent(IsDigimonLackLinkCondition, true))
         {
             return true;
         }
         #endregion
 
         #region Is it necessary to deal with Digimon's Link Count?
-        if (CardEffectCommons.HasMatchConditionPermanent(IsDigimonLackLinkCount))
+        if (CardEffectCommons.HasMatchConditionPermanent(IsDigimonLackLinkCount, true))
         {
             return true;
         }
