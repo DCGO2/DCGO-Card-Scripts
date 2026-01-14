@@ -100,7 +100,7 @@ public class ST14_11 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[Your Turn] When one of your Digimon digivolves into a purple Digimon, you may suspend this Tamer and return 1 card from your hand to your deck top to gain 1 memory.";
+                return "[Your Turn] When one of your Digimon digivolves into a purple Digimon, by suspending this Tamer, return 1 card from your hand to the top of your deck and gain 1 memory.";
             }
 
             bool CanSelectCardCondition(CardSource cardSource)
