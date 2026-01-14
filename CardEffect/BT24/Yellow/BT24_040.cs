@@ -333,7 +333,7 @@ namespace DCGO.CardEffects.BT24
                     {
                         removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(PermanentCondition);
 
-                        return CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanPlaceToSecurityCondition);
+                        return CardEffectCommons.HasMatchConditionPermanent(card, CanPlaceToSecurityCondition);
                     }
                         
                     return false;
@@ -353,8 +353,8 @@ namespace DCGO.CardEffects.BT24
                             && CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
                             && permanent.DigivolutionCards.Count == 0)
                             return true;
-                        }
-                        return false;
+                    }
+                    return false;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
