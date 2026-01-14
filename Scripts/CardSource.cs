@@ -3960,32 +3960,47 @@ public class AppFusionCondition
 
 public class AssemblyCondition
 {
+    //Method to work with older form of Assembly, 1 single condition X times
     public AssemblyCondition(AssemblyConditionElement element, Func<List<CardSource>, CardSource, bool> CanTargetCondition_ByPreSelecetedList, string selectMessage, int elementCount, int reduceCost)
     {
-        this.element = element;
-        this.selectMessage = selectMessage;
-        this.CanTargetCondition_ByPreSelecetedList = CanTargetCondition_ByPreSelecetedList;
+        element.ElementCount = elementCount;
+        element.selectMessage = selectMessage;
+        element.CanTargetCondition_ByPreSelecetedList = CanTargetCondition_ByPreSelecetedList;
+        this.elements = new List<AssemblyConditionElement>(){ element };
         this.elementCount = elementCount;
         this.reduceCost = reduceCost;
     }
 
-    public AssemblyConditionElement element { get; private set; } = new AssemblyConditionElement(null);
-    public Func<List<CardSource>, CardSource, bool> CanTargetCondition_ByPreSelecetedList { get; private set; } = null;
+    //Method to work with A x B x C... DigiXros like conditions
+    public AssemblyCondition(List<AssemblyConditionElement> elements, int reduceCost)
+    {
+        this.elements = elements;
+        this.elementCount = elements.select(elementCount => element.ElementCount).Sum();
+        this.reduceCost = reduceCost;
+    }
 
-    public string selectMessage { get; private set; } = "";
+    public List<AssemblyConditionElement> elements { get; private set; } = new List<AssemblyConditionElement>();
     public int elementCount { get; private set; } = 0;
     public int reduceCost { get; private set; } = 0;
 }
 
 public class AssemblyConditionElement
 {
-    public AssemblyConditionElement(Func<CardSource, bool> cardCondition, bool skipAllIfNoSelect = false)
+    public AssemblyConditionElement(Func<CardSource, bool> cardCondition, bool skipAllIfNoSelect = true, string selectMessage = null, int elementCount = 0, Func<List<CardSource>, CardSource, bool> CanTargetCondition_ByPreSelecetedList = null)
     {
         this.CardCondition = cardCondition;
-
         this.skipAllIfNoSelect = skipAllIfNoSelect;
+        this.selectMessage = selectMessage;
+        this.ElementCount = elementCount;
+        this.CanTargetCondition_ByPreSelecetedList = CanTargetCondition_ByPreSelecetedList;
     }
 
     public Func<CardSource, bool> CardCondition { get; private set; } = null;
-    public bool skipAllIfNoSelect { get; private set; } = false;
+    public bool skipAllIfNoSelect { get; private set; } = true;
+
+    public int ElementCount { get; private set; } = 0;
+
+    public Func<List<CardSource>, CardSource, bool> CanTargetCondition_ByPreSelecetedList { get; private set; } = null;
+
+    public string selectMessage { get; private set; } = "";
 }
