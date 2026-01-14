@@ -212,7 +212,7 @@ namespace DCGO.CardEffects.P
 
             #region When Attacking
 
-            if (timing == EffectTiming.OnEnterFieldAnyone)
+            if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(EffectNameShared(), CanUseCondition, card);
