@@ -145,7 +145,7 @@ namespace DCGO.CardEffects.BT24
 
                     #region Select Digimon To Link
 
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition, true))
                     {
 
 
