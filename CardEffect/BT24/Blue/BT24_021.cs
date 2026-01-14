@@ -132,7 +132,7 @@ namespace DCGO.CardEffects.BT24
                 activateClass.SetUpICardEffect("When your hand is trashed from, digivolve", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetHashString("BT24_026_YT_ESS");
+                activateClass.SetHashString("BT24_021_YT_ESS");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -143,7 +143,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon && 
-                        (cardSource.EqualsCardName("Titamon") || cardSource.EqualsTraits("Demon")) && 
+                        (cardSource.EqualsCardName("Titamon") || cardSource.EqualsTraits("Titan")) && 
                         cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, 
                                                             true, 
                                                             activateClass, 

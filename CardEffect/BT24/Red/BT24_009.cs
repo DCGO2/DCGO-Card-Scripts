@@ -118,7 +118,7 @@ namespace DCGO.CardEffects.BT24
                 activateClass.SetUpICardEffect("When your hand is trashed from, digivolve", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetHashString("BT24_026_YT_ESS");
+                activateClass.SetHashString("BT24_009_YT_ESS");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -129,22 +129,26 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon && 
-                        (cardSource.EqualsCardName("Titamon") || cardSource.EqualsTraits("Demon")) && 
-                        cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, true, activateClass);
+                        (cardSource.EqualsCardName("Titamon") || cardSource.EqualsTraits("Titan")) && 
+                        cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, 
+                                                            true, 
+                                                            activateClass, 
+                                                            fixedCost: Math.Max(0, cardSource.CostList(card.PermanentOfThisCard(), false, true).Min() -1));
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, cardSource => cardSource.Owner == card.Owner) && 
-                        (card.PermanentOfThisCard().TopCard.EqualsTraits("Demon") || 
-                            card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, cardSource => cardSource.Owner == card.Owner)
+                        && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card) &&
-                        CardEffectCommons.IsOwnerTurn(card) &&
-                        CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card) 
+                        && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition)
+                        && (card.PermanentOfThisCard().TopCard.EqualsTraits("Demon") 
+                            || card.PermanentOfThisCard().TopCard.EqualsTraits("Titan"));
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
