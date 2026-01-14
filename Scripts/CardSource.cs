@@ -3975,7 +3975,7 @@ public class AssemblyCondition
     public AssemblyCondition(List<AssemblyConditionElement> elements, int reduceCost)
     {
         this.elements = elements;
-        this.elementCount = elements.select(elementCount => element.ElementCount).Sum();
+        this.elementCount = elements.Select(element => element.ElementCount).Sum();
         this.reduceCost = reduceCost;
     }
 
@@ -3995,12 +3995,12 @@ public class AssemblyConditionElement
         this.CanTargetCondition_ByPreSelecetedList = CanTargetCondition_ByPreSelecetedList;
     }
 
-    public Func<CardSource, bool> CardCondition { get; private set; } = null;
-    public bool skipAllIfNoSelect { get; private set; } = true;
+    public Func<CardSource, bool> CardCondition { get; set; } = null;
+    public bool skipAllIfNoSelect { get; set; } = true;
 
-    public int ElementCount { get; private set; } = 0;
+    public int ElementCount { get; set; } = 0;
 
-    public Func<List<CardSource>, CardSource, bool> CanTargetCondition_ByPreSelecetedList { get; private set; } = null;
+    public Func<List<CardSource>, CardSource, bool> CanTargetCondition_ByPreSelecetedList { get; set; } = null;
 
-    public string selectMessage { get; private set; } = "";
+    public string selectMessage { get; set; } = "";
 }

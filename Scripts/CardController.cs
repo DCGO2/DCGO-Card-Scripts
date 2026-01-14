@@ -2293,6 +2293,158 @@ public class DeckBottomBounceClass
 
 #endregion
 
+#region Place permanents to deck top
+
+public class DeckTopBounceClass
+{
+    public DeckTopBounceClass(List<Permanent> deckBounceTargetPermanents, Hashtable hashtable)
+    {
+        _deckBounceTargetPermanents = deckBounceTargetPermanents.Clone();
+
+        _hashtable = hashtable;
+    }
+
+    public void SetNotShowCards()
+    {
+        _notShowCards = true;
+    }
+
+    public bool IsDeckBounced(Permanent permanent)
+    {
+        return DeckBouncedPermanents.Contains(permanent);
+    }
+
+    List<Permanent> _deckBounceTargetPermanents = new List<Permanent>();
+    public List<Permanent> DeckBouncedPermanents { get; private set; } = new List<Permanent>();
+    Hashtable _hashtable = new Hashtable();
+    bool _notShowCards = false;
+
+    public IEnumerator DeckBounce()
+    {
+        if (_deckBounceTargetPermanents == null) yield break;
+
+        ICardEffect cardEffect = CardEffectCommons.GetCardEffectFromHashtable(_hashtable);
+
+        _deckBounceTargetPermanents = _deckBounceTargetPermanents.Filter(permanent =>
+        permanent != null
+        && permanent.TopCard != null
+        && (cardEffect == null ||
+        (!permanent.TopCard.CanNotBeAffected(cardEffect)
+        && !permanent.CannotReturnToLibrary(cardEffect)
+        && permanent.CanBeRemoved())));
+
+        if (_deckBounceTargetPermanents.Count == 0) yield break;
+
+        _deckBounceTargetPermanents.ForEach(permanent => permanent.willBeRemoveField = true);
+
+        #region cut in effect
+
+        // "When permanents would return to deck" effect
+
+        yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing_CutIn.StackSkillInfos(
+            CardEffectCommons.WhenPermanentWouldRemoveFieldCheckHashtable(
+                _deckBounceTargetPermanents,
+                cardEffect,
+                null
+            ),
+            EffectTiming.WhenReturntoLibraryAnyone));
+
+        // "When permanents would remove field" effect
+
+        yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing_CutIn.StackSkillInfos(
+            CardEffectCommons.WhenPermanentWouldRemoveFieldCheckHashtable(
+                _deckBounceTargetPermanents,
+                cardEffect,
+                null
+            ),
+            EffectTiming.WhenRemoveField));
+
+        if (GManager.instance.autoProcessing_CutIn.HasAwaitingActivateEffects())
+        {
+            foreach (Permanent permanent in _deckBounceTargetPermanents)
+            {
+                permanent.ShowDeckBounceEffect();
+            }
+
+            // cut in effect process
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing_CutIn.TriggeredSkillProcess(false, null));
+
+            foreach (Permanent permanent in _deckBounceTargetPermanents)
+            {
+                permanent.HideDeckBounceEffect();
+            }
+        }
+
+        #endregion
+
+        // fix deck bounce target permanents
+        List<Permanent> deckBounceTargetPermanents_Fixed = _deckBounceTargetPermanents.Filter(permanent =>
+        permanent != null
+        && permanent.TopCard != null
+        && permanent.willBeRemoveField);
+
+        #region show cards
+
+        List<CardSource> returnedCards = deckBounceTargetPermanents_Fixed.Map(permanent => permanent.TopCard);
+
+        if (!_notShowCards)
+        {
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(returnedCards, "Deck bottom cards", true, true));
+        }
+
+        #endregion
+
+        #region
+
+        List<CardSource> deckTopCards = new List<CardSource>();
+
+        foreach (Permanent permanent in deckBounceTargetPermanents_Fixed)
+        {
+            #region recoed used effect
+
+            if (permanent.TopCard != null)
+            {
+                permanent.LibraryBounceEffect = cardEffect;
+            }
+
+            #endregion
+
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().DeckBounceEffect(permanent));
+
+            yield return ContinuousController.instance.StartCoroutine(permanent.DiscardEvoRoots());
+
+            CardSource topCard = permanent.TopCard;
+
+            yield return ContinuousController.instance.StartCoroutine(CardObjectController.RemoveField(permanent));
+
+            deckTopCards.Add(topCard);
+
+            DeckBouncedPermanents.Add(permanent);
+        }
+
+        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(deckTopCards));
+
+        #endregion
+
+        #region off icon
+
+        foreach (Permanent permanent in _deckBounceTargetPermanents)
+        {
+            if (permanent != null)
+            {
+                if (permanent.TopCard != null)
+                {
+                    permanent.willBeRemoveField = false;
+                }
+            }
+        }
+
+        #endregion
+    }
+}
+
+#endregion
+
 #region Return permanent to hand
 
 public class HandBounceClaass

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // Shamanmon
 namespace DCGO.CardEffects.BT24

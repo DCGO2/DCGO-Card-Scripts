@@ -113,7 +113,7 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
             {
                 AssemblyCondition AssemblyCondition = card.assemblyCondition;
 
-                foreach(AssemblyConditionElement element in AssemblyCondition)
+                foreach(AssemblyConditionElement element in AssemblyCondition.elements)
                 {
                     yield return GManager.instance.photonWaitController.StartWait("SelectAssemblys");
 
@@ -130,7 +130,7 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
 
                     bool canSelectTrash = false;
 
-                    if (CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, (cardSource) => AssemblyCondition.elements.any(element => AssemblyCanSelectAssembly(element, cardSource, card))) >= AssemblyCondition.elementCount)
+                    if (CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, (cardSource) => AssemblyCondition.elements.Any(element => CanSelectAssembly(element, cardSource, card))) >= AssemblyCondition.elementCount)
                     {
                         canSelectTrash = true;
                     }
@@ -138,7 +138,7 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
 
                     if (canSelectTrash)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(SelectTrashCard(AssemblyCondition, card));
+                        yield return ContinuousController.instance.StartCoroutine(SelectTrashCard(element, card));
                     }
                 }
                 /*foreach (AssemblyConditionElement element in AssemblyCondition.elements)
@@ -304,7 +304,7 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
                         isShowOpponent: true,
                         mode: SelectCardEffect.Mode.Custom,
                         root: SelectCardEffect.Root.Trash,
-                        customRootCardList: card.Owner.TrashCards.clone().Except(selectedAssemblyCards),//don't include cards already chosen
+                        customRootCardList: card.Owner.TrashCards.Except(selectedAssemblyCards).ToList(),//don't include cards already chosen
                         canLookReverseCard: true,
                         selectPlayer: card.Owner,
                         cardEffect: null);
