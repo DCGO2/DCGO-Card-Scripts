@@ -877,7 +877,7 @@ public class SelectPermanentEffect : MonoBehaviourPunCallbacks
 
                     if (libraryTopPermanents.Count > 0)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(new DeckBottomBounceClass(libraryTopPermanents, hashtable).DeckBounce());
+                        yield return ContinuousController.instance.StartCoroutine(new DeckTopBounceClass(libraryTopPermanents, hashtable).DeckBounce());
                     }
 
                     if (handBouncePermanents.Count > 0)

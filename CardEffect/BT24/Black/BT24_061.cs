@@ -64,7 +64,7 @@ namespace DCGO.CardEffects.BT24
                         canEndNotMax: false,
                         selectPermanentCoroutine: null,
                         afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.PutLibraryBottom,
+                        mode: SelectPermanentEffect.Mode.PutLibraryTop,
                         cardEffect: activateClass);
 
                     selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to return to the top of the deck.", "The opponent is selecting 1 Digimon to return to the top of the deck.");
