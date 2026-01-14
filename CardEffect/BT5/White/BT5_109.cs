@@ -91,12 +91,12 @@ public class BT5_109 : CEntity_Effect
                     ContinuousController.instance.PlaySE(GManager.instance.GetComponent<Effects>().BuffSE);
 
                     ChangeCostClass changeCostClass = new ChangeCostClass();
-                    changeCostClass.SetUpICardEffect("Digivolution Cost -6", CanUseCondition1, card);
+                    changeCostClass.SetUpICardEffect("Digivolution Cost -6", CanUseCondition3, card);
                     changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true); card.Owner.UntilCalculateFixedCostEffect.Add((_timing) => changeCostClass);
 
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ShowReducedCost(_hashtable1));
 
-                    bool CanUseCondition1(Hashtable hashtable)
+                    bool CanUseCondition3(Hashtable hashtable)
                     {
                         return true;
                     }
