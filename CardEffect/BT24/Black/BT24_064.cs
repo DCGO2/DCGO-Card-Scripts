@@ -143,7 +143,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent)
                         && (permanent.IsTamer || permanent.IsDigimon);
                 }
 
