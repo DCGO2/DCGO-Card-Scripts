@@ -1093,6 +1093,8 @@ public class OfficialCardListUtility
         WebClient wc = new WebClient();
         wc.Encoding = Encoding.UTF8;
         string resultText = wc.DownloadString(url);
+        resultText.replace("&nbsp;", " ");
+        resultText.replace("&#160;", " ");
         List<string> parseByEnter = resultText.Split('\n').ToList();
 
         for (int i = 0; i < parseByEnter.Count; i++)
