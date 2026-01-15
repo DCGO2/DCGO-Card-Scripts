@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.HasTSTraits;
+                    return targetPermanent.IsDigimon && targetPermanent.TopCard.HasTSTraits;
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfLinkConditionStaticEffect(permanentCondition: PermanentCondition, linkCost: 3, card: card));
@@ -86,8 +86,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsOwnerPermanent(permanent, card)
-                        &&  card.CanLinkToTargetPermanent(permanent, false, true);
+                    return permanent.IsDigimon
+                        && CardEffectCommons.IsOwnerPermanent(permanent, card)
+                        && card.CanLinkToTargetPermanent(permanent, false, true);
                 }
 
                 bool CanSelectTargetCondition(Permanent permanent)
@@ -139,8 +140,6 @@ namespace DCGO.CardEffects.BT24
 
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition, true))
                     {
-
-
                         Permanent selectedPermanent = null;
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
