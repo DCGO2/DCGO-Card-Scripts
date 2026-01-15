@@ -333,7 +333,7 @@ namespace DCGO.CardEffects.BT24
                     {
                         removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(PermanentCondition);
 
-                        return CardEffectCommons.HasMatchConditionPermanent(card, CanPlaceToSecurityCondition);
+                        return CardEffectCommons.HasMatchConditionPermanent(CanPlaceToSecurityCondition);
                     }
                         
                     return false;
