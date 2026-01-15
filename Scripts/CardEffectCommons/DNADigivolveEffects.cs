@@ -293,6 +293,7 @@ public partial class CardEffectCommons
         bool isIntoHandCard,
         ICardEffect activateClass,
         IEnumerator successProcess,
+        bool ignoreSelection = false
         IEnumerator failedProcess = null,
         bool isOptional = true)
     {
@@ -329,6 +330,10 @@ public partial class CardEffectCommons
             selectHandEffect.SetUpCustomMessage("Select 1 Digimon to DNA digivolve.", "The opponent is selecting 1 Digimon to DNA digivolve.");
 
             yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
+        }
+        else if(ignoreSelection)
+        {
+            dnaTarget = activateClass.EffectSourceCard;
         }
         else
         {
