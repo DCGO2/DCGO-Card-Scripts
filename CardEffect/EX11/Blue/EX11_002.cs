@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Hiyarimon
 namespace DCGO.CardEffects.EX11
@@ -31,7 +32,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool DefenderCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(card, permanent)
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                         && !permanent.IsSuspended;
                 }
 

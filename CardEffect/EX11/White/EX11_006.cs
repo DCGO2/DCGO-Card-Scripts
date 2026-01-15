@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Flickmon
 namespace DCGO.CardEffects.EX11
@@ -29,7 +30,7 @@ namespace DCGO.CardEffects.EX11
                 bool CanActivateCondition(Hashtable hashtable)
                     => CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                     && card.Owner.HandCards.Count >= 1
-                    && card.PermanentOfThisCard().LinkedCards.Contains(cardSource => cardSource.EqualsCardName("Maquinamon"));
+                    && card.PermanentOfThisCard().LinkedCards.Any(cardSource => cardSource.EqualsCardName("Maquinamon"));
 
                 bool CanSelectCardCondition(CardSource cardSource)
                     => cardSource.IsDigimon

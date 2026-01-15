@@ -37,18 +37,13 @@ namespace DCGO.CardEffects.EX4
                     return false;
                 }
 
-                bool CardSourceCondition(CardSource cardSource)
-                {
-                    return true;
-                }
-
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
                         if (CardEffectCommons.IsOwnerTurn(card))
                         {
-                            if (CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, PermanentCondition, CardSourceCondition))
+                            if (CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, PermanentCondition))
                             {
                                 return true;
 
