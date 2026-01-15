@@ -321,7 +321,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                    return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, PermanentCondition)
                         && !CardEffectCommons.IsOwnerEffect(activateClass, card);
                 }
@@ -347,14 +347,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanPlaceToSecurityCondition(Permanent permanent)
                 {
-                    foreach (Permanent removed in removedPermanents)
-                    {
-                        if (removed != permanent
-                            && CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
-                            && permanent.DigivolutionCards.Count == 0)
-                            return true;
-                    }
-                    return false;
+                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
+                        && permanent.DigivolutionCards.Count == 0
+                        && removedPermanents.Some(removed => removed != permanent);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
