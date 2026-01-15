@@ -86,8 +86,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card) || CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card))
-                        &&  card.CanLinkToTargetPermanent(permanent, false);
+                    return CardEffectCommons.IsOwnerPermanent(permanent, card)
+                        &&  card.CanLinkToTargetPermanent(permanent, false, true);
                 }
 
                 bool CanSelectTargetCondition(Permanent permanent)

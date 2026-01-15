@@ -2933,7 +2933,7 @@ public class CardSource : MonoBehaviour
 
     #region whether this card can Link
 
-    public bool CanLink(bool PayCost)
+    public bool CanLink(bool PayCost, bool allowBreeding = false)
     {
         if (linkCondition != null)
         {
@@ -2946,16 +2946,34 @@ public class CardSource : MonoBehaviour
                     return false;
                 }
             }
-
-            if (Owner.GetBattleAreaDigimons().Count >= 1)
+            if (allowBreeding)
             {
-                foreach (Permanent digimon in Owner.GetFieldPermanents())
+                if (Owner.GetFieldPermanents().Count >= 1)
                 {
-                    if (digimon != null)
+                    foreach (Permanent digimon in Owner.GetFieldPermanents())
                     {
-                        if (linkCondition.digimonCondition(digimon))
+                        if (digimon != null)
                         {
-                            return true;
+                            if (linkCondition.digimonCondition(digimon))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Owner.GetBattleAreaDigimons().Count >= 1)
+                {
+                    foreach (Permanent digimon in Owner.GetBattleAreaDigimons())
+                    {
+                        if (digimon != null)
+                        {
+                            if (linkCondition.digimonCondition(digimon))
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -3025,13 +3043,13 @@ public class CardSource : MonoBehaviour
 
     #region whether target permanent can Link into this card
 
-    public bool CanLinkToTargetPermanent(Permanent targetPermanent, bool PayCost)
+    public bool CanLinkToTargetPermanent(Permanent targetPermanent, bool PayCost, bool allowBreeding = false)
     {
         if (targetPermanent != null)
         {
             if (targetPermanent.TopCard != null && !targetPermanent.TopCard.IsToken)
             {
-                if (this.CanLink(PayCost))
+                if (this.CanLink(PayCost, allowBreeding))
                 {
                     if (linkCondition != null)
                     {
