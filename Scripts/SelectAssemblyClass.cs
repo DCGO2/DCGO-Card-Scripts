@@ -98,6 +98,59 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
     }
     #endregion
 
+    #region CanFulfillConditions
+    bool CanFulfillConditions(CardSource card)
+    {
+        if (card != null)
+        {
+            if (card.HasAssembly)
+            {
+                AssemblyCondition AssemblyCondition = card.assemblyCondition;
+
+                if (AssemblyCondition.elements != null)
+                {
+                    if (AssemblyCondition.elements.Count == 1)
+                        return CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, (cardSource) => CanSelectAssembly(AssemblyCondition.elements[0], cardSource, card)) >= AssemblyCondition.elementCount;
+                    else
+                        return CanFulfillEachElementCondition(card, AssemblyCondition);
+                }
+            }
+        }
+        return false;
+    }
+
+   bool CanFulfillEachElementCondition(CardSource card, AssemblyCondition AssemblyCondition, int index = 0, List<CardSource> usedCards = null, int currentElementCount = 0)
+    {
+        if (index < 0 || AssemblyCondition.elements == null)
+            return false;
+        if (index >= AssemblyCondition.elements.Count)
+            return true;
+            
+        usedCards ??= new List<CardSource>();
+
+        AssemblyConditionElement currentElement = AssemblyCondition.elements[index];
+
+        List<CardSource> validCards = card.Owner.TrashCards.Filter(currentElement.CardCondition).Except(usedCards);
+
+        foreach(CardSource validCard in validCards)
+        {  
+            List<CardSource> addedSoFar = new List<CardSource>() { validCard };
+            addedSoFar.AddRange(usedCards);
+            if (currentElementCount + 1 >= currentElement.ElementCount)
+            {
+                if(CanFulfillEachElementCondition(card, AssemblyCondition, index+1, addedSoFar, 0))
+                    return true;
+            } 
+            else
+            {
+                if (CanFulfillEachElementCondition(card, AssemblyCondition, index, addedSoFar, currentElementCount+1))
+                    return true;
+            }
+        }
+        return false;
+    }
+    #endregion
+
     #region Select
     public IEnumerator Select(CardSource card)
     {
@@ -107,42 +160,36 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
 
         playCard = card;
 
-        if (card != null)
+        if (CanFulfillConditions(card))
         {
-            if (card.HasAssembly)
+            AssemblyCondition AssemblyCondition = card.assemblyCondition;
+
+            foreach(AssemblyConditionElement element in AssemblyCondition.elements)
             {
-                AssemblyCondition AssemblyCondition = card.assemblyCondition;
+                yield return GManager.instance.photonWaitController.StartWait("SelectAssemblys");
 
-                if (AssemblyCondition.All(element => CanSelectAssembly(element, cardSource, card)) >= element.elementCount)
+                if (selectedAssemblyCards.Count >= AssemblyCondition.elementCount)
                 {
-                    foreach(AssemblyConditionElement element in AssemblyCondition.elements)
-                    {
-                        yield return GManager.instance.photonWaitController.StartWait("SelectAssemblys");
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(selectedAssemblyCards, "Assembly Cards", false, true));
+                }
 
-                        if (selectedAssemblyCards.Count >= AssemblyCondition.elementCount)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(selectedAssemblyCards, "Assembly Cards", false, true));
-                        }
+                if (_endSelectAssembly)
+                {
+                    _endSelectAssembly = false;
+                    //break; TODO: Removed for not triggering Assembly in all situations
+                }
 
-                        if (_endSelectAssembly)
-                        {
-                            _endSelectAssembly = false;
-                            //break; TODO: Removed for not triggering Assembly in all situations
-                        }
+                bool canSelectTrash = false;
 
-                        bool canSelectTrash = false;
-
-                        if (CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, (cardSource) => CanSelectAssembly(AssemblyConditionElement, cardSource, card)) >= AssemblyConditionElement.elementCount)
-                        {
-                            canSelectTrash = true;
-                        }
+                if (CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, (cardSource) => CanSelectAssembly(AssemblyConditionElement, cardSource, card)) >= AssemblyConditionElement.elementCount)
+                {
+                    canSelectTrash = true;
+                }
 
 
-                        if (canSelectTrash)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(SelectTrashCard(element, card));
-                        }
-                    }
+                if (canSelectTrash)
+                {
+                    yield return ContinuousController.instance.StartCoroutine(SelectTrashCard(element, card));
                 }
             }
         }
