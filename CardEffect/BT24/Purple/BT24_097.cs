@@ -64,7 +64,7 @@ namespace DCGO.CardEffects.BT24
                 CardEffectCommons.AddActivateMainOptionSecurityEffect(
                     card: card,
                     cardEffects: ref cardEffects,
-                    effectName: "Delete 1 opponent's level 6 or lower Digimon. Then, you may link this card.");
+                    effectName: "Delete 1 opponent's level 6 or higher Digimon. Then, you may link this card.");
             }
 
             #endregion
@@ -74,7 +74,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OptionSkill)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Delete 1 opponent's level 6 or lower Digimon. Then, you may link this card.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete 1 opponent's level 6 or higher Digimon. Then, you may link this card.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
