@@ -123,7 +123,7 @@ namespace DCGO.CardEffects.BT24
                             bool CanUseCondition1(Hashtable hashtable)
                             {
                                 return selectedPermanent.TopCard != null
-                                    && selectedPermanent.TopCard.CanNotBeAffected(activateClass);
+                                    && !selectedPermanent.TopCard.CanNotBeAffected(activateClass);
                             }
 
                             bool PermanentCondition(Permanent permanent) => permanent == selectedPermanent;
