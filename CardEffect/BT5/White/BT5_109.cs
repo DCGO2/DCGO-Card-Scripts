@@ -133,7 +133,7 @@ public class BT5_109 : CEntity_Effect
                     bool CardSourceCondition(CardSource cardSource)
                     {
                         return cardSource.HasLevel
-                            && cardSource.Level == 6;
+                            && cardSource.Level == 7;
                     }
 
                     bool RootCondition(SelectCardEffect.Root root)
