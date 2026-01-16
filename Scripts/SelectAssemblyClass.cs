@@ -130,7 +130,7 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
 
         AssemblyConditionElement currentElement = AssemblyCondition.elements[index];
 
-        List<CardSource> validCards = card.Owner.TrashCards.Filter(currentElement.CardCondition).Except(usedCards);
+        List<CardSource> validCards = card.Owner.TrashCards.Filter(currentElement.CardCondition).Except(usedCards).ToList();
 
         foreach(CardSource validCard in validCards)
         {  
@@ -181,7 +181,7 @@ public class SelectAssemblyClass : MonoBehaviourPunCallbacks
 
                 bool canSelectTrash = false;
 
-                if (CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, (cardSource) => CanSelectAssembly(AssemblyConditionElement, cardSource, card)) >= AssemblyConditionElement.elementCount)
+                if (CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, (cardSource) => CanSelectAssembly(element, cardSource, card)) >= element.ElementCount)
                 {
                     canSelectTrash = true;
                 }
