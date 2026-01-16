@@ -228,7 +228,7 @@ public class AutoProcessing : MonoBehaviourPunCallbacks
         {
             if (permanent.TopCard != null)
             {
-                if (permanent.LinkedCards.Any(source => !source.CanLinkToTargetPermanent(permanent, false)))
+                if (permanent.LinkedCards.Any(source => !source.CanLinkToTargetPermanent(permanent, false, true)))
                 {
                     return true;
                 }
