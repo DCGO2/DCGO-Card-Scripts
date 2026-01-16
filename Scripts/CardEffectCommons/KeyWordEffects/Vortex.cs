@@ -15,11 +15,48 @@ public partial class CardEffectCommons
 
     #endregion
 
+    public static bool PermanentHasVortexCanAttackPlayers(Permanent permanent)
+    {
+        #region the effects of permanents
+
+        if (GManager.instance.turnStateMachine.gameContext.Players
+            .Map(player => player.GetFieldPermanents())
+            .Flat()
+            .Map(permanent => permanent.EffectList(EffectTiming.None))
+            .Flat()
+            .Some(cardEffect => cardEffect is IVortexCanAttackPlayersEffect
+                && cardEffect.CanUse(null)
+                && ((IVortexCanAttackPlayersEffect)cardEffect).VortexCanAttackPlayersPermanent(permanent)))
+        {
+            return true;
+        }
+
+        #endregion
+
+        #region the effects of players
+
+        if (GManager.instance.turnStateMachine.gameContext.Players
+                .Map(player => player.EffectList(EffectTiming.None))
+                .Flat()
+                .Some(cardEffect => cardEffect is IVortexCanAttackPlayersEffect
+                    && cardEffect.CanUse(null)
+                    && ((IVortexCanAttackPlayersEffect)cardEffect).VortexCanAttackPlayersPermanent(permanent)))
+        {
+            return true;
+        }
+
+        #endregion
+
+        return false;
+    }
+
     #region Effect process of [Vortex]
 
     public static IEnumerator VortexProcess(CardSource cardSource, ICardEffect activateClass)
     {
         Permanent selectedPermanent = cardSource.PermanentOfThisCard();
+
+        bool canAttackPlayers = PermanentHasVortexCanAttackPlayers(selectedPermanent);
 
         if (selectedPermanent.CanAttack(activateClass, isVortex: true))
         {
@@ -27,7 +64,7 @@ public partial class CardEffectCommons
 
             selectAttackEffect.SetUp(
                 attacker: selectedPermanent,
-                canAttackPlayerCondition: () => false,
+                canAttackPlayerCondition: () => canAttackPlayers,
                 defenderCondition: _ => true,
                 cardEffect: activateClass);
             
