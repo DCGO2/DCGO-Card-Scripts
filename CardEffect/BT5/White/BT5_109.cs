@@ -50,7 +50,7 @@ public class BT5_109 : CEntity_Effect
                 Permanent playedPermanent = ;
 
                 ActivateClass activateClass3 = new ActivateClass();
-                activateClass3.SetUpICardEffect("Delete the Digimon", CanUseCondition2, playedPermanent.TopCard);
+                activateClass3.SetUpICardEffect("Bottom deck the Digimon", CanUseCondition2, playedPermanent.TopCard);
                 activateClass3.SetUpActivateClass(CanActivateCondition1, ActivateCoroutine3, -1, false, EffectDiscription2());
                 activateClass3.SetEffectSourcePermanent(playedPermanent);
                 playedPermanent.UntilOwnerTurnEndEffects.Add(GetCardEffect);
