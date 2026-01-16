@@ -78,8 +78,6 @@ namespace DCGO.CardEffects.BT24
                     || permanent.IsTamer);
             }
 
-            bool ByEffect = false;
-
             bool CanActivateConditionShared(Hashtable hashtable)
             {
                 return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
@@ -107,7 +105,7 @@ namespace DCGO.CardEffects.BT24
 
                 yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                if (CardEffectCommons.IsByEffect(hashtable, null))
+                if (CardEffectCommons.IsByEffect(hashtable, null) && CardEffectCommons.CanTriggerOnPlay(hashtable, card))
                 {
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition1))
                     {
