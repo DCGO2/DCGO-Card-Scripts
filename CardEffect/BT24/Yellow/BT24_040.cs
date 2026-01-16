@@ -405,7 +405,7 @@ namespace DCGO.CardEffects.BT24
                                     toTop: false).PutSecurity()
                                 );
     
-                                if (card.Owner.SecurityCards.Contains(topCard) || card.Owner.Enemy.SecurityCards.Contains(topCard) || (securityCard.IsToken && !CardEffectCommons.IsExistOnBattleArea(securityCard)))
+                                if (card.Owner.SecurityCards.Contains(topCard) || card.Owner.Enemy.SecurityCards.Contains(topCard) || (securityCard.IsToken && !CardEffectCommons.IsExistOnBattleArea(topCard)))
                                 {
                                     foreach (Permanent permanent in removedPermanents)
                                     {
