@@ -524,40 +524,6 @@ public partial class CardEffectFactory
             return CardEffectCommons.CanTriggerOptionMainEffect(hashtable, card);
         }
 
-        IEnumerator ActivateCoroutine(Hashtable hashtable)
-        {
-            if (card.Owner.SecurityCards.Count >= 1)
-            {
-                #region Add Bottom Security Card to Hand
-
-                CardSource bottomCard = card.Owner.SecurityCards.Last();
-
-                yield return ContinuousController.instance.StartCoroutine(
-                    CardObjectController.AddHandCards(new List<CardSource>() { bottomCard }, false, activateClass));
-
-                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                    player: card.Owner,
-                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-
-                #endregion
-            }
-
-            #region Place Face up as Bottom Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: false, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
-        }
-
         return activateClass;
     }
 
@@ -579,40 +545,6 @@ public partial class CardEffectFactory
         bool CanUseCondition(Hashtable hashtable)
         {
             return CardEffectCommons.CanTriggerOptionMainEffect(hashtable, card);
-        }
-
-        IEnumerator ActivateCoroutine(Hashtable hashtable)
-        {
-            if (card.Owner.SecurityCards.Count >= 1)
-            {
-                #region Add Bottom Security Card to Hand
-
-                CardSource topCard = card.Owner.SecurityCards.First();
-
-                yield return ContinuousController.instance.StartCoroutine(
-                    CardObjectController.AddHandCards(new List<CardSource>() { topCard }, false, activateClass));
-
-                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                    player: card.Owner,
-                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-
-                #endregion
-            }
-
-            #region Place Face up as Top Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: true, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
         }
 
         return activateClass;
@@ -638,22 +570,22 @@ public partial class CardEffectFactory
                 refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
 
             #endregion
-
-            #region Place Face up as Bottom Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: false, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
         }
+
+        #region Place Face up as Bottom Security Card
+
+        if (card.Owner.CanAddSecurity(activateClass))
+        {
+            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                card, toTop: false, faceUp: true));
+
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
+                .CreateRecoveryEffect(card.Owner));
+
+            yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
+        }
+
+        #endregion
     }
 
     #endregion
@@ -662,10 +594,9 @@ public partial class CardEffectFactory
 
     public static IEnumerator ReplaceTopSecurityWithFaceUpOptionEffect(CardSource card, ActivateClass activateClass)
     {
-
         if (card.Owner.SecurityCards.Count >= 1)
         {
-            #region Add Bottom Security Card to Hand
+            #region Add Top Security Card to Hand
 
             CardSource topCard = card.Owner.SecurityCards.First();
 
@@ -677,23 +608,22 @@ public partial class CardEffectFactory
                 refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
 
             #endregion
-
-
-            #region Place Face up as Top Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: true, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
         }
+
+        #region Place Face up as Top Security Card
+
+        if (card.Owner.CanAddSecurity(activateClass))
+        {
+            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                card, toTop: true, faceUp: true));
+
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
+                .CreateRecoveryEffect(card.Owner));
+
+            yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
+        }
+
+        #endregion
     }
 
     #endregion
