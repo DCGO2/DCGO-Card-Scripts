@@ -10,7 +10,7 @@ namespace DCGO.CardEffects.EX4
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-            if (timing == EffectTiming.BeforePayCost)
+            if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Draw 1", CanUseCondition, card);
