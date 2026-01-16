@@ -97,7 +97,7 @@ namespace DCGO.CardEffects.BT24
                     {
                         if (permanent.TopCard.HasLevel)
                         {
-                            if (permanent.Level <= 6)
+                            if (permanent.Level >= 6)
                             {
                                 return true;
                             }
