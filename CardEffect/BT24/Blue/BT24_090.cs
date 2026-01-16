@@ -122,7 +122,7 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon
                         && (cardSource.CardColors.Contains(CardColor.Blue) || cardSource.CardColors.Contains(CardColor.Yellow))
                         && cardSource.HasTSTraits
-                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, true, activateClass);
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, true, activateClass, fixedCost: cardSource.GetCostItself - 3);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
