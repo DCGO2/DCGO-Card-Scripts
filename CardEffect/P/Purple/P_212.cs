@@ -32,7 +32,7 @@ namespace DCGO.CardEffects.P
 
                 string EffectDiscription()
                 {
-                    return "[On Play] draw 1 and trash 1 card in your hand. If this effect trashed a card with the [Three Musketeers] or [TS] trait, delete 1 of your opponent's level 3 Digimon.";
+                    return "[On Play] Draw 1 and trash 1 card in your hand. If this effect trashed a card with the [Three Musketeers] or [TS] trait, delete 1 of your opponent's level 3 Digimon.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
