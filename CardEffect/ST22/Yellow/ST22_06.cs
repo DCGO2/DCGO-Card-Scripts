@@ -326,14 +326,14 @@ namespace DCGO.CardEffects.ST22
                                 CardSource topCard = selectedPermanent.TopCard;
 
                                 // TODO: Replace this and if below with a PlaceInSecurityProcessFromResult - P-187 Mastemon
-                                yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
-                                permanent: selectedPermanent,
-                                hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                                toTop: false).PutSecurity());
+                                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlacePermanentInSecurityAndProcessAccordingToResult(
+                                    permanent: selectedPermanent,
+                                    activateClass: activateClass,
+                                    toTop: false,
+                                    SuccessProcess));
 
-                                if (CardEffectCommons.WasSentToSecurity(topCard))
+                                IEnumerator SuccessProcess(CardSource cardSource)
                                 {
-
                                     yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
                                         player: card.Owner.Enemy,
                                         destroySecurityCount: 1,

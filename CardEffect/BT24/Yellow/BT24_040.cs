@@ -390,22 +390,14 @@ namespace DCGO.CardEffects.BT24
                         {
                             if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
                             {
-                                #region hashtable
-                                Hashtable _hashtable = new Hashtable()
-                                {
-                                    {"CardEffect", activateClass}
-                                };
-                                #endregion
+                                yield return ContinuousController.instance.StartCoroutine(
+                                    CardEffectCommons.PlacePermanentInSecurityAndProcessAccordingToResult(
+                                        permanent: selectedPermanent,
+                                        activateClass: activateClass,
+                                        toTop: false,
+                                        SuccessProcess));
     
-                                CardSource topCard = selectedPermanent.TopCard;
-    
-                                yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
-                                    permanent: selectedPermanent,
-                                    hashtable: _hashtable,
-                                    toTop: false).PutSecurity()
-                                );
-    
-                                if (CardEffectCommons.WasSentToSecurity(topCard))
+                                IEnumerator SuccessProcess(CardSource cardSource)
                                 {
                                     foreach (Permanent permanent in removedPermanents)
                                     {
