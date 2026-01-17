@@ -223,7 +223,8 @@ namespace DCGO.CardEffects.P
                 {
                     return cardSource.IsDigimon
                            && cardSource.HasLevel && cardSource.Level <= 4
-                           && cardSource.EqualsTraits("Demon")
+                           && (cardSource.EqualsTraits("Demon")
+                               || cardSource.EqualsTraits("Titan"))
                            && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
