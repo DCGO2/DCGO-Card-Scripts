@@ -21,14 +21,14 @@ public partial class CardEffectCommons
 
         if (cardSource.IsToken)
         {
-            if (!CardEffectCommons.IsExistOnBattleArea(topCard))
+            if (!CardEffectCommons.IsExistOnBattleArea(cardSource))
             {
                 return true;
             }
         }
         if (cardSource.IsDigiEgg)
         {
-            if (!CardEffectCommons.IsExistOnBattleArea(topCard))
+            if (!CardEffectCommons.IsExistOnBattleArea(cardSource))
             {
                 return true;
             }
@@ -36,5 +36,34 @@ public partial class CardEffectCommons
 
         return false;
     }
+    #endregion
+
+    #region Place in security with callbacks for success or failure
+    public static IEnumerator PlacePermanentInSecurityAndProcessAccordingToResult(Permanent targetPermanent, ICardEffect activateClass, bool toTop, Func<CardSource, IEnumerator> successProcess, Func<IEnumerator> failureProcess = false, bool isFaceUp = false)
+    {
+        IPutSecurityPermanent putSecurityPermanent = new IPutSecurityPermanent(targetPermanent, CardEffectCommons.CardEffectHashtable(activateClass), toTop, isFaceUp);
+
+        CardSource topCard = targetPermanent.TopCard;
+        if (activateClass.EffectSourceCard?.Owner.CanAddSecurity)
+        {
+            yield return ContinuousController.instance.StartCoroutine(putSecurityPermanent.PutSecurity());
+        }
+
+        if (WasSentToSecurity(topCard))
+        {
+            if (successProcess != null)
+            {
+                yield return ContinuousController.instance.StartCoroutine(successProcess(topCard));
+            }
+        }
+        else
+        {
+            if (failureProcess != null)
+            {
+                yield return ContinuousController.instance.StartCoroutine(failureProcess());
+            }
+        }
+    }
+
     #endregion
 }
