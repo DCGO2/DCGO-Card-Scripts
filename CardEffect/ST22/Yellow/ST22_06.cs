@@ -331,7 +331,7 @@ namespace DCGO.CardEffects.ST22
                                 hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
                                 toTop: false).PutSecurity());
 
-                                if (topCard.Owner.SecurityCards.Contains(topCard) || topCard.IsToken)
+                                if (topCard.Owner.SecurityCards.Contains(topCard) || (securityCard.IsToken && !CardEffectCommons.IsExistOnBattleArea(topCard)))
                                 {
 
                                     yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
