@@ -12,4 +12,29 @@ public partial class CardEffectCommons
         return CanTriggerWhenLoseSecurity(hashtable, playerCondition);
     }
     #endregion
+
+    #region Check card was sent to security
+    public static bool WasSentToSecurity(CardSource cardSource)
+    {
+        if (cardSource.Owner.SecurityCards.Contains(cardSource))
+            return true; 
+
+        if (cardSource.IsToken)
+        {
+            if (!CardEffectCommons.IsExistOnBattleArea(topCard))
+            {
+                return true;
+            }
+        }
+        if (cardSource.IsDigiEgg)
+        {
+            if (!CardEffectCommons.IsExistOnBattleArea(topCard))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    #endregion
 }
