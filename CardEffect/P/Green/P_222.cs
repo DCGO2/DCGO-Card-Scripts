@@ -362,7 +362,7 @@ namespace DCGO.CardEffects.P
 
                 bool CanTriggerPermanent(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(card);
+                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
