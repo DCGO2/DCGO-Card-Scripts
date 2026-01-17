@@ -51,7 +51,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     List<CardSource> trashedCards = CardEffectCommons.GetDiscardedCardsFromHashtable(hashtable).Filter(CardCondition);
 
-                    if (trashedCards.Count > 0)
+                    if (trashedCards.Count > 0 && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CardCondition))
                     {
                         CardSource selectedCard = null;
 
