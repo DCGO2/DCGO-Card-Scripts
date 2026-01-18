@@ -42,25 +42,26 @@ namespace DCGO.CardEffects.P
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    revealCount: 3,
-                    simplifiedSelectCardConditions:
-                    new SimplifiedSelectCardConditionClass[]
-                    {
-                    new SimplifiedSelectCardConditionClass(
-                        canTargetCondition:CanSelectCardCondition,
-                        message: "Select 1 card with [Royal Base] in text.",
-                        mode: SelectCardEffect.Mode.AddHand,
-                        maxCount: 1,
-                        selectCardCoroutine: null),
-                    new SimplifiedSelectCardConditionClass(
-                        canTargetCondition:CanSelectCardCondition1,
-                        message: "Select 1 [LIBERATOR] trait card.",
-                        mode: SelectCardEffect.Mode.AddHand,
-                        maxCount: 1,
-                        selectCardCoroutine: null),
-                    },
-                    remainingCardsPlace: RemainingCardsPlace.DeckBottom,
-                    activateClass: activateClass));
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
+                        revealCount: 3,
+                        simplifiedSelectCardConditions:
+                        new SimplifiedSelectCardConditionClass[]
+                        {
+                        new SimplifiedSelectCardConditionClass(
+                            canTargetCondition:CanSelectCardCondition,
+                            message: "Select 1 card with [Royal Base] in text.",
+                            mode: SelectCardEffect.Mode.AddHand,
+                            maxCount: 1,
+                            selectCardCoroutine: null),
+                        new SimplifiedSelectCardConditionClass(
+                            canTargetCondition:CanSelectCardCondition1,
+                            message: "Select 1 [LIBERATOR] trait card.",
+                            mode: SelectCardEffect.Mode.AddHand,
+                            maxCount: 1,
+                            selectCardCoroutine: null),
+                        },
+                        remainingCardsPlace: RemainingCardsPlace.DeckBottom,
+                        activateClass: activateClass));
             
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
 
