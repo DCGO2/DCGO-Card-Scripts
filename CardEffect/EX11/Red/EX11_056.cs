@@ -52,7 +52,9 @@ namespace DCGO.CardEffects.EX11
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && CardEffectCommons.HasLevel
                         && CardEffectCommons.Level >= 5
-                        && (permanent.TopCard.ContainsCardName("Tyrannomon") || permanent.TopCard.EqualsTraits("Dinosaur"));
+                        && (permanent.TopCard.ContainsCardName("Tyrannomon") 
+                            || permanent.TopCard.EqualsTraits("Dinosaur")
+                            || permanent.TopCard.EqualsTraits("Reptile"));
                 }
 
                 bool DigivolveToCardCondition(CardSource cardSource)
@@ -96,40 +98,20 @@ namespace DCGO.CardEffects.EX11
                         }
                     }
 
-                    if (card.Owner.GetBreedingAreaPermanents().Count(DigivolveFromPermanentCondition) >= 1)
+                    if (card.Owner.GetBreedingAreaPermanents().Count >= 1)
                     {
-                        List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
-                        {
-                            new(message: "Digivolve in the breeding area", value: true, spriteIndex: 0),
-                            new(message: "Do not digivolve", value: false, spriteIndex: 1),
-                        };
-
-                        string selectPlayerMessage = "Digivolve into [Tyrannomon] in name or [Dinosaur] trait in breeding area?";
-                        string notSelectPlayerMessage = "The opponent is choosing whether to digivolve in the breeding area or not.";
-
-                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements,
-                            selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage,
-                            notSelectPlayerMessage: notSelectPlayerMessage);
-
-                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager
-                            .WaitForEndSelect());
-
-                        if (GManager.instance.userSelectionManager.SelectedBoolValue)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
-                                targetPermanent: card.Owner.GetBreedingAreaPermanents()[0],
-                                cardCondition: DigivolveToCardCondition,
-                                payCost: false,
-                                reduceCostTuple: null,
-                                fixedCostTuple: null,
-                                ignoreDigivolutionRequirementFixedCost: -1,
-                                isHand: true,
-                                activateClass: activateClass,
-                                successProcess: null));
-                        }
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                            targetPermanent: card.Owner.GetBreedingAreaPermanents()[0],
+                            cardCondition: DigivolveToCardCondition,
+                            payCost: false,
+                            reduceCostTuple: null,
+                            fixedCostTuple: null,
+                            ignoreDigivolutionRequirementFixedCost: -1,
+                            isHand: true,
+                            activateClass: activateClass,
+                            successProcess: null));
                     }
                 }
-
             }
 
             #endregion
