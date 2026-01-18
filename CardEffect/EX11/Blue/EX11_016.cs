@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,11 +59,6 @@ namespace DCGO.CardEffects.EX11
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
             }
 
-            bool CanSelectCardCondition(CardSource cardSource)
-            {
-                return !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
-            }
-
             bool OpponentsDigimonWithoutSources(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
@@ -73,30 +69,34 @@ namespace DCGO.CardEffects.EX11
             {
                 #region Strip 2 sources
 
-                if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, CanStripCondition))
+                bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                    return !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
+                }
 
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CanStripCondition,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: 1,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        selectPermanentCoroutine: SelectPermanentCoroutine,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Custom,
-                        cardEffect: activateClass);
+                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(OpponentsDigimon));
 
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will trash digivolution cards.", "The opponent is selecting 1 Digimon that will trash digivolution cards.");
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.TrashDigivolutionCardsFromTopOrBottom(targetPermanent: permanent, trashCount: 2, isFromTop: true, activateClass: activateClass));
-                    }
+                selectPermanentEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: OpponentsDigimon,
+                    canTargetCondition_ByPreSelecetedList: null,
+                    canEndSelectCondition: null,
+                    maxCount: maxCount,
+                    canNoSelect: false,
+                    canEndNotMax: false,
+                    selectPermanentCoroutine: SelectPermanentCoroutine,
+                    afterSelectPermanentCoroutine: null,
+                    mode: SelectPermanentEffect.Mode.Custom,
+                    cardEffect: activateClass);
+
+                selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will trash digivolution cards.", "The opponent is selecting 1 Digimon that will trash digivolution cards.");
+                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                {
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.TrashDigivolutionCardsFromTopOrBottom(targetPermanent: permanent, trashCount: 2, isFromTop: true, activateClass: activateClass));
                 }
 
                 #endregion
@@ -116,9 +116,9 @@ namespace DCGO.CardEffects.EX11
                     && card.Owner.CanAddSecurity(activateClass))
                 {
                     Permanent selectedPermanent = null;
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                    SelectPermanentEffect selectPermanentEffect1 = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                    selectPermanentEffect.SetUp(
+                    selectPermanentEffect1.SetUp(
                         selectPlayer: card.Owner,
                         canTargetCondition: OpponentsDigimonWithoutSources,
                         canTargetCondition_ByPreSelecetedList: null,
@@ -126,16 +126,16 @@ namespace DCGO.CardEffects.EX11
                         maxCount: 1,
                         canNoSelect: true,
                         canEndNotMax: false,
-                        selectPermanentCoroutine: SelectPermanentCoroutine,
+                        selectPermanentCoroutine: SelectPermanentCoroutine1,
                         afterSelectPermanentCoroutine: null,
                         mode: SelectPermanentEffect.Mode.Custom,
                         cardEffect: activateClass);
 
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to place in security", "The opponent is selecting 1 Digimon place in security.");
+                    selectPermanentEffect1.SetUpCustomMessage("Select 1 Digimon to place in security", "The opponent is selecting 1 Digimon place in security.");
 
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect1.Activate());
 
-                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                    IEnumerator SelectPermanentCoroutine1(Permanent permanent)
                     {
                         selectedPermanent = permanent;
                         yield return null;
@@ -210,7 +210,7 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.IsOwnerTurn(card)
                         && card.PermanentOfThisCard().TopCard.EqualsTraits("Ice-Snow")
                         && !CardEffectCommons.HasMatchConditionOpponentsPermanent(card, (permanent) =>
-                                permanent.IsDigimon && !permanent.HasNoDigivolutionCards));                   
+                                permanent.IsDigimon && !permanent.HasNoDigivolutionCards);                   
                 }
 
                 cardEffects.Add(CardEffectFactory.ChangeSelfSAttackStaticEffect(1, true, card, Condition));
@@ -224,7 +224,7 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.IsOwnerTurn(card)
                         && card.PermanentOfThisCard().TopCard.EqualsTraits("Ice-Snow")
                         && !CardEffectCommons.HasMatchConditionOpponentsPermanent(card, (permanent) =>
-                                permanent.IsDigimon && !permanent.HasNoDigivolutionCards));
+                                permanent.IsDigimon && !permanent.HasNoDigivolutionCards);
                 }
 
                 cardEffects.Add(CardEffectFactory.PierceSelfEffect(isInheritedEffect: true, card: card, condition: Condition));
