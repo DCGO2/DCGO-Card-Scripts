@@ -48,7 +48,7 @@ namespace DCGO.CardEffects.P
                     {
                     new SimplifiedSelectCardConditionClass(
                         canTargetCondition:CanSelectCardCondition,
-                        message: "Select 1 card with [Royal Base] trait.",
+                        message: "Select 1 card with [Royal Base] in text.",
                         mode: SelectCardEffect.Mode.AddHand,
                         maxCount: 1,
                         selectCardCoroutine: null),
