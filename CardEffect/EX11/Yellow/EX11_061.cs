@@ -15,37 +15,9 @@ namespace DCGO.CardEffects.EX11
 
             if (timing == EffectTiming.OnStartMainPhase)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Memory +1", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
-                cardEffects.Add(activateClass);
-
-                string EffectDiscription()
-                {
-                    return "[Start of Your Main Phase] If your opponent has a Digimon, gain 1 memory.";
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.IsOwnerTurn(card);
-                }
-
-                bool CanActivateCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.IsExistOnBattleArea(card)
-                        && card.Owner.Enemy.GetBattleAreaDigimons().Count >= 1;
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
-                {
-                    if (card.Owner.CanAddMemory(activateClass))
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(card.Owner.AddMemory(1, activateClass));
-                    }
-                }
+                  cardEffects.Add(CardEffectFactory.Gain1MemoryTamerOpponentDigimonEffect(card));
             }
-
+            
             #endregion
 
             #region Your Turn
