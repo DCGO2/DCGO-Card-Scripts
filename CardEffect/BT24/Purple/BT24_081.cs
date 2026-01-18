@@ -170,7 +170,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
             #endregion
@@ -180,12 +181,13 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
             #endregion
@@ -200,7 +202,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
+                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
             #endregion
