@@ -101,6 +101,7 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon
                         && cardSource.HasLevel
                         && cardSource.Level <= 5
+                        && cardSource.EqualsTraits("Titan")
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
