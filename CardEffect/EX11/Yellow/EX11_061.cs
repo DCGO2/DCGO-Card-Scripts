@@ -40,7 +40,7 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
-                bool PermanentCondition (permamemt Permanent)
+                bool PermanentCondition (Permamemt permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.EqualsTraits("Puppet");
