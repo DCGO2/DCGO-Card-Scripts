@@ -18,14 +18,14 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
             }
 
             bool PermanentDigimonCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                    && (permanent.TopCard.EqualTraits("Reptile")
-                    || permanent.TopCard.EqualTraits("Dragonkin"));
+                    && (permanent.TopCard.EqualsTraits("Reptile")
+                    || permanent.TopCard.EqualsTraits("Dragonkin"));
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -68,7 +68,7 @@ namespace DCGO.CardEffects.EX11
                             activateClass: activateClass));
 
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
-                                targetPermanent: selectedPermament,
+                                targetPermanent: selectedPermanent,
                                 changeValue: 3000,
                                 effectDuration: EffectDuration.UntilEachTurnEnd,
                                 activateClass: activateClass));
