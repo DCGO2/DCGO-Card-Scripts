@@ -32,7 +32,7 @@ namespace DCGO.CardEffects.P
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.EqualsTraits("Royal Base");
+                    return cardSource.HasText("Royal Base");
                 }
 
                 bool CanSelectCardCondition1(CardSource cardSource)
