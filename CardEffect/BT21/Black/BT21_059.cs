@@ -143,6 +143,7 @@ namespace DCGO.CardEffects.BT21
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
+                        CardEffectCommons.IsOwnerTurn(card) &&
                         CardEffectCommons.CanTriggerWhenLinked(hashtable, PermanentCondition, CardCondition) &&
                         CardEffectCommons.HasMatchConditionOpponentsPermanent(card, IsOpponentsDigimon);
                 }
