@@ -39,12 +39,12 @@ namespace DCGO.CardEffects.EX11
 
             string SharedEffectName()
             {
-                return "Trash top 2 digivolution cards of 1 opponent's Digimon. 1 of their Digimon with as many of fewer sources as this Digimon can't suspend until their turn ends.";
+                return "Trash any 2 digivolution cards from your opponents Digimon, may send opponents sourceless digimon to top or bottom security.";
             }
 
             string SharedEffectDescription(string tag)
             {
-                return $"[{tag}] Trash the top 2 digivolution cards of 1 of your opponent's Digimon. Then, 1 of their Digimon with as many of fewer digivolution cards as this Digimon can't suspend until their turn ends.";
+                return $"[{tag}] Trash any 2 digivolution cards from your opponent's Digimon. Then, you may place 1 of their Digimon with no digivolution cards as the top or bottom security card.";
             }
 
             bool SharedCanActivateCondition(Hashtable hashtable)
