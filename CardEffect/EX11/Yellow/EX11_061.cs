@@ -36,17 +36,14 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, permanent =>
-                    {
-                        if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
-                        {
-                            if (permanent.TopCard.EqualsTraits("Puppet"))
-                            {
-                                return true;
-                            }
-                        }
-                        return false;
-                    });
+                    return CardEffectCommons.CanTriggerWhenPermanentDigivolving(permanent, PermanentCondition)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
+                }
+
+                bool PermanentCondition (permamemt Permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                        && permanent.TopCard.EqualsTraits("Puppet");
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
