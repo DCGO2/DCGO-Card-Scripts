@@ -37,6 +37,7 @@ namespace DCGO.CardEffects.EX11
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.CanTriggerWhenPermanentDigivolving(permanent, PermanentCondition)
+                        && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
@@ -49,7 +50,6 @@ namespace DCGO.CardEffects.EX11
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.CanActivateSuspendCostEffect(card);
                 }
 
