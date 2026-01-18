@@ -16,13 +16,13 @@ namespace DCGO.CardEffects.P
             if (timing == EffectTiming.OptionSkill)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Reveal 3, add 1 [Royal Base] trait and 1 [Liberator] trait, bot deck the rest, place in battle area.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Reveal 3, add 1 [Royal Base] in text and 1 [Liberator] trait, bot deck the rest, place in battle area.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                 {
-                    return "[Main] Reveal the top 3 cards of your deck. Add 1 Digimon card with [Royal Base] trait and 1 [LIBERATOR] trait card among them to the hand. Return the rest to the bottom of the deck. Then, place this card in the battle area.";
+                    return "[Main] Reveal the top 3 cards of your deck. Add 1 Digimon card with [Royal Base] in its text and 1 [LIBERATOR] trait card among them to the hand. Return the rest to the bottom of the deck. Then, place this card in the battle area.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -189,7 +189,7 @@ namespace DCGO.CardEffects.P
                 CardEffectCommons.AddActivateMainOptionSecurityEffect(
                     card: card,
                     cardEffects: ref cardEffects,
-                    effectName: "Reveal 3, add 1 [Royal Base] trait and 1 [Liberator] trait, bot deck the rest, place in battle area.");
+                    effectName: "Reveal 3, add 1 [Royal Base] in text and 1 [Liberator] trait, bot deck the rest, place in battle area.");
             }
 
             #endregion
