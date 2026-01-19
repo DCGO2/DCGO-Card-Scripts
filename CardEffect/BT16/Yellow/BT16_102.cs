@@ -88,7 +88,7 @@ namespace DCGO.CardEffects.BT16
                     if (selectedPermanent != null)
                     {
                         if (card.PermanentOfThisCard().DigivolutionCards.Count((cardSource) =>
-                                (cardSource.EqualsCardName("Magnamon (X Antibody)") ||
+                                ((cardSource.EqualsCardName("Magnamon (X Antibody)") ||
                                 cardSource.ContainsTraits("Armor Form")) &&
                                 !cardSource.IsFlipped)>= 1)
                         {
