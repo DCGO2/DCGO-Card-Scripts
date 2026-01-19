@@ -230,6 +230,7 @@ namespace DCGO.CardEffects.BT24
                                 {
                                     if (selectedEffect.EffectSourceCard.PermanentOfThisCard() != null)
                                     {
+                                        selectedEffect.SetIsDigimonEffect(true);
                                         Hashtable onPlayHashtable = CardEffectCommons.OnPlayCheckHashtableOfCard(selectedEffect.EffectSourceCard);
                                         Hashtable digivolvingHashtable = CardEffectCommons.WhenDigivolvingCheckHashtableOfCard(selectedEffect.EffectSourceCard);
                                         
