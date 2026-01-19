@@ -53,15 +53,15 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.HasLevel
                         && CardEffectCommons.Level >= 5
                         && (permanent.TopCard.ContainsCardName("Tyrannomon") 
-                            || permanent.TopCard.EqualsTraits("Dinosaur")
-                            || permanent.TopCard.EqualsTraits("Reptile"));
+                            || permanent.TopCard.EqualsTraits("Dinosaur"));
                 }
 
                 bool DigivolveToCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon
                         && (cardSource.ContainsCardName("Tyrannomon")
-                        || cardSource.EqualsTraits("Dinosaour"))
+                        || permanent.TopCard.EqualsTraits("Dinosaur")
+                            || permanent.TopCard.EqualsTraits("Reptile"))
                         && cardSource.CanPlayCardTargetFrame(
                                    frame: card.Owner.GetBreedingAreaPermanents()[0].PermanentFrame,
                                    PayCost: false,
