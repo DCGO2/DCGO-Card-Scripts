@@ -7,7 +7,7 @@ using UnityEngine;
 public partial class CardEffectFactory
 {
     #region Static effect that adds one's own card's digivolution requirement
-    public static AddDigivolutionRequirementClass AddSelfDigivolutionRequirementStaticEffect(Func<Permanent, bool> permanentCondition, int digivolutionCost, bool ignoreDigivolutionRequirement, CardSource card, Func<bool> condition, string effectName = null, Func<CardSource, bool> cardCondition = null, Func<int> costEquation = null)
+    public static AddDigivolutionRequirementClass AddSelfDigivolutionRequirementStaticEffect(Func<Permanent, bool> permanentCondition, int digivolutionCost, bool ignoreDigivolutionRequirement, CardSource card, Func<bool> condition, string effectName = null, Func<CardSource, bool> cardCondition = null, Func<int> costEquation = null, CardColor cardColor = CardColor.None, int level = -1)
     {
         bool CanUseCondition()
         {
@@ -23,12 +23,14 @@ public partial class CardEffectFactory
             card: card,
             condition: CanUseCondition,
             effectName: effectName ?? "Can digivolve to this card",
-            costEquation: costEquation);
+            costEquation: costEquation,
+            cardColor,
+            level);
     }
     #endregion
 
     #region Static effect that adds digivolution requirement
-    public static AddDigivolutionRequirementClass AddDigivolutionRequirementStaticEffect(Func<Permanent, bool> permanentCondition, Func<CardSource, bool> cardCondition, bool ignoreDigivolutionRequirement, int digivolutionCost, bool isInheritedEffect, CardSource card, Func<bool> condition, string effectName, Func<int> costEquation = null)
+    public static AddDigivolutionRequirementClass AddDigivolutionRequirementStaticEffect(Func<Permanent, bool> permanentCondition, Func<CardSource, bool> cardCondition, bool ignoreDigivolutionRequirement, int digivolutionCost, bool isInheritedEffect, CardSource card, Func<bool> condition, string effectName, Func<int> costEquation = null, CardColor cardColor = CardColor.None, int level = -1)
     {
         AddDigivolutionRequirementClass addDigivolutionRequirementClass = new AddDigivolutionRequirementClass();
         addDigivolutionRequirementClass.SetUpICardEffect(effectName, CanUseCondition, card);
@@ -52,9 +54,15 @@ public partial class CardEffectFactory
                 return -1;
             }
 
-            if (CardCondition(cardSource) && PermanentCondition(permanent))
+            if (cardColor == CardColor.None || permanent.TopCard.CardColors.Contains(cardColor))
             {
-                return costEquation != null ? costEquation() : digivolutionCost;
+                if (level < 0 || (permanent.TopCard.HasLevel && permanent.TopCard.Level == level))
+                {
+                    if (CardCondition(cardSource) && PermanentCondition(permanent))
+                    {
+                        return costEquation != null ? costEquation() : digivolutionCost;
+                    }
+                }
             }
 
             return -1;
