@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace DCGO.CardEffects.EX11
 {
@@ -36,12 +37,12 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenPermanentDigivolving(permanent, PermanentCondition)
+                    return CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, PermanentCondition)
                         && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
-                bool PermanentCondition (Permamemt permanent)
+                bool PermanentCondition (Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.EqualsTraits("Puppet");
@@ -97,7 +98,7 @@ namespace DCGO.CardEffects.EX11
 
                         yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
-                        if (selectCard != null)
+                        if (selectedCards.Count> 0)
                         {
                             yield return ContinuousController.instance.StartCoroutine(
                             CardEffectCommons.PlayPermanentCards(cardSources: selectedCards, activateClass: activateClass,
@@ -107,11 +108,11 @@ namespace DCGO.CardEffects.EX11
 
                             yield return new WaitForSeconds(0.2f);
 
-                            playedDigimon = selectCard.PermanentOfThisCard();            
+                            playedDigimon = selectedCards[0].PermanentOfThisCard();            
 
                             #region Delete Played Digimon
 
-                            Permanent selectedPermanent = selectCard.PermanentOfThisCard();
+                            Permanent selectedPermanent = selectedCards[0].PermanentOfThisCard();
 
                             ActivateClass activateClass1 = new ActivateClass();
                             activateClass1.SetUpICardEffect("Delete this Digimon", CanUseCondition2, card);
