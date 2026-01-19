@@ -60,8 +60,8 @@ namespace DCGO.CardEffects.EX11
                 {
                     return cardSource.IsDigimon
                         && (cardSource.ContainsCardName("Tyrannomon")
-                        || permanent.TopCard.EqualsTraits("Dinosaur")
-                            || permanent.TopCard.EqualsTraits("Reptile"))
+                        || cardSource.EqualsTraits("Dinosaur")
+                            || cardSource.EqualsTraits("Reptile"))
                         && cardSource.CanPlayCardTargetFrame(
                                    frame: card.Owner.GetBreedingAreaPermanents()[0].PermanentFrame,
                                    PayCost: false,
