@@ -37,7 +37,7 @@ namespace DCGO.CardEffects.P
             bool HasWingGuardiansCondition(CardSource cardSource)
             {
                 return CardEffectCommons.IsExistInSecurity(cardSource) &&
-                        cardSource.EqualsCardName("Wing Guardians");
+                        cardSource.EqualsCardName("Wind Guardians");
             }
 
             #endregion
@@ -47,13 +47,13 @@ namespace DCGO.CardEffects.P
             if (timing == EffectTiming.BeforePayCost)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("If [Wing Guardians] is in your face up security cards get Play Cost -4", CanUseCondition, card);
+                activateClass.SetUpICardEffect("If [Wind Guardians] is in your face up security cards get Play Cost -4", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                 {
-                    return "When this card would be played, if you have a face-up [Wing Guardians] security card, reduce the play cost by 4.";
+                    return "When this card would be played, if you have a face-up [Wind Guardians] security card, reduce the play cost by 4.";
                 }
 
                 bool CardCondition(CardSource cardSource)
@@ -177,7 +177,7 @@ namespace DCGO.CardEffects.P
                 {
                     if (card.Owner.HandCards.Contains(card))
                     {
-                        ICardEffect activateClass = card.EffectList(EffectTiming.BeforePayCost).Find(cardEffect => cardEffect.EffectName == "If [Wing Guardians] is in your face up security cards get Play Cost -4");
+                        ICardEffect activateClass = card.EffectList(EffectTiming.BeforePayCost).Find(cardEffect => cardEffect.EffectName == "If [Wind Guardians] is in your face up security cards get Play Cost -4");
 
                         if (activateClass != null)
                         {
@@ -360,10 +360,15 @@ namespace DCGO.CardEffects.P
                         && CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy);
                 }
 
+                bool CanTriggerPermanent(Permanent permanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent);
+                }
+
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerWhenSelfPermanentSuspends(hashtable, card);
+                        && CardEffectCommons.CanTriggerWhenPermanentSuspends(hashtable, CanTriggerPermanent);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)

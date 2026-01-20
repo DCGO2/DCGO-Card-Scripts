@@ -100,16 +100,16 @@ namespace DCGO.CardEffects.BT10
                     {
                         selectedCards.Add(cardSource);
                         yield return null;
+
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                            cardSources: selectedCards,
+                            activateClass: activateClass,
+                            payCost: false,
+                            isTapped: false,
+                            root: SelectCardEffect.Root.Library,
+                            activateETB: true));
                     }
-
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
-                        cardSources: selectedCards,
-                        activateClass: activateClass,
-                        payCost: false,
-                        isTapped: false,
-                        root: SelectCardEffect.Root.Library,
-                        activateETB: true));
-
+                    
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
                 }
             }

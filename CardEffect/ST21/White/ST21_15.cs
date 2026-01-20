@@ -65,7 +65,7 @@ namespace DCGO.CardEffects.ST21
             #region Main Effect
             if (timing == EffectTiming.OptionSkill)
             {
-                cardEffects.Add(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOption(card));
+                cardEffects.Add(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOptionMainEffect(card));
             }
             #endregion
 

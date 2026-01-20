@@ -117,18 +117,19 @@ namespace DCGO.CardEffects.BT24
 
                     List<CardSource> selectedCards = new List<CardSource>();
                     int totalCost = 4 * (1 + (card.Owner.Enemy.TrashCards.Count / 10));
+                    int maxCount = CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, CanSelectCardCondition);
 
                     SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                     selectCardEffect.SetUp(
                         canTargetCondition: CanSelectCardCondition,
                         canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
-                        canEndSelectCondition: null,
+                        canEndSelectCondition: CanEndSelectCardCondition,
                         canNoSelect: () => true,
                         selectCardCoroutine: SelectCardCoroutine,
                         afterSelectCardCoroutine: null,
-                        message: "Select 1 digimon to play",
-                        maxCount: totalCost, 
+                        message: $"Select up to {totalCost} play cost worth of digimon to play",
+                        maxCount: maxCount, 
                         canEndNotMax: true,
                         isShowOpponent: true,
                         mode: SelectCardEffect.Mode.Custom,
@@ -145,6 +146,28 @@ namespace DCGO.CardEffects.BT24
                         selectedCards.Add(cardSource);
 
                         yield return null;
+                    }
+
+                    bool CanEndSelectCardCondition(List<CardSource> cards)
+                    {
+                        if (cards.Count <= 0)
+                        {
+                            return false;
+                        }
+
+                        int sumCost = 0;
+
+                        foreach (CardSource source in cards)
+                        {
+                            sumCost += source.GetCostItself;
+                        }
+
+                        if (sumCost > totalCost)
+                        {
+                            return false;
+                        }
+
+                        return true;
                     }
 
                     bool CanTargetCondition_ByPreSelecetedList(List<CardSource> cardSources, CardSource cardSource)

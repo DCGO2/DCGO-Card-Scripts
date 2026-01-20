@@ -98,7 +98,7 @@ namespace DCGO.CardEffects.EX8
 
                         foreach (CardSource source in card.PermanentOfThisCard().DigivolutionCards)
                         {
-                            if (!source.ContainsCardName("Justimon") && !source.IsFlipped)
+                            if (!source.ContainsCardName("Justimon") || source.IsFlipped)
                                 continue;
 
                             List<ICardEffect> effects = source.EffectList_ForCard(EffectTiming.OnEnterFieldAnyone, card)

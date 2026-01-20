@@ -228,7 +228,8 @@ namespace DCGO.CardEffects.BT24
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    List<CardSource> selectedCards = new List<CardSource>();
+                    CardSource placedCard = null;
+                    Permanent thisPermanent = card.PermanentOfThisCard();
 
                     SelectPermanentEffect selectPermanentEffect =
                         GManager.instance.GetComponent<SelectPermanentEffect>();
@@ -251,23 +252,21 @@ namespace DCGO.CardEffects.BT24
                         "The opponent is selecting 1 card to place on bottom of digivolution cards.");
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                    CardSource placedCard = null;
                     
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
                         placedCard = permanent.TopCard;
-                        selectedCards.Add(placedCard);
 
                         yield return ContinuousController.instance.StartCoroutine(new IPlacePermanentToDigivolutionCards(
-                            new List<Permanent[]>() { new Permanent[] { permanent, card.PermanentOfThisCard() } },
+                            new List<Permanent[]>() { new Permanent[] { permanent, thisPermanent } },
                             false,
                             activateClass).PlacePermanentToDigivolutionCards());
                     }
 
-                    if (card.PermanentOfThisCard().DigivolutionCards.Contains(placedCard))
+                    if (thisPermanent.DigivolutionCards.Contains(placedCard))
                     {
                         yield return ContinuousController.instance.StartCoroutine(
-                            new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() },
+                            new IUnsuspendPermanents(new List<Permanent>() { thisPermanent },
                                 activateClass).Unsuspend());
                     }
                 }

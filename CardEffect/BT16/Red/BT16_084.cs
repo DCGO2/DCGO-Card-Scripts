@@ -21,7 +21,7 @@ namespace DCGO.CardEffects.BT16
 
                 string EffectDiscription()
                 {
-                    return "[Start of Your Main Phase] You may play 1 [Hawkmon] or [Salamon] from your hand without paying the cost. At the next tim e your opponent's turn ends, return that Digimon to the hand.";
+                    return "[Start of Your Main Phase] You may play 1 [Hawkmon] or [Salamon] from your hand without paying the cost. At the next time your opponent's turn ends, return that Digimon to the hand.";
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)

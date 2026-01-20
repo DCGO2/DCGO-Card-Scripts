@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-// Super Hacking
+// Invasion of the Titans
 namespace DCGO.CardEffects.BT24
 {
     public class BT24_098 : CEntity_Effect
@@ -57,7 +57,7 @@ namespace DCGO.CardEffects.BT24
 
                         selectHandEffect.SetUpCustomMessage("Select 2 cards to trash.", "Opponent is selecting 2 cards to trash.");
 
-                        yield return StartCoroutine(selectHandEffect.Activate());
+                        yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
                     }
 
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlaceDelayOptionCards(card: card, cardEffect: activateClass));
@@ -66,7 +66,7 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
-            #region All Turns - Delay
+            #region Your Turns - Delay
 
             if(timing == EffectTiming.OnEnterFieldAnyone)
             {
@@ -80,6 +80,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
+                        && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.CanDeclareOptionDelayEffect(card)
                         && CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, PermamentCondition);
                 }
@@ -100,6 +101,7 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon
                         && cardSource.HasLevel
                         && cardSource.Level <= 5
+                        && cardSource.EqualsTraits("Titan")
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 

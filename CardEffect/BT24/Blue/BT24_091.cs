@@ -5,7 +5,7 @@ using System.Collections.Generic;
 // Tidal Stream
 namespace DCGO.CardEffects.BT24
 {
-    public class ST24_091 : CEntity_Effect
+    public class BT24_091 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.HasTSTraits;
+                    return targetPermanent.IsDigimon && targetPermanent.TopCard.HasTSTraits;
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfLinkConditionStaticEffect(permanentCondition: PermanentCondition, linkCost: 3, card: card));
@@ -86,8 +86,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card) || CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card))
-                        &&  card.CanLinkToTargetPermanent(permanent, false);
+                    return permanent.IsDigimon
+                        && CardEffectCommons.IsOwnerPermanent(permanent, card)
+                        && card.CanLinkToTargetPermanent(permanent, false, true);
                 }
 
                 bool CanSelectTargetCondition(Permanent permanent)
@@ -174,7 +175,7 @@ namespace DCGO.CardEffects.BT24
 
                     #region Select Digimon To Link
 
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition, true))
                     {
                         Permanent selectedPermanent = null;
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
@@ -201,8 +202,6 @@ namespace DCGO.CardEffects.BT24
                             selectedPermanent = permanent;
                             yield return null;
                         }
-
-
 
                         if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddLinkCard(card, activateClass));
                     }

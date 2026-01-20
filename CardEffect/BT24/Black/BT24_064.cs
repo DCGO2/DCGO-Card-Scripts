@@ -18,8 +18,8 @@ namespace DCGO.CardEffects.BT24
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
                     return targetPermanent.TopCard.IsLevel5
-                        && (targetPermanent.TopCard.EqualsTraits("DigiPolice")
-                            || targetPermanent.TopCard.EqualsTraits("SEEKERS"));
+                        && (targetPermanent.TopCard.HasDigiPoliceTraits
+                            || targetPermanent.TopCard.HasSeekersTraits);
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -59,8 +59,8 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.HasPlayCost
                         && cardSource.GetCostItself <= 7
-                        && (cardSource.EqualsTraits("DigiPolice")
-                            || cardSource.EqualsTraits("SEEKERS"))
+                        && (cardSource.HasDigiPoliceTraits
+                            || cardSource.HasSeekersTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
@@ -143,7 +143,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent)
                         && (permanent.IsTamer || permanent.IsDigimon);
                 }
 

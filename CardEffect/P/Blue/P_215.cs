@@ -148,7 +148,7 @@ namespace DCGO.CardEffects.P
                             maxCount: maxCount,
                             canEndNotMax: false,
                             isShowOpponent: true,
-                            mode: SelectCardEffect.Mode.AddHand,
+                            mode: SelectCardEffect.Mode.Custom,
                             root: SelectCardEffect.Root.Trash,
                             customRootCardList: null,
                             canLookReverseCard: true,

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 // SnowGoblimon
 namespace DCGO.CardEffects.BT24
@@ -115,7 +117,7 @@ namespace DCGO.CardEffects.BT24
 
                         selectHandEffect.SetUpCustomMessage("Select 1 Card to trash.", "The opponent is selecting 1 card to trash from their hand.");
 
-                        yield return ContinousController.instance.StartCoroutine(selectHandEffect.Activate());
+                        yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
                     }
                 }
             }
@@ -130,7 +132,7 @@ namespace DCGO.CardEffects.BT24
                 activateClass.SetUpICardEffect("When your hand is trashed from, digivolve", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetHashString("BT24_026_YT_ESS");
+                activateClass.SetHashString("BT24_021_YT_ESS");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
@@ -141,11 +143,10 @@ namespace DCGO.CardEffects.BT24
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon && 
-                        (cardSource.EqualsCardName("Titamon") || cardSource.EqualsTraits("Demon")) && 
+                        (cardSource.EqualsCardName("Titamon") || cardSource.EqualsTraits("Titan")) && 
                         cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, 
-                                                            true, 
-                                                            activateClass, 
-                                                            fixedCost: Math.max(0, cardSource.CostList(card.PermanentOfThisCard(), false, true).Min() -1));
+                                                            false, 
+                                                            activateClass);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)

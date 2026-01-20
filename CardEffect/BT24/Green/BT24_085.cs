@@ -70,6 +70,7 @@ namespace DCGO.CardEffects.BT24
                 {
                     return cardSource.IsOption
                         && cardSource.HasTSTraits
+                        && !cardSource.CanNotPlayThisOption
                         && cardSource.GetCostItself <= card.Owner.Enemy.MemoryForPlayer;
                 }
 
