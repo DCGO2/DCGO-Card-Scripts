@@ -18,7 +18,7 @@ namespace DCGO.CardEffects.BT21
 
             bool CanSelectCardCondition(CardSource cardSource) => true;
 
-            bool SharedCanActivateCondition(HashTable hashtable) => CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+            bool SharedCanActivateCondition(Hashtable hashtable) => CardEffectCommons.IsExistOnBattleAreaDigimon(card);
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.BT21
                     selectHandEffect.SetUpCustomMessage(
                         "Select 1 card to place at the bottom of security.",
                         "The opponent is selecting 1 card to place at the bottom of security.");
-                    selectHandEffect.SetNotShowCard(true);
+                    selectHandEffect.SetNotShowCard();
 
                     yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
