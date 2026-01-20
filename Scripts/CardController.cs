@@ -5065,7 +5065,7 @@ public class IFlipSecurity
     public IEnumerator FlipFaceUp()
     {
         if (!_player.SecurityCards.Contains(_cardSource) || _cardSource.IsFlipped)
-            return;
+            yield return null;
 
         _cardSource.SetFace();
 

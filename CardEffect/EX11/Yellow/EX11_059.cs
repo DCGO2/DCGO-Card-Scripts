@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DCGO.CardEffects.EX11
 {
@@ -143,7 +144,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnPermanentDeleted(hashtable, HasNSoPermanent);
+                    return CardEffectCommons.CanTriggerOnPermanentDeleted(hashtable, IsNSoPermanent);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)

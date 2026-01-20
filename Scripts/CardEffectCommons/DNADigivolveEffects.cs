@@ -1,3 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using System.Linq;
+using UnityEngine;
+
 public partial class CardEffectCommons
 {
     /// <summary>
@@ -86,7 +92,7 @@ public partial class CardEffectCommons
                     }
                 }
             }
-            card.Owner.FieldPermanents[frameID] = null;
+            owner.FieldPermanents[frameID] = null;
         }
         return isValid;
     }
@@ -259,8 +265,11 @@ public partial class CardEffectCommons
         return selectedPermanent;
     }
 
-    public static bool CanJogressWithHandOrTrash(Player owner, CardSource source, bool isWithHandCard, bool isIntoHandCard, Func<CardSource, bool> targetCardCondition = null, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
+    public static bool CanJogressWithHandOrTrash(CardSource source, bool isWithHandCard, bool isIntoHandCard, Func<CardSource, bool> targetCardCondition = null, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null, Player owner = null)
     {
+        if (owner == null)
+            owner = source.Owner;
+
         return (isIntoHandCard ? IsExistOnHand(source) : IsExistOnTrash(source))
             && (targetCardCondition == null || targetCardCondition(source)) 
             && source.jogressCondition.Count > 0
@@ -293,7 +302,7 @@ public partial class CardEffectCommons
         bool isIntoHandCard,
         ICardEffect activateClass,
         IEnumerator successProcess,
-        bool ignoreSelection = false
+        bool ignoreSelection = false,
         IEnumerator failedProcess = null,
         bool isOptional = true)
     {

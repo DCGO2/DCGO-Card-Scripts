@@ -12,7 +12,7 @@ namespace DCGO.CardEffects.EX11
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-            if(timing = EffectTiming.OnFaceUpSecurityIncreased)
+            if(timing == EffectTiming.OnFaceUpSecurityIncreased)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Draw 1", CanUseCondition, card);
