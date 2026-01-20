@@ -10,7 +10,6 @@ public partial class CardEffectCommons
     public static bool CanTriggerWhenWinBattle(
         Hashtable hashtable,
         Func<Permanent, bool> winnerCondition,
-        bool isOnlyWinnerSurvive,
         Func<Permanent, bool> winnerRealCondition = null,
         bool isSecurityOnly = false)
     {
@@ -57,11 +56,11 @@ public partial class CardEffectCommons
 
                     if (WinnerCondition())
                     {
-                        if (battleHashtable.ContainsKey("LoserPermanents"))
+                        if (battleHashtable.ContainsKey("WasTie"))
                         {
-                            List<Permanent> LoserPermanents = (List<Permanent>)battleHashtable["LoserPermanents"];
+                            bool WasTie = (bool)battleHashtable["WasTie"];
 
-                            if (!isOnlyWinnerSurvive || winnerCondition == null || LoserPermanents == null || LoserPermanents.Count((permanent) => permanent != null && permanent.TopCard != null && winnerCondition(permanent)) == 0)
+                            if (!WasTie)
                             {
                                 if(battleHashtable.ContainsKey("LoserCard"))
                                 {

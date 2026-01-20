@@ -283,8 +283,7 @@ namespace DCGO.CardEffects.EX11
 
                             if (CardEffectCommons.CanTriggerWhenWinBattle(
                                 hashtable: hashtable,
-                                winnerCondition: WinnerCondition,
-                                isOnlyWinnerSurvive: false))
+                                winnerCondition: WinnerCondition))
                             {
                                 return true;
                             }
