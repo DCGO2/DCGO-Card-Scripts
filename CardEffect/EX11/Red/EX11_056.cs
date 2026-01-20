@@ -50,8 +50,8 @@ namespace DCGO.CardEffects.EX11
                 bool PermanentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && CardEffectCommons.HasLevel
-                        && CardEffectCommons.Level >= 5
+                        && permanent.TopCard.HasLevel
+                        && permanent.TopCard.Level >= 5
                         && (permanent.TopCard.ContainsCardName("Tyrannomon") 
                             || permanent.TopCard.EqualsTraits("Dinosaur"));
                 }
