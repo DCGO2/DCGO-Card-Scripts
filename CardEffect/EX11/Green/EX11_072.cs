@@ -183,8 +183,8 @@ namespace DCGO.CardEffects.EX11
                 bool PermanentCondition(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                        && (cardSource.HasBirdTraits
-                            || cardSource.EqualsTraits("Vortex Warriors"));
+                        && (permanent.TopCard.HasBirdTraits
+                            || permanent.TopCard.EqualsTraits("Vortex Warriors"));
                 }
 
                 bool CardCondition(CardSource cardSource)
