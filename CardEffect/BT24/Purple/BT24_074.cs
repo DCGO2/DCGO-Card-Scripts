@@ -74,7 +74,8 @@ namespace DCGO.CardEffects.BT24
                 }
 
                 if (CardEffectCommons.HasMatchConditionPermanent(CanSelectNoSourcePermanentCondition)
-                && CardEffectCommons.IsByEffect(hashtable, null))
+                && CardEffectCommons.IsByEffect(hashtable, null)
+                && CardEffectCommons.CanTriggerOnPlay(hashtable, card))
                 {
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 

@@ -72,7 +72,8 @@ namespace DCGO.CardEffects.BT19
                 {
                     removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(HasOtherRoyalBaseDigimon);
 
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && card.Owner.CanAddSecurity(activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

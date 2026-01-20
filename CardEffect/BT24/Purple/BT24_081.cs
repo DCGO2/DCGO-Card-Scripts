@@ -51,34 +51,27 @@ namespace DCGO.CardEffects.BT24
                 {
                     if (cardSource == card)
                     {
-                        AssemblyConditionElement element = new AssemblyConditionElement(CanSelectCardCondition);
+                        AssemblyConditionElement element1 = new AssemblyConditionElement(CanSelectCardCondition1, selectMessage: "[Titamon]", elementCount: 1);
+                        AssemblyConditionElement element2 = new AssemblyConditionElement(CanSelectCardCondition2, selectMessage: "[SkullBaluchimon]", elementCount: 1);
 
-                        bool CanSelectCardCondition(CardSource cardSource)
+                        bool CanSelectCardCondition1(CardSource cardSource)
                         {
                             return cardSource != null && 
                                 cardSource.Owner == card.Owner && 
                                 cardSource.IsDigimon && 
-                                (cardSource.EqualsCardName("Titamon") || cardSource.EqualsCardName("SkullBaluchimon"));
+                                cardSource.EqualsCardName("Titamon");
                         }
 
-                        bool CanTargetCondition_ByPreSelecetedList(List<CardSource> cardSources, CardSource cardSource)
+                        bool CanSelectCardCondition2(CardSource cardSource)
                         {
-                            if (cardSources.Count == 0)
-                            {
-                                return cardSource.EqualsCardName("Titamon");//If no cards selected yet, force to select a Titamon first
-                            }
-                            if (cardSources.Count == 1)
-                            {
-                                return cardSource.EqualsCardName("SkullBaluchimon");//If 1 card (Titamon) chosen, force to select a SkullBaluchimon next
-                            }
-                            return false;
+                            return cardSource != null && 
+                                cardSource.Owner == card.Owner && 
+                                cardSource.IsDigimon && 
+                                cardSource.EqualsCardName("SkullBaluchimon");
                         }
 
                         AssemblyCondition assemblyCondition = new AssemblyCondition(
-                            element:element,
-                            CanTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
-                            selectMessage: "[Titamon] x [Skullbaluchimon]",
-                            elementCount: 2,
+                            elements:new List<AssemblyConditionElement>() { element1, element2 },
                             reduceCost: 6);
 
                         return assemblyCondition;
@@ -145,7 +138,7 @@ namespace DCGO.CardEffects.BT24
 
                     selectHandEffect.SetUpCustomMessage("Select 1 Card to trash.", "The opponent is selecting 1 card to trash from their hand.");
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
                     IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                     {
@@ -177,22 +170,24 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+                    return CardEffectCommons.CanTriggerOnPlay(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
             #endregion
 
             #region When Digivolving
-            if (timing == EffectTiming.OnAllyAttack)
+            if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition,(hash) => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+                    return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
             #endregion
@@ -207,7 +202,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card);
+                    return CardEffectCommons.CanTriggerOnAttack(hashtable, card)
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
             }
             #endregion

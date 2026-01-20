@@ -100,7 +100,7 @@ namespace DCGO.CardEffects.BT18
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Trash 2 bottom digivolution cards of all your opponent's Digimon", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Trash 2 bottom sources from all opponent's Digimon. Their sourceless digimon can't suspend", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
@@ -136,7 +136,7 @@ namespace DCGO.CardEffects.BT18
                     bool PermanentCanNotSuspendCondition(Permanent permanentCanNotSuspend)
                     {
                         return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanentCanNotSuspend,card) &&
-                               !permanentCanNotSuspend.HasNoDigivolutionCards;
+                               permanentCanNotSuspend.HasNoDigivolutionCards;
                     }
                 }
             }

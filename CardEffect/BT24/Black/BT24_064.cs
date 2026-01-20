@@ -18,8 +18,8 @@ namespace DCGO.CardEffects.BT24
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
                     return targetPermanent.TopCard.IsLevel5
-                        && (targetPermanent.TopCard.EqualsTraits("Digipolice")
-                            || targetPermanent.TopCard.EqualsTraits("SEEKERS"));
+                        && (targetPermanent.TopCard.HasDigiPoliceTraits
+                            || targetPermanent.TopCard.HasSeekersTraits);
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 3, ignoreDigivolutionRequirement: false, card: card, condition: null));
@@ -52,15 +52,15 @@ namespace DCGO.CardEffects.BT24
 
                 string EffectDiscription()
                 {
-                    return "[When Digivolving] Reveal the top 3 cards of your deck. You may play 1 play cost 7 or lower [DigiPolice] or [SEEKERS] trait card among them without paying the cost. Return the rest to the top or bottom of the deck.";
+                    return "[When Digivolving] Reveal the top 3 cards of your deck. You may play 1 play cost 7 or lower [Digi] or [SEEKERS] trait card among them without paying the cost. Return the rest to the top or bottom of the deck.";
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.HasPlayCost
                         && cardSource.GetCostItself <= 7
-                        && (cardSource.EqualsTraits("Digipolice")
-                            || cardSource.EqualsTraits("SEEKERS"))
+                        && (cardSource.HasDigiPoliceTraits
+                            || cardSource.HasSeekersTraits)
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
@@ -143,7 +143,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnBattleArea(permanent)
                         && (permanent.IsTamer || permanent.IsDigimon);
                 }
 

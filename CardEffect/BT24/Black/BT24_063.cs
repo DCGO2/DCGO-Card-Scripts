@@ -50,9 +50,10 @@ namespace DCGO.CardEffects.BT24
             bool CanSelectCardCondition(CardSource cardSource)
             {
                 return cardSource.GetCostItself <= 5
+                    && cardSource.HasPlayCost
                     && (cardSource.EqualsTraits("Machine")
-                    || cardSource.EqualsTraits("Cyborg")
-                    || cardSource.EqualsTraits("TS"));
+                        || cardSource.EqualsTraits("Cyborg")
+                        || cardSource.EqualsTraits("TS"));
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable _hashtable, ActivateClass activateClass)

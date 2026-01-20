@@ -73,13 +73,11 @@ namespace DCGO.CardEffects.BT16
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card))
+                    if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        if (CardEffectCommons.IsExistOnBattleArea(card))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
+                    
                     return false;
                 }
 
@@ -90,8 +88,9 @@ namespace DCGO.CardEffects.BT16
                     if (selectedPermanent != null)
                     {
                         if (card.PermanentOfThisCard().DigivolutionCards.Count((cardSource) =>
-                                cardSource.EqualsCardName("Magnamon (X Antibody)") ||
-                                cardSource.ContainsTraits("Armor Form")) >= 1)
+                                (cardSource.EqualsCardName("Magnamon (X Antibody)") ||
+                                cardSource.ContainsTraits("Armor Form")) &&
+                                !cardSource.IsFlipped)>= 1)
                         {
                             CanNotAffectedClass canNotAffectedClass = new CanNotAffectedClass();
                             canNotAffectedClass.SetUpICardEffect("Isn't affected by opponent's effects", CanUseCondition1, card);

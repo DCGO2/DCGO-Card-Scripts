@@ -54,14 +54,17 @@ namespace DCGO.CardEffects.BT24
                 {
                     Permanent selectedPermanent = GManager.instance.attackProcess.AttackingPermanent;
 
-                    yield return ContinuousController.instance.StartCoroutine(new PlayCardClass(
-                            cardSources: new List<CardSource> { card },
-                            hashtable: CardEffectCommons.CardEffectHashtable(activateClass),
-                            payCost: false,
-                            targetPermanent: selectedPermanent,
-                            isTapped: false,
-                            root: root,
-                            activateETB: true).PlayCard);
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                                targetPermanent: selectedPermanent,
+                                cardCondition: null,
+                                payCost: false,
+                                reduceCostTuple: null,
+                                fixedCostTuple: null,
+                                ignoreDigivolutionRequirementFixedCost: -1,
+                                isHand: false,
+                                activateClass: activateClass,
+                                successProcess: null,
+                                ignoreSelection: true));
                     
                     if (selectedPermanent.TopCard == card)
                     {
@@ -81,7 +84,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Digivolve into this to trash top opponent security", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete opponent's lowest level, play a Digimon", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
@@ -114,18 +117,19 @@ namespace DCGO.CardEffects.BT24
 
                     List<CardSource> selectedCards = new List<CardSource>();
                     int totalCost = 4 * (1 + (card.Owner.Enemy.TrashCards.Count / 10));
+                    int maxCount = CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, CanSelectCardCondition);
 
                     SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                     selectCardEffect.SetUp(
                         canTargetCondition: CanSelectCardCondition,
                         canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
-                        canEndSelectCondition: null,
+                        canEndSelectCondition: CanEndSelectCardCondition,
                         canNoSelect: () => true,
                         selectCardCoroutine: SelectCardCoroutine,
                         afterSelectCardCoroutine: null,
-                        message: "Select 1 digimon to play",
-                        maxCount: totalCost, 
+                        message: $"Select up to {totalCost} play cost worth of digimon to play",
+                        maxCount: maxCount, 
                         canEndNotMax: true,
                         isShowOpponent: true,
                         mode: SelectCardEffect.Mode.Custom,
@@ -142,6 +146,28 @@ namespace DCGO.CardEffects.BT24
                         selectedCards.Add(cardSource);
 
                         yield return null;
+                    }
+
+                    bool CanEndSelectCardCondition(List<CardSource> cards)
+                    {
+                        if (cards.Count <= 0)
+                        {
+                            return false;
+                        }
+
+                        int sumCost = 0;
+
+                        foreach (CardSource source in cards)
+                        {
+                            sumCost += source.GetCostItself;
+                        }
+
+                        if (sumCost > totalCost)
+                        {
+                            return false;
+                        }
+
+                        return true;
                     }
 
                     bool CanTargetCondition_ByPreSelecetedList(List<CardSource> cardSources, CardSource cardSource)

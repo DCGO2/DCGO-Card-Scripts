@@ -176,8 +176,15 @@ namespace DCGO.CardEffects.BT24
                             }
                             else
                             {
-                                List<SkillInfo> skillInfos = candidateEffects
-                                    .Map(cardEffect => new SkillInfo(cardEffect, null, EffectTiming.None));
+                                List<SkillInfo> skillInfos = new List<SkillInfo>();
+                                
+                                foreach (ICardEffect effect in candidateEffects)
+                                {
+                                    ICardEffect cardEffect = new ChangeBaseDPClass();
+                                    cardEffect.SetUpICardEffect((effect.IsOnPlay ? "On Play: " : "When Digivolving: ") + effect.EffectName, null, effect.EffectSourceCard);
+                                    
+                                    skillInfos.Add(new SkillInfo(cardEffect, null, EffectTiming.None));
+                                }
 
                                 List<CardSource> cardSources = candidateEffects
                                     .Map(cardEffect => cardEffect.EffectSourceCard);

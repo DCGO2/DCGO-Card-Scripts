@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// Tsunomon
 namespace DCGO.CardEffects.EX4
 {
     public class EX4_003 : CEntity_Effect
@@ -9,7 +10,7 @@ namespace DCGO.CardEffects.EX4
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-            if (timing == EffectTiming.BeforePayCost)
+            if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Draw 1", CanUseCondition, card);
@@ -36,18 +37,13 @@ namespace DCGO.CardEffects.EX4
                     return false;
                 }
 
-                bool CardSourceCondition(CardSource cardSource)
-                {
-                    return true;
-                }
-
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
                         if (CardEffectCommons.IsOwnerTurn(card))
                         {
-                            if (CardEffectCommons.CanTriggerWhenPermanentWouldDigivolve(hashtable, PermanentCondition, CardSourceCondition))//.CanTriggerWhenPermanentDigivolving(hashtable, PermanentCondition))
+                            if (CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, PermanentCondition))
                             {
                                 return true;
 

@@ -65,41 +65,7 @@ namespace DCGO.CardEffects.ST21
             #region Main Effect
             if (timing == EffectTiming.OptionSkill)
             {
-                ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Replace your bottom security card with this face-up card", CanUseCondition, card);
-                activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
-                cardEffects.Add(activateClass);
-
-                string EffectDescription()
-                {
-                    return "[Main] Add your bottom security card to the hand. Then, place this card face up as the bottom security card.";
-                }
-
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return CardEffectCommons.CanTriggerOptionMainEffect(hashtable, card);
-                }
-
-                IEnumerator ActivateCoroutine(Hashtable hashtable)
-                {
-                    if (card.Owner.SecurityCards.Count >= 1)
-                    {
-                        // Add your bottom security card to the hand
-                        CardSource bottomCard = card.Owner.SecurityCards[^1];
-
-                        yield return ContinuousController.instance.StartCoroutine(
-                            CardObjectController.AddHandCards(new List<CardSource>() { bottomCard }, false, activateClass));
-
-                        yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                            player: card.Owner,
-                            refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-                    }
-
-                    // Place this card face up as the bottom security card
-                    yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                        card, toTop: false, faceUp: true));
-
-                }
+                cardEffects.Add(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOptionMainEffect(card));
             }
             #endregion
 

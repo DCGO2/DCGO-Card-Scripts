@@ -68,7 +68,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return permanent.TopCard.EqualsCardName("Aegiomon");
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                        && permanent.TopCard.EqualsCardName("Aegiomon");
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)

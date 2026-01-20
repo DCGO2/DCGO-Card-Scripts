@@ -63,21 +63,13 @@ namespace DCGO.CardEffects.BT24
                         canNoSelect: false,
                         canEndNotMax: false,
                         selectPermanentCoroutine: null,
-                        afterSelectPermanentCoroutine: AfterSelectCardCoroutine,
-                        mode: SelectPermanentEffect.Mode.PutLibraryBottom,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.PutLibraryTop,
                         cardEffect: activateClass);
 
                     selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to return to the top of the deck.", "The opponent is selecting 1 Digimon to return to the top of the deck.");
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    IEnumerator AfterSelectCardCoroutine(List<Permanent> permanents)
-                    {
-                        if (permanents.Count == 1)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(new DeckBottomBounceClass(permanents, hashtable).DeckBounce());
-                        }
-                    }
                 }
             }
 
