@@ -184,8 +184,7 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectCardCondition(CardSource cardSource, ActivateClass activateClass)
             {
-                return cardSource.IsDigimon
-                    && cardSource.HasPlayCost
+                return cardSource.HasPlayCost
                     && cardSource.GetCostItself <= 5
                     && cardSource.EqualsTraits("Iliad")
                     && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);

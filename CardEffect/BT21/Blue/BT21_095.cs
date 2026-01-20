@@ -83,7 +83,7 @@ namespace DCGO.CardEffects.BT21
 
             if (timing == EffectTiming.OptionSkill)
             {
-                cardEffects.Add(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOption(card));
+                cardEffects.Add(CardEffectFactory.ReplaceBottomSecurityWithFaceUpOptionMainEffect(card));
             }
 
             #endregion

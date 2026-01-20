@@ -44,15 +44,14 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon
                         && cardSource.HasLevel && cardSource.Level >= 4
                         && (cardSource.EqualsTraits("Demon") || cardSource.EqualsTraits("Titan"))
-                        && card.Owner.MaxMemoryCost >= cardSource.GetCostItself - 2
-                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, true, activateClass, fixedCost: cardSource.GetCostItself-2);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
                     List<CardSource> trashedCards = CardEffectCommons.GetDiscardedCardsFromHashtable(hashtable).Filter(CardCondition);
 
-                    if (trashedCards.Count > 0)
+                    if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, trashCard=> trashedCards.Contains(trashCard)))
                     {
                         CardSource selectedCard = null;
 

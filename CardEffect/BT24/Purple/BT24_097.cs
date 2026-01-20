@@ -5,7 +5,7 @@ using System.Collections.Generic;
 //Soul Fear
 namespace DCGO.CardEffects.BT24
 {
-    public class ST24_097 : CEntity_Effect
+    public class BT24_097 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.HasTSTraits;
+                    return targetPermanent.IsDigimon && targetPermanent.TopCard.HasTSTraits;
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfLinkConditionStaticEffect(permanentCondition: PermanentCondition, linkCost: 3, card: card));
@@ -64,7 +64,7 @@ namespace DCGO.CardEffects.BT24
                 CardEffectCommons.AddActivateMainOptionSecurityEffect(
                     card: card,
                     cardEffects: ref cardEffects,
-                    effectName: "Delete 1 opponent's level 6 or lower Digimon. Then, you may link this card.");
+                    effectName: "Delete 1 opponent's level 6 or higher Digimon. Then, you may link this card.");
             }
 
             #endregion
@@ -74,7 +74,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OptionSkill)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Delete 1 opponent's level 6 or lower Digimon. Then, you may link this card.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete 1 opponent's level 6 or higher Digimon. Then, you may link this card.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
@@ -86,8 +86,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card) || CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card))
-                        &&  card.CanLinkToTargetPermanent(permanent, false);
+                    return permanent.IsDigimon
+                        && CardEffectCommons.IsOwnerPermanent(permanent, card)
+                        && card.CanLinkToTargetPermanent(permanent, false, true);
                 }
 
                 bool CanSelectTargetCondition(Permanent permanent)
@@ -96,7 +97,7 @@ namespace DCGO.CardEffects.BT24
                     {
                         if (permanent.TopCard.HasLevel)
                         {
-                            if (permanent.Level <= 6)
+                            if (permanent.Level >= 6)
                             {
                                 return true;
                             }
@@ -137,10 +138,8 @@ namespace DCGO.CardEffects.BT24
 
                     #region Select Digimon To Link
 
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition, true))
                     {
-
-
                         Permanent selectedPermanent = null;
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 

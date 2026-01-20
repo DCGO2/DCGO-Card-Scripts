@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Delete lowest DP Digimon, Rturn 2 cards from their trash to deck to play 2 Tokens and gain 2k DP per opponent's Digimon.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete lowest DP Digimon, Return 2 cards from their trash to deck to play 2 Tokens and gain 2k DP per opponent's Digimon.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
@@ -57,7 +57,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanDeleteCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy);
+                    return CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy);
                 }       
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -128,44 +128,9 @@ namespace DCGO.CardEffects.BT24
 
                         if (selectedCards.Count == 2)
                         {
-                            #region Opponent chooses deck bottom order and return to deck
-                            List<CardSource> orderedSelectedCards = new List<CardSource>();
-
-                            SelectCardEffect selectCardEffect1 = GManager.instance.GetComponent<SelectCardEffect>();
-
-                            selectCardEffect1.SetUp(
-                                canTargetCondition: (card) => true,
-                                canTargetCondition_ByPreSelecetedList: null,
-                                canEndSelectCondition: null,
-                                canNoSelect: () => false,
-                                selectCardCoroutine: SelectCardCoroutine1,
-                                afterSelectCardCoroutine: null,
-                                message: "Select 2 cards to bottom deck",
-                                maxCount: 2,
-                                canEndNotMax: false,
-                                isShowOpponent: true,
-                                mode: SelectCardEffect.Mode.Custom,
-                                root: SelectCardEffect.Root.Custom,
-                                customRootCardList: selectedCards,
-                                canLookReverseCard: true,
-                                selectPlayer: card.Owner.Enemy,
-                                cardEffect: activateClass);
-
-                            IEnumerator SelectCardCoroutine1(CardSource cardSource)
-                            {
-                                orderedSelectedCards.Add(cardSource);
-                                yield return null;
-                            }
-
-                            selectCardEffect1.SetUpCustomMessage("Select order of cards to bottom deck", "Your opponent the order of cards to bottom deck");
-                            selectCardEffect1.SetUpCustomMessage_ShowCard("Selected Cards");
-                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect1.Activate());
-
                             yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ReturnRevealedCardsToLibraryBottom(
-                                remainingCards: orderedSelectedCards,
+                                remainingCards: selectedCards,
                                 activateClass: activateClass));
-                        
-                            #endregion
 
                             #region Play 2 Tokens
 
