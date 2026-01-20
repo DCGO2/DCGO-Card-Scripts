@@ -4237,6 +4237,7 @@ public class IBattle
                 List<Permanent> WinnerPermanents = new List<Permanent>();
                 List<Permanent> LoserPermanents = new List<Permanent>();
                 CardSource LoserCard = null;
+                bool WasTie = false;
 
                 //add log
                 string log = $"\nBattle:\n{AttackingPermanent.TopCard.BaseENGCardNameFromEntity}({AttackingPermanent.TopCard.CardID})";
@@ -4340,6 +4341,8 @@ public class IBattle
                     }
                     else if (battleResults == 0)
                     {
+                        WasTie = true;
+
                         WinnerPermanents.Add(AttackingPermanent);
                         WinnerPermanents.Add(DefendingPermanent);
 
@@ -4370,6 +4373,8 @@ public class IBattle
                     }
                     else if (AttackingPermanent.DP == DefendingCard.CardDP)
                     {
+                        WasTie = true;
+
                         if (AttackingPermanent.CanBeDestroyedByBattle(AttackingPermanent, DefendingPermanent, DefendingCard))
                         {
                             LoserPermanents.Add(AttackingPermanent);
@@ -4412,6 +4417,7 @@ public class IBattle
                 hashtable.Add("LoserPermanents", _LoserPermanents);
                 hashtable.Add("LoserPermanents_real", LoserPermanents);
                 hashtable.Add("LoserCard", LoserCard);
+                hashtable.Add("WasTie", WasTie);
                 hashtable.Add("battle", this);
 
                 // battle effect

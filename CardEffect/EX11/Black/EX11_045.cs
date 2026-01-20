@@ -41,7 +41,7 @@ namespace DCGO.CardEffects.EX11
 
             bool OpponentsDigimonCondition(Permanent permanent) => CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card);
 
-            bool OpponentPermanentCondition(Permanent permanent)
+            bool CannotUnsuspendValidTargets(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && (permanent.IsDigimon || permanent.IsTamer);
@@ -75,13 +75,14 @@ namespace DCGO.CardEffects.EX11
                         yield return ContinuousController.instance.StartCoroutine(new IDegeneration(permanent, 2, activateClass).Degeneration());
                     }
                 }
-                if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, OpponentPermanentCondition))
+                
+                if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, CannotUnsuspendValidTargets))
                 {
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: OpponentPermanentCondition,
+                        canTargetCondition: CannotUnsuspendValidTargets,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: 1,
