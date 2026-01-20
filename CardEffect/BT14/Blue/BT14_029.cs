@@ -106,7 +106,7 @@ namespace DCGO.CardEffects.BT14
                 {
                     if (CardEffectCommons.IsExistOnBattleArea(card))
                     {
-                        if (card.Owner.Enemy.GetBattleAreaDigimons().Count(PermanentCondition) == 0)
+                        if (card.Owner.Enemy.GetBattleAreaDigimons().Count(permanent => permanent.DigivolutionCards.Count >= card.PermanentOfThisCard().DigivolutionCards.Count) == 0)
                         {
                             return true;
                         }
@@ -117,11 +117,7 @@ namespace DCGO.CardEffects.BT14
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    Permanent selectedPermanent = card.PermanentOfThisCard();
-
-                    if (selectedPermanent.DigivolutionCards.Count >= card.PermanentOfThisCard().DigivolutionCards.Count)
-                        yield return ContinuousController.instance.StartCoroutine(new IUnsuspendPermanents(new List<Permanent>() { selectedPermanent }, activateClass).Unsuspend());
-                        
+                    yield return ContinuousController.instance.StartCoroutine(new IUnsuspendPermanents(new List<Permanent>() { card.PermanentOfThisCard() }, activateClass).Unsuspend());
                 }
             }
 

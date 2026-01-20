@@ -211,7 +211,7 @@ namespace DCGO.CardEffects.P
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, null);
+                        && CardEffectCommons.CanTriggerOnTrashHand(hashtable, null, cardSource => cardSource.Owner == card.Owner);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -223,7 +223,8 @@ namespace DCGO.CardEffects.P
                 {
                     return cardSource.IsDigimon
                            && cardSource.HasLevel && cardSource.Level <= 4
-                           && cardSource.EqualsTraits("Demon")
+                           && (cardSource.EqualsTraits("Demon")
+                               || cardSource.EqualsTraits("Titan"))
                            && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 

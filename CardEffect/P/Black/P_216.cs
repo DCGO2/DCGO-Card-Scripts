@@ -39,7 +39,8 @@ namespace DCGO.CardEffects.P
                 bool CanSelectHandCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon
-                        && cardSource.EqualsTraits("Dark Masters");
+                        && cardSource.EqualsTraits("Dark Masters")
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 
                 bool CanUseCondition(Hashtable hashtable)

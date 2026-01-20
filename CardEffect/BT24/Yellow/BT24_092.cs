@@ -5,7 +5,7 @@ using System.Collections.Generic;
 //Shock Plasma
 namespace DCGO.CardEffects.BT24
 {
-    public class ST24_092 : CEntity_Effect
+    public class BT24_092 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.HasTSTraits;
+                    return targetPermanent.IsDigimon && targetPermanent.TopCard.HasTSTraits;
                 }
 
                 cardEffects.Add(CardEffectFactory.AddSelfLinkConditionStaticEffect(permanentCondition: PermanentCondition, linkCost: 3, card: card));
@@ -125,6 +125,7 @@ namespace DCGO.CardEffects.BT24
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("1 opponent's Digimon gets -6K DP for the turn. Then, you may link this card.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDescription());
+                cardEffects.Add(activateClass);
 
                 string EffectDescription()
                     => "[Main] 1 of your opponent's Digimon gets -6000 DP for the turn. Then, you may link this card to 1 of your Digimon on the field without paying the cost.";
@@ -134,8 +135,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card) || CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card))
-                        &&  card.CanLinkToTargetPermanent(permanent, false);
+                    return permanent.IsDigimon
+                        && CardEffectCommons.IsOwnerPermanent(permanent, card)
+                        && card.CanLinkToTargetPermanent(permanent, false, true);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -144,10 +146,8 @@ namespace DCGO.CardEffects.BT24
 
                     #region Select Digimon To Link
 
-                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
+                    if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition, true))
                     {
-
-
                         Permanent selectedPermanent = null;
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -173,8 +173,6 @@ namespace DCGO.CardEffects.BT24
                             selectedPermanent = permanent;
                             yield return null;
                         }
-
-
 
                         if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(selectedPermanent.AddLinkCard(card, activateClass));
                     }

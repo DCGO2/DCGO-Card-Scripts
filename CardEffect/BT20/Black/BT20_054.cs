@@ -21,7 +21,7 @@ namespace DCGO.CardEffects.BT20
             #endregion
 
             #region Opponent's Turn
-            if (timing == EffectTiming.WhenPermanentWouldBeDeleted)
+            if (timing == EffectTiming.WhenRemoveField)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 1 play cost 4 or lower Digimon", CanUseCondition, card);

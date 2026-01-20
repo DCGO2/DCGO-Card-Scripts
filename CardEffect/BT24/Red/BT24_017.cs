@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Delete lowest DP Digimon, Rturn 2 cards from their trash to deck to play 2 Tokens and gain 2k DP per opponent's Digimon.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete lowest DP Digimon, Return 2 cards from their trash to deck to play 2 Tokens and gain 2k DP per opponent's Digimon.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
                 cardEffects.Add(activateClass);
 
@@ -57,7 +57,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanDeleteCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy);
+                    return CardEffectCommons.IsMinDP(permanent, card.Owner.Enemy);
                 }       
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -108,10 +108,10 @@ namespace DCGO.CardEffects.BT24
                             canEndNotMax: false,
                             isShowOpponent: true,
                             mode: SelectCardEffect.Mode.Custom,
-                            root: SelectCardEffect.Root.Trash,
-                            customRootCardList: null,
+                            root: SelectCardEffect.Root.Custom,
+                            customRootCardList: card.Owner.Enemy.TrashCards,
                             canLookReverseCard: true,
-                            selectPlayer: card.Owner.Enemy,
+                            selectPlayer: card.Owner,
                             cardEffect: activateClass);
 
                         IEnumerator SelectCardCoroutine(CardSource cardSource)
@@ -124,13 +124,13 @@ namespace DCGO.CardEffects.BT24
                         selectCardEffect.SetUpCustomMessage_ShowCard("Selected Cards");
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
+                        #endregion
+
                         if (selectedCards.Count == 2)
                         {
                             yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ReturnRevealedCardsToLibraryBottom(
                                 remainingCards: selectedCards,
                                 activateClass: activateClass));
-                        
-                            #endregion
 
                             #region Play 2 Tokens
 

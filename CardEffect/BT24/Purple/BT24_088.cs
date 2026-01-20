@@ -16,7 +16,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnStartTurn)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Return to deck to play another or a lvl 4- [TS] or [Three Musketeers]", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Return to deck to play another or a lvl 4 or lower [TS] or [Three Musketeers]", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDescription());
                 cardEffects.Add(activateClass);
 
@@ -39,7 +39,7 @@ namespace DCGO.CardEffects.BT24
                     return (cardSource.EqualsCardName("Asuna Shiroki")
                         || (cardSource.IsDigimon
                             && cardSource.HasLevel
-                            && cardSource.Level < 4
+                            && cardSource.Level <= 4
                             && (cardSource.HasTSTraits
                                 || cardSource.HasText("Three Musketeers"))))
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);

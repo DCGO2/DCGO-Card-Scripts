@@ -173,6 +173,15 @@ namespace DCGO.CardEffects.BT19
 
                     IEnumerator SuccessProcess()
                     {
+                        List<Permanent> selectedPermanents = new List<Permanent>();
+
+                        IEnumerator SelectTargetCoroutine(Permanent permanent)
+                        {
+                            selectedPermanents.Add(permanent);
+
+                            yield return null;
+                        }
+
                         if (CardEffectCommons.HasMatchConditionPermanent(permanent =>
                                 CanSelectLevelOpponentPermanentConditionShared(permanent, 3)))
                         {
@@ -184,10 +193,12 @@ namespace DCGO.CardEffects.BT19
                                 maxCount: 1,
                                 canNoSelect: false,
                                 canEndNotMax: false,
-                                selectPermanentCoroutine: null,
+                                selectPermanentCoroutine: SelectTargetCoroutine,
                                 afterSelectPermanentCoroutine: null,
-                                mode: SelectPermanentEffect.Mode.Destroy,
+                                mode: SelectPermanentEffect.Mode.Custom,
                                 cardEffect: activateClass);
+
+                            selectPermanentEffect.SetUpCustomMessage("Select a level 3 Digimon to delete.", "Opponent is selecting Digimon to delete.");
 
                             yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                         }
@@ -203,10 +214,12 @@ namespace DCGO.CardEffects.BT19
                                 maxCount: 1,
                                 canNoSelect: false,
                                 canEndNotMax: false,
-                                selectPermanentCoroutine: null,
+                                selectPermanentCoroutine: SelectTargetCoroutine,
                                 afterSelectPermanentCoroutine: null,
-                                mode: SelectPermanentEffect.Mode.Destroy,
+                                mode: SelectPermanentEffect.Mode.Custom,
                                 cardEffect: activateClass);
+
+                            selectPermanentEffect.SetUpCustomMessage("Select a level 4 Digimon to delete.", "Opponent is selecting Digimon to delete.");
 
                             yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                         }
@@ -222,12 +235,21 @@ namespace DCGO.CardEffects.BT19
                                 maxCount: 1,
                                 canNoSelect: false,
                                 canEndNotMax: false,
-                                selectPermanentCoroutine: null,
+                                selectPermanentCoroutine: SelectTargetCoroutine,
                                 afterSelectPermanentCoroutine: null,
-                                mode: SelectPermanentEffect.Mode.Destroy,
+                                mode: SelectPermanentEffect.Mode.Custom,
                                 cardEffect: activateClass);
 
+                            selectPermanentEffect.SetUpCustomMessage("Select a level 5 Digimon to delete.", "Opponent is selecting Digimon to delete.");
+
                             yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                        }
+
+                        if(selectedPermanents.Count > 0)
+                        {
+                            yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(
+                                selectedPermanents,
+                                CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
                         }
                     }
                 }

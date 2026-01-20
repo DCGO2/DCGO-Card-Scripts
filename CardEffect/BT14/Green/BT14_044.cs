@@ -113,7 +113,10 @@ namespace DCGO.CardEffects.BT14
                                     {
                                         if (CardEffectCommons.CanTriggerWhenPermanentSuspends(hashtable1, (permanent) => permanent == selectedPermanent))
                                         {
-                                            return true;
+                                            if (!selectedPermanent.TopCard.CanNotBeAffected(activateClass))
+                                            {
+                                                return true;
+                                            }
                                         }
                                     }
 

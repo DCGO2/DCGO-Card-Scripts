@@ -107,18 +107,18 @@ namespace DCGO.CardEffects.BT24
                             canEndNotMax: false,
                             selectPermanentCoroutine: null,
                             afterSelectPermanentCoroutine: AfterSelectPermanentCoroutine,
-                            mode: SelectPermanentEffect.Mode.Destroy,
+                            mode: SelectPermanentEffect.Mode.Custom,
                             cardEffect: activateClass);
 
                         selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to delete.", "The opponent is selecting 1 Digimon to delete.");
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                    }
 
-                    IEnumerator AfterSelectPermanentCoroutine(List<Permanent> permanents)
-                    {
-                        deleteTargetPermanents = permanents.Clone();
-
-                        yield return null;
+                        IEnumerator AfterSelectPermanentCoroutine(List<Permanent> permanents)
+                        {
+                            deleteTargetPermanents = permanents.Clone();
+    
+                            yield return null;
+                        }
                     }
 
                     if (deleteTargetPermanents.Count > 0)

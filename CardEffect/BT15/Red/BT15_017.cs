@@ -182,7 +182,7 @@ namespace DCGO.CardEffects.BT15
 
                 string EffectDiscription()
                 {
-                    return "[On Play] You may play 1 red Digimon card with 5000 DP or less or 1 red Tamer card from your hand without paying the cost.";
+                    return "[When Digivolving] You may play 1 red Digimon card with 5000 DP or less or 1 red Tamer card from your hand without paying the cost.";
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)

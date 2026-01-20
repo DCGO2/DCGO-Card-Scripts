@@ -88,7 +88,7 @@ namespace DCGO.CardEffects.BT24
             if (timing == EffectTiming.OnAttackTargetChanged)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Draw 1", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Delete lowest DP", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
                 activateClass.SetHashString("AT_BT24-015");
                 cardEffects.Add(activateClass);

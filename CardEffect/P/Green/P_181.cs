@@ -1,4 +1,3 @@
-using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -119,8 +118,11 @@ namespace DCGO.CardEffects.P
                     }
 
                     // Place this card face up as the bottom security card
-                    yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                        card, toTop: false, faceUp: true));
+                    if (card.Owner.CanAddSecurity(activateClass))
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                            card, toTop: false, faceUp: true));
+                    }
                 }
             }
 

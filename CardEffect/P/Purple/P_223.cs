@@ -440,43 +440,18 @@ namespace DCGO.CardEffects.P
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.IsExistOnBattleArea(card))
-                    {
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                bool CanActivateTokenEffectCondition(Hashtable hashtable)
-                {
-                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
-                    {
-                        if (CardEffectCommons.CanTriggerWhenOwnerUseOption(hashtable, null, null, card))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return CardEffectCommons.IsExistOnBattleArea(card)
+                        && CardEffectCommons.CanTriggerWhenOwnerUseOption(hashtable, null, null, card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.IsExistOnBattleAreaDigimon(card))
-                    {
-                        return true;
-                    }
-
-                    return false;
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
-                    if (CanActivateTokenEffectCondition(_hashtable))
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPipeFox(activateClass));
-                    }
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPipeFox(activateClass));
                 }
             }
 

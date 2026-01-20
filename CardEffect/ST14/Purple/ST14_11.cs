@@ -6,6 +6,7 @@ using Photon;
 using System;
 using Photon.Pun;
 
+// Ai & Mako
 public class ST14_11 : CEntity_Effect
 {
     public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
@@ -99,7 +100,7 @@ public class ST14_11 : CEntity_Effect
 
             string EffectDiscription()
             {
-                return "[Your Turn] When one of your Digimon digivolves into a purple Digimon, you may suspend this Tamer and return 1 card from your hand to your deck to gain 1 memory.";
+                return "[Your Turn] When one of your Digimon digivolves into a purple Digimon, by suspending this Tamer, return 1 card from your hand to the top of your deck and gain 1 memory.";
             }
 
             bool CanSelectCardCondition(CardSource cardSource)
@@ -109,7 +110,7 @@ public class ST14_11 : CEntity_Effect
 
             bool PermanentCondition(Permanent permanent)
             {
-                if (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card))
+                if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
                 {
                     if (permanent.TopCard.CardColors.Contains(CardColor.Purple))
                     {

@@ -257,7 +257,7 @@ namespace DCGO.CardEffects.BT20
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Digivolve into level 6", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
@@ -417,7 +417,7 @@ namespace DCGO.CardEffects.BT20
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Digivolve into level 6", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()

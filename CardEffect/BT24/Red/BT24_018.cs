@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 // Styracomon
 namespace DCGO.CardEffects.BT24
@@ -11,6 +12,36 @@ namespace DCGO.CardEffects.BT24
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
+
+            #region Alternate Digivolution
+            if (timing == EffectTiming.None)
+            {
+                bool Condition()
+                {
+                    return CardEffectCommons.HasMatchConditionOwnersPermanent(card, HasOwenDreadnought);
+                }
+
+                bool HasOwenDreadnought(Permanent targetPermanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(targetPermanent, card) &&
+                           targetPermanent.TopCard.EqualsCardName("Owen Dreadnought");
+                }
+
+                bool PermanentCondition(Permanent targetPermanent)
+                {
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(targetPermanent, card)
+                        && targetPermanent.TopCard.EqualsCardName("Lamiamon");
+                }
+
+                cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(
+                    permanentCondition: PermanentCondition,
+                    digivolutionCost: 6,
+                    ignoreDigivolutionRequirement: false,
+                    card: card,
+                    condition: Condition)
+                );
+            }
+            #endregion
 
             #region Progress
             if (timing == EffectTiming.None)
@@ -67,27 +98,69 @@ namespace DCGO.CardEffects.BT24
                     #region Trash Security
                     if (card.Owner.Enemy.SecurityCards.Count >= 1)
                     {
-                        List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
+                        int maxCount = 1;
+                    
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    
+                        CardSource selectedCard = null;
+                    
+                        selectCardEffect.SetUp(
+                            canTargetCondition: (cardSource) => true,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            canNoSelect: () => true,
+                            selectCardCoroutine: SelectCardCoroutine,
+                            afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                            message: "Select 1 card to trash.\n (cards to the left are at the top and cards to the right are at the bottom)",
+                            maxCount: maxCount,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            mode: SelectCardEffect.Mode.Custom,
+                            root: SelectCardEffect.Root.Security,
+                            customRootCardList: card.Owner.Enemy.SecurityCards,
+                            canLookReverseCard: false,
+                            selectPlayer: card.Owner,
+                            cardEffect: activateClass);
+                    
+                        selectCardEffect.SetUpCustomMessage_ShowCard("Send to trash");
+
+                        selectCardEffect.SetUseFaceDown();
+                    
+                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                    
+                        IEnumerator SelectCardCoroutine(CardSource cardSource)
                         {
-                            new SelectionElement<bool>(message: $"Yes", value : true, spriteIndex: 0),
-                            new SelectionElement<bool>(message: $"No", value : false, spriteIndex: 1),
-                        };
-
-                        string selectPlayerMessage = "Will you trash 1 opponent's security?";
-                        string notSelectPlayerMessage = "The opponent is choosing if they will trash your security.";
-
-                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
-
-                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
-                        var selectedOption = GManager.instance.userSelectionManager.SelectedBoolValue;
-
-                        if (selectedOption)
+                            selectedCard = cardSource;
+                            yield return null;
+                        }
+                    
+                        IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(new IDestroySecurity(
-                                player: card.Owner.Enemy,
-                                destroySecurityCount: 1,
-                                cardEffect: activateClass,
-                                fromTop: true).DestroySecurity());
+                            if (cardSources.Count >= 1)
+                            {
+                                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
+                                    player: card.Owner.Enemy,
+                                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
+                            }
+                        }
+
+                        if (selectedCard != null)
+                        {
+                            #region
+                            selectedCard.Owner.securityObject.securityBreakGlass.ShowBlueMatarial();
+
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().BreakSecurityEffect(selectedCard.Owner));
+
+                            yield return new WaitForSeconds(0.1f);
+
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().EnterSecurityCardEffect(selectedCard));
+
+                            yield return new WaitForSeconds(0.5f);
+
+                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().DestroySecurityEffect(selectedCard));
+                            #endregion
+
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddTrashCard(selectedCard));
                         }
                     }
                     #endregion

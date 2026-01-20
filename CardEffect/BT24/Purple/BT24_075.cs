@@ -41,13 +41,13 @@ namespace DCGO.CardEffects.BT24
 
             bool CanSelectLevel3Condition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                     && permanent.TopCard.IsLevel3;
             }
 
             bool CanSelectLevel4Condition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                     && permanent.TopCard.IsLevel4;
             }
 

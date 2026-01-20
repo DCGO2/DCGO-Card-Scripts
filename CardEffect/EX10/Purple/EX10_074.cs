@@ -43,7 +43,7 @@ namespace DCGO.CardEffects.EX10
 
             #region Trash, then Delete effect
 
-            string FirstEffectShortText() => "Trash top 2 from deck, Delete 1 play cost 6 or higher";
+            string FirstEffectShortText() => "Trash top 2 from deck, Delete 1 play cost 6 or lower";
             string FirstEffectDiscription(string tag)
             {
                 return $"[{tag}] Trash the top 2 cards of your deck. Then, delete 1 of your opponent's play cost 6 or lower Digimon. For every 10 cards in your trash, add 3 to the play cost maximum.";
@@ -157,6 +157,8 @@ namespace DCGO.CardEffects.EX10
 
             IEnumerator SecondActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
+                List<CardSource> selectedCards = new List<CardSource>();
+                
                 bool cardsAdded = false;
 
                 if (card.Owner.TrashCards.Count >= 10)
@@ -173,7 +175,7 @@ namespace DCGO.CardEffects.EX10
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     canNoSelect: () => true,
-                    selectCardCoroutine: null,
+                    selectCardCoroutine: SelectCardCoroutine,
                     afterSelectCardCoroutine: AfterSelectCardCoroutine,
                     message: "Select cards to place at the top of the deck\n(cards will be placed back to the bottom of the deck so that cards with lower numbers are on top).",
                     maxCount: 2,
@@ -188,11 +190,18 @@ namespace DCGO.CardEffects.EX10
 
                     yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    {
+                        selectedCards.Add(cardSource);
+                        yield return null;
+                    }
+
                     IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
                     {
-                        if (cardSources.Count == 2)
+                        if (selectedCards.Count == 2)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(cardSources));
+                            selectedCards.Reverse();
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddLibraryTopCards(selectedCards));
                             yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(cardSources, "Deck Top Cards", true, true));
                             cardsAdded = true;
                         }
