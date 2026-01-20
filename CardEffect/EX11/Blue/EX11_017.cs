@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using System.Diagnostics;
 
+// Skadimon
 namespace DCGO.CardEffects.EX11
 {
     public class EX11_017
