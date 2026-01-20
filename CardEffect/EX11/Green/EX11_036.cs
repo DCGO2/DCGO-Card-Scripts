@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// Metatromon
+// Dalphomon
 namespace DCGO.CardEffects.EX11
 {
-    public class EX11_045 : CEntity_Effect
+    public class EX11_036 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
@@ -22,26 +22,24 @@ namespace DCGO.CardEffects.EX11
             }
             #endregion
 
-            #region Blocker
+            #region Vortex
             if (timing == EffectTiming.None)
             {
-                cardEffects.Add(CardEffectFactory.BlockerSelfStaticEffect(isInheritedEffect: false, card: card, condition: null));
+                cardEffects.Add(CardEffectFactory.VortexSelfEffect(isInheritedEffect: false, card: card, condition: null));
             }
             #endregion
 
             #region Shared OP / WD /WA
 
-            string SharedHashString = "EX11_045_OP_WD_WA";
+            string SharedHashString = "EX11_036_OP_WD_WA";
 
-            string SharedEffectName = "<De-Digivolve> 2 1 Opponent's Digimon. 1 Opponent's Digimon or Tamer can't digivolve.";
+            string SharedEffectName = "Suspend 2 Opponent's digimon or Tamers. 1 of their Digimon or Tamers can't unsuspend";
 
-            string SharedEffectDescription(string tag) => $"[{tag}] [Once Per Turn] <De-Digivolve 2> 1 of your opponent's Digimon. Then, 1 of their Digimon or Tamers can't digivolve until their turn ends.";
+            string SharedEffectDescription(string tag) => $"[{tag}] [Once Per Turn] Suspend 2 of your opponent's Digimon or Tamers. Then, 1 of their Digimon or Tamers can't unsuspend until their turn ends.";
 
             bool SharedCanActivateCondition(Hashtable hashtable) => CardEffectCommons.IsExistOnBattleAreaDigimon(card);
 
-            bool OpponentsDigimonCondition(Permanent permanent) => CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card);
-
-            bool CannotUnsuspendValidTargets(Permanent permanent)
+            bool SharedCanSelectPermanentCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && (permanent.IsDigimon || permanent.IsTamer);
@@ -49,13 +47,35 @@ namespace DCGO.CardEffects.EX11
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, OpponentsDigimonCondition))
+                if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, SharedCanSelectPermanentCondition))
                 {
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                    int maxCount = Math.Min(2, CardEffectCommons.MatchConditionOpponentsPermanentCount(card, SharedCanSelectPermanentCondition));
+                    SelectPermanentEffect selectPermanentEffect1 = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                    selectPermanentEffect.SetUp(
+                    selectPermanentEffect1.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: OpponentsDigimonCondition,
+                        canTargetCondition: SharedCanSelectPermanentCondition,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        maxCount: maxCount,
+                        canNoSelect: false,
+                        canEndNotMax: false,
+                        selectPermanentCoroutine: null,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.Tap,
+                        cardEffect: activateClass);
+
+                    selectPermanentEffect1.SetUpCustomMessage($"Select {maxCount} Digimon or Tamers to Suspend.", $"The opponent is selecting {maxCount} Digimon or Tamers to Suspend.");
+
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect1.Activate());
+
+                    SelectPermanentEffect selectPermanentEffect2 = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                    selectPermanentEffect2 = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                    selectPermanentEffect2.SetUp(
+                        selectPlayer: card.Owner,
+                        canTargetCondition: SharedCanSelectPermanentCondition,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: 1,
@@ -66,72 +86,16 @@ namespace DCGO.CardEffects.EX11
                         mode: SelectPermanentEffect.Mode.Custom,
                         cardEffect: activateClass);
 
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 digimon to De-Digivolve.", "Opponent is selecting 1 digimon to De-Digivolve.");
+                    selectPermanentEffect2.SetUpCustomMessage("Select 1 Digimon or Tamer that can't unsuspend.", "The opponent is selecting 1 Digimon or Tamer that can't unsuspend.");
 
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect2.Activate());
 
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
-                        yield return ContinuousController.instance.StartCoroutine(new IDegeneration(permanent, 2, activateClass).Degeneration());
-                    }
-                }
-                
-                if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, CannotUnsuspendValidTargets))
-                {
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CannotUnsuspendValidTargets,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: 1,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        selectPermanentCoroutine: SelectPermanentCoroutine,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Custom,
-                        cardEffect: activateClass);
-
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 card to prevent from digivolving.", "Opponent is selecting 1 card to prevent from digivolving.");
-
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    IEnumerator SelectPermanentCoroutine(Permanent selectedPermanent)
-                    {
-                        CanNotDigivolveClass canNotPutFieldClass = new CanNotDigivolveClass();
-                        canNotPutFieldClass.SetUpICardEffect("Can't Digivolve", CanUseCondition1, card);
-                        canNotPutFieldClass.SetUpCanNotEvolveClass(permanentCondition: PermanentCondition, cardCondition: CardCondition);
-                        selectedPermanent.UntilOwnerTurnEndEffects.Add(GetCardEffect);
-
-                        ContinuousController.instance.PlaySE(GManager.instance.GetComponent<Effects>().DebuffSE);
-
-                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateDebuffEffect(selectedPermanent));
-
-                        bool CanUseCondition1(Hashtable hashtable) => true;
-
-                        bool PermanentCondition(Permanent permanent)
-                        {
-                            return permanent == selectedPermanent
-                                && permanent.TopCard != null
-                                && !permanent.TopCard.CanNotBeAffected(canNotPutFieldClass);
-                        }
-
-                        bool CardCondition(CardSource cardSource)
-                        {
-                            return cardSource.Owner == card.Owner.Enemy
-                                && !cardSource.CanNotBeAffected(canNotPutFieldClass);
-                        }
-
-                        ICardEffect GetCardEffect(EffectTiming _timing)
-                        {
-                            if (_timing == EffectTiming.None)
-                            {
-                                return canNotPutFieldClass;
-                            }
-
-                            return null;
-                        }
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainCantUnsuspendUntilOpponentTurnEnd(
+                            targetPermanent: permanent,
+                            activateClass: activateClass
+                        ));
                     }
                 }
             }
@@ -193,12 +157,12 @@ namespace DCGO.CardEffects.EX11
             if (timing == EffectTiming.OnEndTurn)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("1 other digimon may digivolve into a green card w/[Maquinamon] in text for free", CanUseCondition, card);
+                activateClass.SetUpICardEffect("1 other digimon may digivolve into a black card w/[Maquinamon] in text for free", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
-                activateClass.SetHashString("EX11_045_EOYT");
+                activateClass.SetHashString("EX11_036_EOYT");
                 cardEffects.Add(activateClass);
 
-                string EffectDescription() => "[End of Your Turn] [Once Per Turn] 1 of your other Digimon may digivolve into a green Digimon card with [Maquinamon] in its text in the hand without paying the cost.";
+                string EffectDescription() => "[End of Your Turn] [Once Per Turn] 1 of your other Digimon may digivolve into a black Digimon card with [Maquinamon] in its text in the hand without paying the cost.";
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
@@ -227,7 +191,7 @@ namespace DCGO.CardEffects.EX11
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.HasText("Maquinamon")
-                        && cardSource.CardColors.Contains(CardColor.Green);
+                        && cardSource.CardColors.Contains(CardColor.Black);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -294,14 +258,14 @@ namespace DCGO.CardEffects.EX11
                             return cardSource != null
                                 && cardSource.Owner == card.Owner
                                 && cardSource.IsDigimon
-                                && cardSource.CardColors.Contains(CardColor.Black)
+                                && cardSource.CardColors.Contains(CardColor.Green)
                                 && cardSource.HasText("Maquinamon");
                         }
 
                         AssemblyCondition assemblyCondition = new AssemblyCondition(
                             element: element,
                             CanTargetCondition_ByPreSelecetedList: null,
-                            selectMessage: "5 Black Digimon cards with [Maquinamon] in text",
+                            selectMessage: "5 Green Digimon cards with [Maquinamon] in text",
                             elementCount: 5,
                             reduceCost: 5);
 
@@ -314,43 +278,42 @@ namespace DCGO.CardEffects.EX11
             #endregion
 
             #region ESS
-            if (timing == EffectTiming.OnAddDigivolutionCards)
+            if (timing == EffectTiming.WhenLinked)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("Delete 1 lowest play cost", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
+                activateClass.SetUpICardEffect("Suspend 1 Digimon, then this may attack", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetHashString("EX11_045_DELETE_ESS");
+                activateClass.SetHashString("EX11_036_YT_ESS");
                 cardEffects.Add(activateClass);
 
-                string EffectDescription()
-                {
-                    return "[All Turns] [Once Per Turn] When effects add to this Digimon's digivolution cards, delete 1 of your opponent's Digimon with the lowest play cost.";
-                }
+                string EffectDescription() => "[Your Turn] [Once Per Turn] When this Digimon gets linked, suspend 1 of your opponent's Digimon. Then, this Digimon may attack.";
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerOnAddDigivolutionCard(
-                                hashtable: hashtable,
-                                permanentCondition: permanent => permanent == card.PermanentOfThisCard(),
-                                cardEffectCondition: cardEffect => cardEffect.EffectSourceCard != null,
-                                cardCondition: null);
+                        && CardEffectCommons.IsOwnerTurn(card)
+                        && CardEffectCommons.CanTriggerWhenLinked(hashtable, PermanentCondition, null);
                 }
 
-                bool CanActivateCondition(Hashtable hashtable) => CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                bool PermanentCondition(Permanent permanent) => permanent == card.PermanentOfThisCard();
 
-                bool ValidTarget(Permanent permanent) => CardEffectCommons.IsMinCost(permanent, card.Owner.Enemy, true);
-
-                IEnumerator ActivateCoroutine(Hashtable _hashtable)
+                bool CanActivateCondition(Hashtable hashtable)
                 {
-                    if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, ValidTarget))
-                    {
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                }
 
-                        selectPermanentEffect.SetUp(
+                bool IsOpponentsDigimon(Permanent permanent) => CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
+
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
+                {
+                    if (CardEffectCommons.HasMatchConditionOpponentsPermanent(card, IsOpponentsDigimon))
+                    {
+                        SelectPermanentEffect selectPermanentEffect1 = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                        selectPermanentEffect1.SetUp(
                             selectPlayer: card.Owner,
-                            canTargetCondition: ValidTarget,
+                            canTargetCondition: IsOpponentsDigimon,
                             canTargetCondition_ByPreSelecetedList: null,
                             canEndSelectCondition: null,
                             maxCount: 1,
@@ -358,10 +321,24 @@ namespace DCGO.CardEffects.EX11
                             canEndNotMax: false,
                             selectPermanentCoroutine: null,
                             afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Destroy,
+                            mode: SelectPermanentEffect.Mode.Tap,
                             cardEffect: activateClass);
 
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                        selectPermanentEffect1.SetUpCustomMessage("Select 1 Digimon to Suspend.", "The opponent is selecting 1 Digimon to Suspend.");
+
+                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect1.Activate());
+                    }
+                    if (card.PermanentOfThisCard().CanAttack(activateClass))
+                    {
+                        SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
+
+                        selectAttackEffect.SetUp(
+                            attacker: card.PermanentOfThisCard(),
+                            canAttackPlayerCondition: () => true,
+                            defenderCondition: _ => true,
+                            cardEffect: activateClass);
+
+                        yield return ContinuousController.instance.StartCoroutine(selectAttackEffect.Activate());
                     }
                 }
             }
