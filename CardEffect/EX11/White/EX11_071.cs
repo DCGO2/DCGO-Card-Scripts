@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Cool Boy
 namespace DCGO.CardEffects.EX11
@@ -115,6 +117,8 @@ namespace DCGO.CardEffects.EX11
                     {
                         if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition))
                         {
+                            List<CardSource> selectedCards = new List<CardSource>();
+
                             SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
                             selectHandEffect.SetUp(
@@ -126,8 +130,8 @@ namespace DCGO.CardEffects.EX11
                                 canNoSelect: true,
                                 canEndNotMax: false,
                                 isShowOpponent: true,
-                                selectCardCoroutine: null,
-                                afterSelectCardCoroutine: SelectCardCoroutine,
+                                selectCardCoroutine: SelectCardCoroutine,
+                                afterSelectCardCoroutine: null,
                                 mode: SelectHandEffect.Mode.Custom,
                                 cardEffect: activateClass);
 
@@ -208,7 +212,7 @@ namespace DCGO.CardEffects.EX11
                                     {
                                         if (cardSource.GetCostItself >= 4)
                                         {
-                                            if (cardSource.EqualsTraits ("Royal Knight")
+                                            if (cardSource.EqualsTraits ("Royal Knight"))
                                             {
                                                 return true;
                                             }
