@@ -27,7 +27,7 @@ namespace DCGO.CardEffects.EX11
 
             bool CanGiveBoostCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent, card)
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                     && (permanent.TopCard.ContainsTraits("Avian")
                     || permanent.TopCard.ContainsTraits("Bird")
                     || permanent.TopCard.EqualsTraits("Vortex Warrior"));
@@ -142,7 +142,7 @@ namespace DCGO.CardEffects.EX11
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
                 activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
                 cardEffects.Add(activateClass);
 

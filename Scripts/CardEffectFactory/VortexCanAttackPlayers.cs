@@ -74,7 +74,7 @@ public partial class CardEffectFactory
         {
             if (CardEffectCommons.IsPermanentExistsOnBattleArea(attacker))
             {
-                if (!attacker.TopCard.CanNotBeAffected(canNotAttackClass))
+                if (!attacker.TopCard.CanNotBeAffected(vortexCanAttackPlayersClass))
                 {
                     if (attackerCondition == null || attackerCondition(attacker))
                     {

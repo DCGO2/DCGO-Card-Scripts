@@ -59,7 +59,7 @@ namespace DCGO.CardEffects.EX11
                 {
                     yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent>() { card.PermanentOfThisCard() }, CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
 
-                    if (CardEffectCommons.IsByEffect(hashtable, null))
+                    if (CardEffectCommons.IsByEffect(_hashtable, null))
                     {
                         yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
                     }
@@ -111,7 +111,7 @@ namespace DCGO.CardEffects.EX11
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.IsOpponentTurn(card)
-                        && card.Owner.Enemy.GetBattleAreaDigimons().None(permanent => !permanent.IsSuspended);
+                        && !card.Owner.Enemy.GetBattleAreaDigimons().Any(permanent => !permanent.IsSuspended);
                 }
 
                 string effectName = "While your opponent has no unsuspended digimon, your <Vortex> can also attack players.";
