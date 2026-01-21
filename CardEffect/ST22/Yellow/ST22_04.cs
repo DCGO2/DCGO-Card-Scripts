@@ -117,7 +117,7 @@ namespace DCGO.CardEffects.ST22
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("1 digimon gains 'cant activate [When Digivolving] effects' and -6K DP", CanUseCondition, card);
+                activateClass.SetUpICardEffect("1 digimon gains 'cant activate [When Digivolving] effects' and -3K DP", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, hash => SharedActivateCoroutine(hash, activateClass), -1, false, EffectDiscriptionShared("On Play"));
                 cardEffects.Add(activateClass);
 
@@ -135,7 +135,7 @@ namespace DCGO.CardEffects.ST22
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("1 digimon gains 'cant activate [When Digivolving] effects' and -6K DP", CanUseCondition, card);
+                activateClass.SetUpICardEffect("1 digimon gains 'cant activate [When Digivolving] effects' and -3K DP", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateConditionShared, hash => SharedActivateCoroutine(hash, activateClass), -1, false, EffectDiscriptionShared("When Digivolving"));
                 cardEffects.Add(activateClass);
 
