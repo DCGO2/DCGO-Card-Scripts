@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.IO;
+using WebSocketSharp;
 
 public class DataBase : MonoBehaviour
 {
@@ -903,7 +904,7 @@ public class DictionaryUtility
 
     public static CardKind GetCardKind(string CardKindName, Dictionary<CardKind, string> CardKindNameDictionary)
     {
-        CardKind cardKind = CardKindNameDictionary.First(x => x.Value == CardKindName).Key;
+        CardKind cardKind = CardKindName.IsNullOrEmpty() ? CardKind.Tamer : CardKindNameDictionary.First(x => x.Value == CardKindName).Key;
 
         return cardKind;
     }

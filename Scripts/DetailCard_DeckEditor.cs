@@ -106,8 +106,10 @@ public class DetailCard_DeckEditor : MonoBehaviour
             cardNameText.font = Font_JPN;
             cardNameText.text = cEntity_Base.CardName_JPN;
         }
+        
 
-        if (cEntity_Base.cardColors[0] == CardColor.Yellow || cEntity_Base.cardColors[0] == CardColor.White)
+
+        if (cEntity_Base.cardColors.Count > 0 && (cEntity_Base.cardColors[0] == CardColor.Yellow || cEntity_Base.cardColors[0] == CardColor.White))
         {
             cardNameText.color = Color.black;
         }
