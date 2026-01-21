@@ -56,12 +56,12 @@ namespace DCGO.CardEffects.EX11
 
             string SharedEffectName()
             {
-                return "Trash top 2 digivolution cards of 1 opponent's Digimon. 1 of their Digimon with as many of fewer sources as this Digimon can't suspend until their turn ends.";
+                return "Delete 1 opponent's lowest level.";
             }
 
             string SharedEffectDescription(string tag)
             {
-                return $"[{tag}] Trash the top 2 digivolution cards of 1 of your opponent's Digimon. Then, 1 of their Digimon with as many of fewer digivolution cards as this Digimon can't suspend until their turn ends.";
+                return $"[{tag}] [Once Per Turn] Delete 1 of your opponent's Digimon with the lowest level.";
             }
 
             bool SharedCanActivateCondition(Hashtable hashtable)
@@ -71,8 +71,7 @@ namespace DCGO.CardEffects.EX11
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card) &&
-                       CardEffectCommons.IsMinLevel(permanent, card.Owner);
+                return CardEffectCommons.IsMinLevel(permanent, card.Owner.Enemy);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -109,7 +108,7 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashtable) => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashtable) => SharedActivateCoroutine(hashtable, activateClass), 1, false, SharedEffectDescription("When Digivolving"));
                 activateClass.SetHashString(SharedHashString);
                 cardEffects.Add(activateClass);
 
@@ -128,7 +127,7 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashtable) => SharedActivateCoroutine(hashtable, activateClass), -1, false, SharedEffectDescription("End of Opponent's Turn"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashtable) => SharedActivateCoroutine(hashtable, activateClass), 1, false, SharedEffectDescription("End of Opponent's Turn"));
                 activateClass.SetHashString(SharedHashString);
                 cardEffects.Add(activateClass);
 
@@ -147,11 +146,11 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play a level 4 or lower [Puppet] trait for free.", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetHashString("EX11_023_AT");
                 cardEffects.Add(activateClass);
 
-                string EffectDiscription()
+                string EffectDescription()
                 {
                     return "[All Turns] [Once Per Turn] When other Digimon are deleted, you may play 1 level 4 or lower [Puppet] trait Digimon card from your trash without paying the cost.";
                 }
@@ -164,15 +163,17 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition);
                 }
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass, SelectCardEffect.Root.Trash)
+                    return cardSource.IsDigimon
                         && cardSource.HasLevel
                         && cardSource.Level <= 4
-                        && cardSource.EqualsTraits("Puppet");
+                        && cardSource.EqualsTraits("Puppet")
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass, SelectCardEffect.Root.Trash);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
