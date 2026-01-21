@@ -87,7 +87,7 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDiscription("Start of Your Main Phase"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDiscription("Start of Your Main Phase"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -105,7 +105,7 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, true, SharedEffectDiscription("On Play"));
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDiscription("On Play"));
                 cardEffects.Add(activateClass);
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -137,14 +137,14 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanActivateCondition(Hashtable hashtable)
                     => CardEffectCommons.IsExistOnBattleArea(card)
-                    && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition);
+                    && CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition)
+                    && card.Owner.HandCards.Count <= 4;
 
                 bool PermanentCondition(Permanent permanent)
                     => CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
 
                 bool CanSelectCardCondition(CardSource cardSource)
-                    => cardSource != null
-                    && cardSource.Owner == card.Owner
+                    => cardSource.IsDigimon
                     && (cardSource.EqualsTraits("Dark Dragon") || cardSource.EqualsTraits("Evil Dragon"));
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -192,11 +192,9 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource != null
-                        && cardSource.Owner == card.Owner
-                        && (cardSource.EqualsTraits("Evil")
-                            || cardSource.EqualsTraits("Dark Dragon")
-                            || cardSource.EqualsTraits("Evil Dragon"));
+                    return cardSource.EqualsTraits("Evil")
+                        || cardSource.EqualsTraits("Dark Dragon")
+                        || cardSource.EqualsTraits("Evil Dragon");
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
