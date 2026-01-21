@@ -50,7 +50,7 @@ namespace DCGO.CardEffects.EX11
 
             #region Shared OP/WD
 
-            string SharedEffectName() => "Suspend 1, then possibly get +4k DP.";
+            string SharedEffectName() => "Suspend 1. If this is suspended get +4k DP.";
 
             string SharedEffectDescription(string tag) => $"[{tag}] You may suspend 1 Digimon. Then, if this Digimon is suspended, it gets +4000 DP until your opponent's turn ends.";
 
