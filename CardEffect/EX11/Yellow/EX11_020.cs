@@ -12,7 +12,7 @@ namespace DCGO.CardEffects.EX11
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-            #region Alernative Digivolution Cost
+            #region Alternative Digivolution Cost
 
             if (timing == EffectTiming.None)
             {
@@ -55,7 +55,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletionInherited(hashtable, card)
+                    return CardEffectCommons.IsExistOnTrash(card)
                         && CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
                 }
 
@@ -136,7 +136,6 @@ namespace DCGO.CardEffects.EX11
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.IsOpponentTurn(card)
                         && CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanSelectPermanentCondition);
                 }
 
