@@ -64,7 +64,7 @@ namespace DCGO.CardEffects.BT22
 
                 string EffectDiscription()
                 {
-                    return "[When Digivolving] You may play 1 [Diaboromon] Token without paying the cost. (Digimon/Cost 14/Lv.6/White/Mega/Unknown/Unidentified/3000 DP)";
+                    return "[When Digivolving] You may play 1 [Diaboromon] Token without paying the cost. (Digimon / Cost 14 / Lv.6 / White / Mega / Unknown / Unidentified / 3000 DP)";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -96,7 +96,7 @@ namespace DCGO.CardEffects.BT22
 
                 string EffectDiscription()
                 {
-                    return "[When Attacking] You may play 1 [Diaboromon] Token without paying the cost. (Digimon/Cost 14/Lv.6/White/Mega/Unknown/Unidentified/3000 DP)";
+                    return "[When Attacking] You may play 1 [Diaboromon] Token without paying the cost. (Digimon / Cost 14 / Lv.6 / White / Mega / Unknown / Unidentified / 3000 DP)";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
