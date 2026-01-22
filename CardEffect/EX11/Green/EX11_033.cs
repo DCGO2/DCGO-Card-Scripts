@@ -65,7 +65,7 @@ namespace DCGO.CardEffects.EX11
 
                     if (doPlay)
                     {
-                        List<CardSource> selectedCards = null;
+                        List<CardSource> selectedCards = new List<CardSource>();
 
                         IEnumerator SelectCardCoroutine(CardSource cardSource)
                         {
