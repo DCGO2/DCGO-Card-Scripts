@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 #region "Target effect is negated" effect.
 public interface IDisableCardEffect
@@ -517,4 +515,13 @@ public interface IVortexCanAttackPlayersEffect
 {
     bool VortexCanAttackPlayersPermanent(Permanent Attacker);
 }
+#endregion
+
+#region "Card effect source for field effects" effect
+public interface IFieldEffectCardIdentity
+{
+    CardSource? EffectCardSource { get; }
+    string EffectCardHashstring { get; }
+}
+
 #endregion

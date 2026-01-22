@@ -1,18 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using Photon;
 using System;
 
-public class AllianceClass : ICardEffect, IAllianceEffect
+public class AllianceClass : ICardEffect, IAllianceEffect, IFieldEffectCardIdentity
 {
     public void SetUpAllianceClass(Func<Permanent, bool> PermanentCondition)
     {
         this.PermanentCondition = PermanentCondition;
     }
 
+    public void SetupAllianceCardSource(CardSource cardSource, string cardHashstring)
+    {
+        EffectCardSource = cardSource;
+        EffectCardHashstring = cardHashstring;
+    }
+
     Func<Permanent, bool> PermanentCondition { get; set; }
+
+    public CardSource EffectCardSource { get; private set; } = null;
+    public string EffectCardHashstring { get; private set; } = null;
 
     public bool HasAlliance(Permanent permanent)
     {

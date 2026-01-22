@@ -1,18 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using Photon;
 using System;
 
-public class BlockerClass : ICardEffect, IBlockerEffect
+public class BlockerClass : ICardEffect, IBlockerEffect, IFieldEffectCardIdentity
 {
     public void SetUpBlockerClass(Func<Permanent, bool> PermanentCondition)
     {
         this.PermanentCondition = PermanentCondition;
     }
 
+    public void SetupBlockerCardSource(CardSource cardSource, string cardHashstring)
+    {
+        EffectCardSource = cardSource;
+        EffectCardHashstring = cardHashstring;
+    }
+
     Func<Permanent, bool> PermanentCondition { get; set; }
+    public CardSource EffectCardSource { get; private set; } = null;
+    public string EffectCardHashstring { get; private set; } = null;
 
     public bool IsBlocker(Permanent permanent)
     {

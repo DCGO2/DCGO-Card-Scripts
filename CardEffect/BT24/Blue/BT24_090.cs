@@ -38,11 +38,19 @@ namespace DCGO.CardEffects.BT24
 
             if (timing == EffectTiming.None)
             {
-                bool PermanentCondition(Permanent permanent)
+                bool PermanentCondition<T>(Permanent permanent, string effectString = null) where T : class, IFieldEffectCardIdentity
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && (permanent.TopCard.CardColors.Contains(CardColor.Blue) || permanent.TopCard.CardColors.Contains(CardColor.Yellow))
-                        && permanent.TopCard.HasTSTraits;
+                        && permanent.TopCard.HasTSTraits
+                        && !EffectCondition<T>(permanent, card, effectString);
+                }
+
+                bool EffectCondition<T>(Permanent permanent, CardSource cardSource, string effectString) where T : class, IFieldEffectCardIdentity
+                {
+                    return permanent.EffectList(EffectTiming.None)
+                    .OfType<T>()
+                    .Any(x => x.EffectCardSource == cardSource && x.EffectCardHashstring == effectString);
                 }
 
                 #region Blocker
@@ -51,23 +59,14 @@ namespace DCGO.CardEffects.BT24
                     return CardEffectCommons.IsExistInSecurity(card, false);
                 }
 
-                cardEffects.Add(CardEffectFactory.BlockerStaticEffect(permanentCondition: PermanentCondition, isInheritedEffect: false, card: card, condition: CanUseCondition));
+                string blockerEffectHashString = "BT24_090_AT_Block";
+
+                cardEffects.Add(CardEffectFactory.BlockerStaticEffect(permanentCondition: (perm) => PermanentCondition<BlockerClass>(perm, blockerEffectHashString), isInheritedEffect: false, card: card, condition: CanUseCondition, cardSourceHashString: blockerEffectHashString));
                 #endregion
 
                 #region Alliance
-                AddSkillClass addSkillClass1 = new AddSkillClass();
-                addSkillClass1.SetUpICardEffect("Your Digimon gain <Alliance>", CanUseCondition1, card);
-                addSkillClass1.SetUpAddSkillClass(cardSourceCondition: CardSourceCondition, getEffects: GetEffects1);
-                cardEffects.Add(addSkillClass1);
 
-                bool CardSourceCondition(CardSource cardSource)
-                {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(cardSource) &&
-                           cardSource == cardSource.PermanentOfThisCard().TopCard &&
-                           PermanentCondition(cardSource.PermanentOfThisCard());
-                }
-
-                bool CanUseCondition1(Hashtable hashtable)
+                bool CanUseCondition1()
                 {
                     return CardEffectCommons.IsExistInSecurity(card, false) &&
                            CardEffectCommons.HasMatchConditionOwnersPermanent(card, HasOXII);
@@ -79,20 +78,9 @@ namespace DCGO.CardEffects.BT24
                         || permanent.TopCard.EqualsCardName("Venusmon");
                 }
 
-                List<ICardEffect> GetEffects1(CardSource cardSource, List<ICardEffect> effects, EffectTiming effectTiming)
-                {
-                    if (effectTiming == EffectTiming.OnAllyAttack)
-                    {
-                        bool Condition()
-                        {
-                            return CardSourceCondition(cardSource);
-                        }
+                string allianceEffectHashString = "BT24_090_AT_Alliance";
 
-                        effects.Add(CardEffectFactory.AllianceSelfEffect(false, cardSource, Condition));
-                    }
-
-                    return effects;
-                }
+                cardEffects.Add(CardEffectFactory.AllianceStaticEffect(permanentCondition: (perm) => PermanentCondition<AllianceClass>(perm, allianceEffectHashString), isInheritedEffect: false, card: card, condition: CanUseCondition1, cardSourceHashString: allianceEffectHashString));
                 #endregion
             }
 

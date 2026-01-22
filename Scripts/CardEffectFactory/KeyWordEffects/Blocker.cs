@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using System;
-using System.Linq;
-using UnityEngine;
+using System.Collections;
 
 public partial class CardEffectFactory
 {
@@ -32,13 +29,23 @@ public partial class CardEffectFactory
 
     #region Static effect of [Blocker]
 
-    public static BlockerClass BlockerStaticEffect(Func<Permanent, bool> permanentCondition, bool isInheritedEffect, CardSource card, Func<bool> condition, bool isLinkedEffect = false)
+    public static BlockerClass BlockerStaticEffect(Func<Permanent, bool> permanentCondition,
+                                                   bool isInheritedEffect,
+                                                   CardSource card,
+                                                   Func<bool> condition,
+                                                   bool isLinkedEffect = false,
+                                                   string cardSourceHashString = null)
     {
         string effectName = "Blocker";
 
         BlockerClass blockerClass = new BlockerClass();
         blockerClass.SetUpICardEffect(effectName, CanUseCondition, card);
         blockerClass.SetUpBlockerClass(PermanentCondition: PermanentCondition);
+
+        if (cardSourceHashString != null)
+        {
+            blockerClass.SetupBlockerCardSource(card, cardSourceHashString);
+        }
 
         if (isInheritedEffect)
         {

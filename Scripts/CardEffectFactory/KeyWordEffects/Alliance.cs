@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using System;
-using System.Linq;
-using UnityEngine;
+using System.Collections;
 
 public partial class CardEffectFactory
 {
@@ -79,13 +76,18 @@ public partial class CardEffectFactory
     #endregion
 
     #region Static effect of [Alliance]
-    public static AllianceClass AllianceStaticEffect(Func<Permanent, bool> permanentCondition, bool isInheritedEffect, CardSource card, Func<bool> condition)
+    public static AllianceClass AllianceStaticEffect(Func<Permanent, bool> permanentCondition, bool isInheritedEffect, CardSource card, Func<bool> condition, string cardSourceHashString = null)
     {
         string effectName = "Alliance";
 
         AllianceClass allianceClass = new AllianceClass();
         allianceClass.SetUpICardEffect(effectName, CanUseCondition, card);
         allianceClass.SetUpAllianceClass(PermanentCondition: PermanentCondition);
+
+        if (cardSourceHashString != null)
+        {
+            allianceClass.SetupAllianceCardSource(card, cardSourceHashString);
+        }
 
         if (isInheritedEffect)
         {
