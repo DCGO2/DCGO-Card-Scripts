@@ -110,7 +110,7 @@ namespace DCGO.CardEffects.EX11
                 bool Condition()
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.IsOpponentTurn(card)
+                        && CardEffectCommons.IsOwnerTurn(card)
                         && !card.Owner.Enemy.GetBattleAreaDigimons().Any(permanent => !permanent.IsSuspended);
                 }
 
