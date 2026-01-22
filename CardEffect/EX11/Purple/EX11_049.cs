@@ -80,25 +80,22 @@ namespace DCGO.CardEffects.EX11
                         canEndNotMax: false,
                         isShowOpponent: true,
                         selectCardCoroutine: null,
-                        afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                        afterSelectCardCoroutine: null,
                         mode: SelectHandEffect.Mode.Discard,
                         cardEffect: activateClass);
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
-
-                    IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
-                            targetPermanent: card.PermanentOfThisCard(),
-                            cardCondition: CanSelectCardCondition,
-                            payCost: true,
-                            reduceCostTuple: (reduceCost: 2, reduceCostCardCondition: null),
-                            fixedCostTuple: null,
-                            ignoreDigivolutionRequirementFixedCost: -1,
-                            isHand: false,
-                            activateClass: activateClass,
-                            successProcess: null));
-                    }                    
+                    yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
+                    
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                        targetPermanent: card.PermanentOfThisCard(),
+                        cardCondition: CanSelectCardCondition,
+                        payCost: true,
+                        reduceCostTuple: (reduceCost: 2, reduceCostCardCondition: null),
+                        fixedCostTuple: null,
+                        ignoreDigivolutionRequirementFixedCost: -1,
+                        isHand: false,
+                        activateClass: activateClass,
+                        successProcess: null));
                 }
             }
 
