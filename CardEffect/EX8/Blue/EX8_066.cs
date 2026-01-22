@@ -89,7 +89,8 @@ namespace DCGO.CardEffects.EX8
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, EnterFieldPermanent) || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, EnterFieldPermanent));
+                    return (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, EnterFieldPermanent) || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, EnterFieldPermanent))
+                        && CardEffectCommons.IsExistOnBattleArea(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
