@@ -135,11 +135,13 @@ namespace DCGO.CardEffects.EX11
                 {
                     return CardEffectCommons.CanJogressWithHandOrTrash(
                         source: source, 
+                        owner: card.Owner,
                         isWithHandCard: false, 
                         isIntoHandCard: true, 
                         targetCardCondition: IsNSoDigimonCard, 
                         permanentCondition: IsNSoPermanent,
-                        digivolutionCardCondition: IsNSoDigimonCard);
+                        digivolutionCardCondition: IsNSoDigimonCard
+                        );
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
