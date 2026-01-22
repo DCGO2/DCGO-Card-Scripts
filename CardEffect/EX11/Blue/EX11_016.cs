@@ -50,7 +50,8 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleArea(card);
+                return CardEffectCommons.IsExistOnBattleArea(card) &&
+                    card.Owner.Enemy.GetBattleAreaDigimons().Count() > 0;
             }
 
             bool OpponentsDigimon(Permanent permanent)
@@ -63,107 +64,79 @@ namespace DCGO.CardEffects.EX11
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
                        permanent.DigivolutionCards.Count == 0;
             }
-
+            
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                if (card.Owner.Enemy.GetBattleAreaDigimons().Count() > 0)
-                { 
-                    #region Strip 2 sources
+                #region Strip 2 sources
 
-                    bool CanSelectCardCondition(CardSource cardSource)
-                    {
-                        return !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
-                    }
+                bool CanSelectCardCondition(CardSource cardSource)
+                {
+                    return !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
+                }
 
-                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(OpponentsDigimon));
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: OpponentsDigimon,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: maxCount,
-                        canNoSelect: false,
-                        canEndNotMax: false,
-                        selectPermanentCoroutine: SelectPermanentCoroutine,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Custom,
-                        cardEffect: activateClass);
-
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will trash digivolution cards.", "The opponent is selecting 1 Digimon that will trash digivolution cards.");
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                    {
-                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.TrashDigivolutionCardsFromTopOrBottom(targetPermanent: permanent, trashCount: 2, isFromTop: true, activateClass: activateClass));
-                    }
-
-                    #endregion
-
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
+                if (CardEffectCommons.HasMatchConditionPermanent(OpponentsDigimon)) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
                             permanentCondition: OpponentsDigimon,
                             cardCondition: CanSelectCardCondition,
                             maxCount: 2,
                             canNoTrash: false,
                             isFromOnly1Permanent: false,
                             activateClass: activateClass
-                        ));
+                ));
 
-                    #region Send to Security
+                #endregion
+                
+                #region Send to Security
 
-                    if (CardEffectCommons.HasMatchConditionPermanent(OpponentsDigimonWithoutSources)
-                        && card.Owner.CanAddSecurity(activateClass))
+                if (CardEffectCommons.HasMatchConditionPermanent(OpponentsDigimonWithoutSources)
+                    && card.Owner.CanAddSecurity(activateClass))
+                {
+                    Permanent selectedPermanent = null;
+                    SelectPermanentEffect selectPermanentEffect1 = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                    selectPermanentEffect1.SetUp(
+                        selectPlayer: card.Owner,
+                        canTargetCondition: OpponentsDigimonWithoutSources,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        maxCount: 1,
+                        canNoSelect: true,
+                        canEndNotMax: false,
+                        selectPermanentCoroutine: SelectPermanentCoroutine1,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.Custom,
+                        cardEffect: activateClass);
+
+                    selectPermanentEffect1.SetUpCustomMessage("Select 1 Digimon to place in security", "The opponent is selecting 1 Digimon place in security.");
+
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect1.Activate());
+
+                    IEnumerator SelectPermanentCoroutine1(Permanent permanent)
                     {
-                        Permanent selectedPermanent = null;
-                        SelectPermanentEffect selectPermanentEffect1 = GManager.instance.GetComponent<SelectPermanentEffect>();
+                        selectedPermanent = permanent;
+                        yield return null;
+                    }
 
-                        selectPermanentEffect1.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: OpponentsDigimonWithoutSources,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: 1,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine1,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectPermanentEffect1.SetUpCustomMessage("Select 1 Digimon to place in security", "The opponent is selecting 1 Digimon place in security.");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect1.Activate());
-
-                        IEnumerator SelectPermanentCoroutine1(Permanent permanent)
-                        {
-                            selectedPermanent = permanent;
-                            yield return null;
-                        }
-
-                        if (selectedPermanent != null)
-                        {
-                            List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
+                    if (selectedPermanent != null)
+                    {
+                        List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
                                 {
                                     new SelectionElement<bool>(message: $"Security Top", value : true, spriteIndex: 0),
                                     new SelectionElement<bool>(message: $"Security Bottom", value : false, spriteIndex: 1),
                                 };
 
-                            string selectPlayerMessage = "Choose security position?";
-                            string notSelectPlayerMessage = "The opponent is choosing security position";
+                        string selectPlayerMessage = "Choose security position?";
+                        string notSelectPlayerMessage = "The opponent is choosing security position";
 
-                            GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
-                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
-                            bool position = GManager.instance.userSelectionManager.SelectedBoolValue;
+                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
+                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+                        bool position = GManager.instance.userSelectionManager.SelectedBoolValue;
 
-                            yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(selectedPermanent, CardEffectCommons.CardEffectHashtable(activateClass), toTop: position).PutSecurity());
-                        }
+                        yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(selectedPermanent, CardEffectCommons.CardEffectHashtable(activateClass), toTop: position).PutSecurity());
                     }
+                }
 
                 #endregion
 
-                }
             }
 
             #endregion
