@@ -73,7 +73,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool HasDigimonAbleToDelete()
                 {
-                    return card.Owner.GetBattleAreaDigimons().Some(ownersPermanent => CardEffectCommons.HasMatchConditionOpponentsPermanent(permanent => CanSelectOpponentDigimon(permanent, ownersPermanent)));
+                    return card.Owner.GetBattleAreaDigimons().Some(ownersPermanent => CardEffectCommons.HasMatchConditionOpponentsPermanent(card, permanent => CanSelectOpponentDigimon(permanent, ownersPermanent)));
                 }
 
                 bool CanSelectOpponentDigimon(Permanent permanent, Permanent ownersPermanent)
