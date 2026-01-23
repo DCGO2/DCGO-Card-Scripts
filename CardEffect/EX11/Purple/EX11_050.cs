@@ -68,26 +68,25 @@ namespace DCGO.CardEffects.EX11
 
                 Permanent selectedOwnerDigimon = null;
 
-                List<Permanent> ownerDigimonList = card.Owner.GetBattleAreaDigimons();
-                List<Permanent> opponentDigimonList = card.Owner.Enemy.GetBattleAreaDigimons();
-
-                int highestDp = ownerDigimonList.Count > 0 ? ownerDigimonList.Max(x => x.DP) : -1;
-
                 bool CanSelectOwnerDigimon(Permanent permanent)
                         => CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
 
-                bool CanSelectOpponentDigimon(Permanent permanent)
+                bool HasDigimonAbleToDelete()
+                {
+                    return card.Owner.GetBattleAreaDigimons().Some(ownersPermanent => CardEffectCommons.HasMatchConditionOpponentsPermanent(permanent => CanSelectOpponentDigimon(permanent, ownersPermanent)));
+                }
+
+                bool CanSelectOpponentDigimon(Permanent permanent, Permanent ownersPermanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
-                           permanent.DP <= selectedOwnerDigimon.DP;
+                            permanent.DP <= ownersPermanent.DP;
                 }
 
                 #endregion
 
                 #region Select Digimon to Compare
 
-                // Comparing to our highest dp is just used as a fast way to check if there is a least 1 vaild selection.
-                if (ownerDigimonList.Count > 0 && opponentDigimonList.Any(x => x.DP <= highestDp))
+                if (HasDigimonAbleToDelete())
                 {
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -104,7 +103,7 @@ namespace DCGO.CardEffects.EX11
                         mode: SelectPermanentEffect.Mode.Custom,
                         cardEffect: activateClass);
 
-                    selectPermanentEffect.SetUpCustomMessage("Select 1 of your Digimon.", "The opponent is selecting 1 Digimon");
+                    selectPermanentEffect.SetUpCustomMessage("Select 1 of your Digimon. You will next be deleting a Digimon with less DP than this to delete.", "The opponent is selecting 1 Digimon");
 
                     IEnumerator SelectPermanentCoroutine(Permanent permanent)
                     {
@@ -119,13 +118,13 @@ namespace DCGO.CardEffects.EX11
 
                 #region Select Digimon To Delete
 
-                if (selectedOwnerDigimon != null && opponentDigimonList.Any(x => x.DP <= selectedOwnerDigimon.DP))
+                if (selectedOwnerDigimon != null && CardEffectCommons.HasMatchConditionOpponentsPermanent(card, permanent => CanSelectOpponentDigimon(permanent, selectedOwnerDigimon)))
                 {
                     SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
                     selectPermanentEffect.SetUp(
                         selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectOpponentDigimon,
+                        canTargetCondition: permanent => CanSelectOpponentDigimon(permanent, selectedOwnerDigimon),
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: null,
                         maxCount: 1,
@@ -187,7 +186,7 @@ namespace DCGO.CardEffects.EX11
             if (timing == EffectTiming.None)
             {
                 AddSkillClass addSkillClass = new AddSkillClass();
-                addSkillClass.SetUpICardEffect("Your NSo trait Digimon gain Scapegoat", CanUseCondition, card);
+                addSkillClass.SetUpICardEffect("Your [Dark Dragon]/[Evil Dragon] trait Digimon gain Scapegoat", CanUseCondition, card);
                 addSkillClass.SetUpAddSkillClass(cardSourceCondition: CardSourceCondition, getEffects: GetEffects);
                 cardEffects.Add(addSkillClass);
 
