@@ -2055,22 +2055,25 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
                             {
                                 bool CanPlayEmptyFrame = false;
 
-                                foreach (FieldCardFrame fieldCardFrame in GManager.instance.You.fieldCardFrames)
+                                if (!handCard1.cardSource.IsDualCard)
                                 {
-                                    if (fieldCardFrame.IsEmptyFrame())
+                                    foreach (FieldCardFrame fieldCardFrame in GManager.instance.You.fieldCardFrames)
                                     {
-                                        if (handCard1.cardSource.CanPlayCardTargetFrame(fieldCardFrame, true, null))
+                                        if (fieldCardFrame.IsEmptyFrame())
                                         {
-                                            CanPlayEmptyFrame = true;
-                                            break;
+                                            if (handCard1.cardSource.CanPlayCardTargetFrame(fieldCardFrame, true, null))
+                                            {
+                                                CanPlayEmptyFrame = true;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
 
-                                if (CanPlayEmptyFrame)
-                                {
-                                    GManager.instance.You.playMatCardFrame.Frame.transform.parent.gameObject.SetActive(true);
-                                    GManager.instance.You.playMatCardFrame.OnFrame_Select(DataBase.SelectColor_Blue);
+                                    if (CanPlayEmptyFrame)
+                                    {
+                                        GManager.instance.You.playMatCardFrame.Frame.transform.parent.gameObject.SetActive(true);
+                                        GManager.instance.You.playMatCardFrame.OnFrame_Select(DataBase.SelectColor_Blue);
+                                    }
                                 }
 
                                 foreach (FieldCardFrame fieldCardFrame in GManager.instance.You.fieldCardFrames)
@@ -2091,7 +2094,7 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
                             #endregion
 
                             #region オプション
-                            else if (handCard1.cardSource.IsOption)
+                            if (handCard1.cardSource.IsOption && !handCard1.cardSource.IsDualCard)
                             {
                                 GManager.instance.You.playMatCardFrame.Frame.transform.parent.gameObject.SetActive(true);
                                 GManager.instance.You.playMatCardFrame.OnFrame_Select(DataBase.SelectColor_Blue);
@@ -2520,14 +2523,21 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
 
                                     bool CanPlayEmptyFrame = false;
 
-                                    foreach (FieldCardFrame fieldCardFrame in GManager.instance.You.fieldCardFrames)
+                                    if (handCard.cardSource.IsDualCard)
                                     {
-                                        if (fieldCardFrame.IsEmptyFrame())
+                                        CanPlayEmptyFrame = true;
+                                    }
+                                    else
+                                    {
+                                        foreach (FieldCardFrame fieldCardFrame in GManager.instance.You.fieldCardFrames)
                                         {
-                                            if (handCard.cardSource.CanPlayCardTargetFrame(fieldCardFrame, true, null))
+                                            if (fieldCardFrame.IsEmptyFrame())
                                             {
-                                                CanPlayEmptyFrame = true;
-                                                break;
+                                                if (handCard.cardSource.CanPlayCardTargetFrame(fieldCardFrame, true, null))
+                                                {
+                                                    CanPlayEmptyFrame = true;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -2556,8 +2566,14 @@ public class TurnStateMachine : MonoBehaviourPunCallbacks
 
                                             GManager.instance.You.playMatCardFrame.RemoveClickTarget();
                                             GManager.instance.You.playMatCardFrame.Frame.transform.parent.gameObject.SetActive(false);
-
-                                            photonView.RPC("SetPlayCard", RpcTarget.All, handCard.cardSource.CardIndex, handCard.cardSource.PreferredFrame().FrameID, new int[0], -1, new int[0]);
+                                            if (handCard.cardSource.IsDualCard)
+                                            {
+                                                photonView.RPC("SetPlayCard", RpcTarget.All, handCard.cardSource.CardIndex, 0, new int[0], -1, new int[0]);
+                                            }
+                                            else 
+                                            {
+                                                photonView.RPC("SetPlayCard", RpcTarget.All, handCard.cardSource.CardIndex, handCard.cardSource.PreferredFrame().FrameID, new int[0], -1, new int[0]);
+                                            }
                                             selected = true;
 
                                             return;

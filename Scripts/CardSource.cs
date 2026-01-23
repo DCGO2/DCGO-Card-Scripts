@@ -108,12 +108,17 @@ public class CardSource : MonoBehaviour
     {
         get
         {
+            if (IsDualCard && owner.GetBattleAreaDigimons().Some(permanent => CanPlayCardTargetFrame(permanent.PermanentFrame, true, null)))
+            {
+                return true;
+            }
+
             if (CanNotPlayThisOption)
             {
                 return false;
             }
 
-            if (_cEntity_Base.IsPermanent)
+            if (_cEntity_Base.IsPermanent && !IsDualCard)
             {
                 if (!CanPlayJogress(true))
                 {
