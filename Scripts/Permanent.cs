@@ -1140,7 +1140,11 @@ public class Permanent
             {
                 isFromSameDigimon = true;
 
-                if (addedDigivolutionCard == TopCard)
+                if (LinkedCards.Contains(addedDigivolutionCard))
+                {
+                    RemoveLinkedCard(addedDigivolutionCard, trashCard: false);
+                }
+                else if (addedDigivolutionCard == TopCard)
                 {
                     yield return ContinuousController.instance.StartCoroutine(CardObjectController.RemoveFromAllArea(addedDigivolutionCard));
 
