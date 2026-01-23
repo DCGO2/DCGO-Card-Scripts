@@ -26,8 +26,6 @@ namespace DCGO.CardEffects.EX11
                     return true;
                 }
 
-
-
                 JogressCondition GetJogress(CardSource cardSource)
                 {
                     if (cardSource == card)
@@ -133,7 +131,7 @@ namespace DCGO.CardEffects.EX11
 
                         if (validHandCardCount + validTrashCardCount + validDigivolutionCardCount <= 0)//No cards left to pick
                         {
-                            break;
+                            goto END_LOOP;
                         }
                         int index = 0;
                         List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>();
@@ -159,8 +157,8 @@ namespace DCGO.CardEffects.EX11
 
                         GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
 
-                        if (GManager.instance.userSelectionManager.SelectedIntValue == 4)
-                            break;
+                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+
                         switch (GManager.instance.userSelectionManager.SelectedIntValue)
                         {
                             case 1: // From Hand
@@ -245,8 +243,12 @@ namespace DCGO.CardEffects.EX11
                                 yield return StartCoroutine(selectCardEffect.Activate());
                                 break;
                             }
+                            default:
+                                goto END_LOOP;
                         }
                     }
+
+                    END_LOOP:;
                     
                     foreach(CardSource linkCard in selectedCards)
                     {

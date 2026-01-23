@@ -153,7 +153,11 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.CanActivateSuspendCostEffect(card);
                 }
 
-                bool PermanentCondition(Permanent permanent) => permanent.TopCard.HasText("Vemmon");
+                bool PermanentCondition(Permanent permanent)
+                {
+                    return permanent.TopCard.HasText("Vemmon")
+                        && CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent);
+                }
 
                 bool IsVemmon(CardSource cardSource) => cardSource.EqualsCardName("Vemmon");
 

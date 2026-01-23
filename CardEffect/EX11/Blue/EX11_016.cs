@@ -64,7 +64,7 @@ namespace DCGO.CardEffects.EX11
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card) &&
                        permanent.DigivolutionCards.Count == 0;
             }
-
+            
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 #region Strip 2 sources
@@ -74,42 +74,17 @@ namespace DCGO.CardEffects.EX11
                     return !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
                 }
 
-                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(OpponentsDigimon));
-
-                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                selectPermanentEffect.SetUp(
-                    selectPlayer: card.Owner,
-                    canTargetCondition: OpponentsDigimon,
-                    canTargetCondition_ByPreSelecetedList: null,
-                    canEndSelectCondition: null,
-                    maxCount: maxCount,
-                    canNoSelect: false,
-                    canEndNotMax: false,
-                    selectPermanentCoroutine: SelectPermanentCoroutine,
-                    afterSelectPermanentCoroutine: null,
-                    mode: SelectPermanentEffect.Mode.Custom,
-                    cardEffect: activateClass);
-
-                selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will trash digivolution cards.", "The opponent is selecting 1 Digimon that will trash digivolution cards.");
-                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                {
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.TrashDigivolutionCardsFromTopOrBottom(targetPermanent: permanent, trashCount: 2, isFromTop: true, activateClass: activateClass));
-                }
+                if (CardEffectCommons.HasMatchConditionPermanent(OpponentsDigimon)) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
+                            permanentCondition: OpponentsDigimon,
+                            cardCondition: CanSelectCardCondition,
+                            maxCount: 2,
+                            canNoTrash: false,
+                            isFromOnly1Permanent: false,
+                            activateClass: activateClass
+                ));
 
                 #endregion
-
-                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
-                        permanentCondition: OpponentsDigimon,
-                        cardCondition: CanSelectCardCondition,
-                        maxCount: 2,
-                        canNoTrash: false,
-                        isFromOnly1Permanent: false,
-                        activateClass: activateClass
-                    ));
-
+                
                 #region Send to Security
 
                 if (CardEffectCommons.HasMatchConditionPermanent(OpponentsDigimonWithoutSources)

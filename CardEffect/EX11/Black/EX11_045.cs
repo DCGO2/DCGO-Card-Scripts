@@ -39,7 +39,7 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable) => CardEffectCommons.IsExistOnBattleAreaDigimon(card);
 
-            bool OpponentsDigimonCondition(Permanent permanent) => CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card);
+            bool OpponentsDigimonCondition(Permanent permanent) => CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card);
 
             bool CannotUnsuspendValidTargets(Permanent permanent)
             {

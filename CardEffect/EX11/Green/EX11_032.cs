@@ -50,7 +50,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool IsGrandGalemon(CardSource source)
                 {
-                    return source.IsDigimon && source.EqualsCardName("GrandGalemon");
+                    return CardEffectCommons.IsExistOnHand(source) && source == card;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

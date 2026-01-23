@@ -71,3 +71,19 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+#Open Source Locked
+/[Aa]ssets/[Aa]ddOn
+/[Aa]ssets/[Ee]ditor
+/[Aa]ssets/[Mm]HLab
+/[Aa]ssets/AddOn/@ Xxuebi
+/[Aa]ssets/AddOn/Energy Shield Shader
+/[Aa]ssets/AddOn/NucleusDNAEffect
+/[Aa]ssets/AddOn/Taimiso
+/[Aa]ssets/AddOn/unity3d-curves-master
+/[Aa]ssets/Effect/DigitalEnvironmentEffects
+/[Aa]ssets/Effect/DL_Fantasy_RPG_Effects
+/[Aa]ssets/Effect/KTK_Effect_Samples
+/[Aa]ssets/SCI-FI UI Components
+/[Aa]ssets/Sound
+/[Aa]ssets/CardBaseEntity/CardEntity_JSONLoader
