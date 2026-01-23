@@ -42,7 +42,8 @@ namespace DCGO.CardEffects.EX11
 
                 bool SecurityCondition(CardSource cardSource)
                 {
-                    return !cardSource.IsFlipped;
+                    return !cardSource.IsFlipped
+                        && cardSource.EqualsTrits("Royal Base");
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
