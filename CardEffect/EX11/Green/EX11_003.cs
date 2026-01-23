@@ -42,7 +42,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool SecurityCondition(CardSource cardSource)
                 {
-                    return !cardSource.IsFlipped &&;
+                    return !cardSource.IsFlipped;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
