@@ -60,8 +60,7 @@ namespace DCGO.CardEffects.EX11
                 {
                     return cardSource.IsDigimon
                         && (cardSource.EqualsTraits("Dark Dragon")
-                            || cardSource.EqualsTraits("Evil Dragon"))
-                        && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, false, activateClass);
+                            || cardSource.EqualsTraits("Evil Dragon"));
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
