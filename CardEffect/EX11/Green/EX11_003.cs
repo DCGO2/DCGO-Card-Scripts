@@ -26,9 +26,12 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
+                    List<CardSource> securityCards = CardEffectCommons.GetCardSourcesFromHashtable(hashtable).Filter(SecurityCondition);
+
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.IsOwnerTurn(card)
-                        && CardEffectCommons.CanTriggerWhenAddSecurity(hashtable, player => player == card.Owner);
+                        && CardEffectCommons.CanTriggerWhenAddSecurity(hashtable, player => player == card.Owner)
+                        && securityCards.Count > 0;;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
