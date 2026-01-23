@@ -199,8 +199,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    return card.Owner == permanent.TopCard.Owner
-                        && CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && (permanent.TopCard.EqualsTraits("Dark Dragon")
                             || permanent.TopCard.EqualsTraits("Evil Dragon"));
                 }
