@@ -60,6 +60,8 @@ namespace DCGO.CardEffects.EX11
 
                     GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
 
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+                    
                     bool doPlay = GManager.instance.userSelectionManager.SelectedIntValue != 3;
                     bool fromHand = GManager.instance.userSelectionManager.SelectedIntValue == 1;
 
