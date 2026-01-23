@@ -1475,28 +1475,27 @@ public class Permanent
                     if (!cardSource.IsFlipped)
                     {
                         bool isTopCard = cardSource == TopCard;
-
-                        if (!isTopCard)
-                        {
-                            if (!IsDigimon)
-                            {
-                                continue;
-                            }
-                        }
+                        bool isDigimon = IsDigimon;
 
                         foreach (ICardEffect cardEffect in cardSource.cEntity_EffectController.GetCardEffects(timing, cardSource))
                         {
                             if (cardEffect != null)
                             {
-                                #region Entity, Inherited and Link effects
-
-                                if (cardEffect.IsInheritedEffect && !isTopCard)
+                                if (cardEffect.IsEffectOfCard)
                                 {
                                     _EffectList.Add(cardEffect);
                                     continue;
                                 }
 
-                                if (cardEffect.IsLinkedEffect && cardSource.IsLinked)
+                                #region Entity, Inherited and Link effects
+
+                                if (cardEffect.IsInheritedEffect && !isTopCard && isDigimon)
+                                {
+                                    _EffectList.Add(cardEffect);
+                                    continue;
+                                }
+
+                                if (cardEffect.IsLinkedEffect && cardSource.IsLinked && isDigimon)
                                 {
                                     _EffectList.Add(cardEffect);
                                     continue;
