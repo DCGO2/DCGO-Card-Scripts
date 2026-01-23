@@ -423,7 +423,7 @@ namespace DCGO.CardEffects.P
                             if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CardSelectCondition1)){
                                 List<CardSource> selectedCards1 = new List<CardSource>();
 
-                                int maxCount1 = Math.Min(2, card.Owner.TrashCards.Filter(CardSelectCondition1).map(cardSource => cardSource.Level).Distinct().Count);
+                                int maxCount1 = Math.Min(2, card.Owner.TrashCards.Filter(CardSelectCondition1).Map(cardSource => cardSource.Level).Distinct().Count());
 
                                 SelectCardEffect selectCardEffect1 = GManager.instance.GetComponent<SelectCardEffect>();
 
