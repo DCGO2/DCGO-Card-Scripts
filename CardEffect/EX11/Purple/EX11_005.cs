@@ -12,15 +12,6 @@ namespace DCGO.CardEffects.EX11
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-            #region Security Effect
-
-            if (timing == EffectTiming.SecuritySkill)
-            {
-                cardEffects.Add(CardEffectFactory.PlaySelfTamerSecurityEffect(card));
-            }
-
-            #endregion
-
             #region Start of Your Main Phase
 
             if (timing == EffectTiming.OnStartMainPhase)
