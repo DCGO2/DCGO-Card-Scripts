@@ -5290,11 +5290,6 @@ public class IUnsuspendPermanents
 
             yield return new WaitForSeconds(0.3f);
         }
-
-        foreach (Permanent permanent in untappedPermanets)
-        {
-            permanent.UntilNextUntapEffects = new List<Func<EffectTiming, ICardEffect>>();
-        }
     }
 }
 
