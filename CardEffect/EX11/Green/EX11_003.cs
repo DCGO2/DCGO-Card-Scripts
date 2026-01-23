@@ -40,6 +40,11 @@ namespace DCGO.CardEffects.EX11
                         && card.Owner.LibraryCards.Count >= 1;
                 }
 
+                bool SecurityCondition(CardSource cardSource)
+                {
+                    return !cardSource.IsFlipped &&;
+                }
+
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
                 {
                     yield return ContinuousController.instance.StartCoroutine(new DrawClass(
