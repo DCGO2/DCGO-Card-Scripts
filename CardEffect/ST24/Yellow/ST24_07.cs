@@ -305,7 +305,7 @@ namespace DCGO.CardEffects.ST24
             if (timing == EffectTiming.OptionSkill)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("1 Enemy Digmon gets -6k  DP, Delete 1 Enemy Digimon with 7k or less DP.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("1 Enemy Digimon gets -6k  DP, Delete 1 Enemy Digimon with 7k or less DP.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(null, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
@@ -372,8 +372,6 @@ namespace DCGO.CardEffects.ST24
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                     }
-
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ArtsDigivolve(card, activateClass));
                 }
             }
             #endregion

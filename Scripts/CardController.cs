@@ -1753,6 +1753,11 @@ public class UseOptionClass
 
             #endregion
 
+            if (card.Owner.ExecutingCards.Contains(card) && card.IsDualCard)
+            {
+                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ArtsDigivolve(card));
+            }
+
             if (card.Owner.ExecutingCards.Contains(card))
             {
                 if (_addSecurityEndOption && card.Owner.CanAddSecurity(CardEffect))

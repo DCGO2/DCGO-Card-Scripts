@@ -980,7 +980,7 @@ public partial class CardEffectCommons
     #endregion
 
     #region Arts Digivolve
-    public static IEnumerator ArtsDigivolve(CardSource card, ActivateClass activateClass)
+    public static IEnumerator ArtsDigivolve(CardSource card, ActivateClass activateClass = null)
     {
         Permanent targetPermanent = null;
 
@@ -1015,7 +1015,16 @@ public partial class CardEffectCommons
         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
         if (targetPermanent != null)
-            yield return DigivolveIntoExcecutingAreaCard(targetPermanent, null, false, null, null, -1, activateClass, null, true);
+        {
+            yield return ContinuousController.instance.StartCoroutine(new PlayCardClass(
+                cardSources: new List<CardSource>() { card },
+                hashtable: CardEffectHashtable(activateClass),
+                payCost: false,
+                targetPermanent: targetPermanent,
+                isTapped: false,
+                root: SelectCardEffect.Root.Execution,
+                activateETB: true).PlayCard());
+        }
     }
     #endregion
 
