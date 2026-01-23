@@ -157,7 +157,7 @@ namespace DCGO.CardEffects.EX11
             #endregion
 
             #region When Digivolving
-            if (timing == EffectTiming.OnAllyAttack)
+            if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
@@ -198,8 +198,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.EqualsCardName("Galacticmon") 
-                        && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, false, activateClass, ignore: CardEffectCommons.IgnoreRequirement.All);
+                    return cardSource.EqualsCardName("Galacticmon");
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)

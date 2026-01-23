@@ -6,14 +6,14 @@ using System.Linq;
 // Medusamon
 namespace DCGO.CardEffects.EX11
 {
-    public class EX11_012: CEntity_Effect
+    public class EX11_012 : CEntity_Effect
     {
         public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
         {
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
             #region Rush
-            if(timing == EffectTiming.OnAllyAttack)
+            if (timing == EffectTiming.None)
             {
                 cardEffects.Add(CardEffectFactory.RushSelfStaticEffect(isInheritedEffect: false, card: card, condition: null));
             }
@@ -82,7 +82,7 @@ namespace DCGO.CardEffects.EX11
                         root: SelectCardEffect.Root.Trash,
                         customRootCardList: null,
                         canLookReverseCard: true,
-                        selectPlayer: card.Owner,
+                        selectPlayer: card.Owner.Enemy,
                         cardEffect: activateClass);
 
                     selectCardEffect.SetUpCustomMessage("Select a card to return to bottom of deck.", "The opponent is selecting a card to return to bottom of deck.");
@@ -117,7 +117,7 @@ namespace DCGO.CardEffects.EX11
             #endregion
 
             #region End of Attack
-            if(timing == EffectTiming.OnEndAttack)
+            if (timing == EffectTiming.OnEndAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName, CanUseCondition, card);
@@ -162,7 +162,7 @@ namespace DCGO.CardEffects.EX11
                     if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentCondition))
                     {
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-    
+
                         selectPermanentEffect.SetUp(
                             selectPlayer: card.Owner,
                             canTargetCondition: CanSelectPermanentCondition,
@@ -175,11 +175,11 @@ namespace DCGO.CardEffects.EX11
                             afterSelectPermanentCoroutine: null,
                             mode: SelectPermanentEffect.Mode.Custom,
                             cardEffect: activateClass);
-    
+
                         selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to delete.", "The opponent is selecting 1 Digimon to delete.");
-    
+
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-    
+
                         IEnumerator SelectPermanentCoroutine(Permanent permanent)
                         {
                             yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DeletePeremanentAndProcessAccordingToResult(targetPermanents: new List<Permanent>() { permanent }, activateClass: activateClass, successProcess: permanents => SuccessProcess(), failureProcess: null));

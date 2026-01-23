@@ -50,7 +50,7 @@ public partial class CardEffectCommons
     /// <returns></returns>
     private static bool CardFulfillsRequirement(Player owner, CardSource cardSource, CardSource jogressTarget, Permanent firstCondition, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> cardCondition = null)
     {
-        if (jogressTarget.jogressCondition.Count > 0)
+        if (jogressTarget.jogressCondition.Count <= 0)
             return false;
         bool isValid = false;
         if(cardCondition == null || cardCondition(cardSource))
@@ -182,7 +182,7 @@ public partial class CardEffectCommons
     /// <returns></returns>
     private static bool PermanentFulfillsRequirement(Player owner, Permanent permanent, CardSource jogressTarget, Permanent firstCondition, bool isWithHandCard, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> cardCondition = null)
     {
-        if (jogressTarget.jogressCondition.Count > 0 || jogressTarget.CanNotEvolve(permanent))
+        if (jogressTarget.jogressCondition.Count <= 0 || jogressTarget.CanNotEvolve(permanent))
             return false;
         if(permanentCondition == null || permanentCondition(permanent))
         {
@@ -262,11 +262,8 @@ public partial class CardEffectCommons
         return selectedPermanent;
     }
 
-    public static bool CanJogressWithHandOrTrash(CardSource source, bool isWithHandCard, bool isIntoHandCard, Func<CardSource, bool> targetCardCondition = null, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null, Player owner = null)
+    public static bool CanJogressWithHandOrTrash(CardSource source, Player owner, bool isWithHandCard, bool isIntoHandCard, Func<CardSource, bool> targetCardCondition = null, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
     {
-        if (owner == null)
-            owner = source.Owner;
-
         return (isIntoHandCard ? IsExistOnHand(source) : IsExistOnTrash(source))
             && (targetCardCondition == null || targetCardCondition(source)) 
             && source.jogressCondition.Count > 0
@@ -316,13 +313,13 @@ public partial class CardEffectCommons
             yield return null;
         }
 
-        if (isWithHandCard && owner.HandCards.Some(cardSource => CanJogressWithHandOrTrash(cardSource, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition, owner)))
+        if (isWithHandCard && owner.HandCards.Some(cardSource => CanJogressWithHandOrTrash(cardSource, owner, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition)))
         {
             SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
             selectHandEffect.SetUp(
                 selectPlayer: owner,
-                canTargetCondition: cardSource => CanJogressWithHandOrTrash(cardSource, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition, owner),
+                canTargetCondition: cardSource => CanJogressWithHandOrTrash(cardSource, owner, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition),
                 canTargetCondition_ByPreSelecetedList: null,
                 canEndSelectCondition: null,
                 maxCount: 1,
@@ -342,12 +339,12 @@ public partial class CardEffectCommons
         {
             dnaTarget = activateClass.EffectSourceCard;
         }
-        else if (owner.TrashCards.Some(cardSource => CanJogressWithHandOrTrash(cardSource, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition, owner)))
+        else if (owner.TrashCards.Some(cardSource => CanJogressWithHandOrTrash(cardSource, owner, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition)))
         {
             SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
             selectCardEffect.SetUp(
-            canTargetCondition: cardSource => CanJogressWithHandOrTrash(cardSource, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition, owner),
+            canTargetCondition: cardSource => CanJogressWithHandOrTrash(cardSource, owner, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition),
             canTargetCondition_ByPreSelecetedList: null,
             canEndSelectCondition: null,
             canNoSelect: () => isOptional,

@@ -57,7 +57,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanMaybeLinkPermanent(Permanent permanent)
                 {
-                    return permanent.IsDigimon
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent != card.PermanentOfThisCard()
                         && (card.CanLinkToTargetPermanent(permanent, false)
                             || card.Owner.HandCards.Filter(CanSelectCardCondition).Some(cardSource => cardSource.CanLinkToTargetPermanent(permanent, false)));
@@ -119,6 +119,8 @@ namespace DCGO.CardEffects.EX11
                         string notSelectPlayerMessage = "The opponent is choosing from which area to select a card.";
 
                         GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
+
+                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
 
                         bool doLink = GManager.instance.userSelectionManager.SelectedIntValue != 3;
                         bool fromHand = GManager.instance.userSelectionManager.SelectedIntValue == 2;
