@@ -31,7 +31,7 @@ namespace DCGO.CardEffects.EX11
                     return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.CanTriggerWhenAddSecurity(hashtable, player => player == card.Owner)
-                        && securityCards.Count > 0;;
+                        && securityCards.Count > 0;
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
