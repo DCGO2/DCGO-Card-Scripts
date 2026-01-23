@@ -198,8 +198,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.EqualsCardName("Galacticmon") 
-                        && cardSource.CanPlayCardTargetFrame(card.PermanentOfThisCard().PermanentFrame, false, activateClass, ignore: CardEffectCommons.IgnoreRequirement.All);
+                    return cardSource.EqualsCardName("Galacticmon");
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
