@@ -204,27 +204,37 @@ namespace DCGO.CardEffects.EX11
                     {
                         yield return ContinuousController.instance.StartCoroutine(PermanentSelectorAndDigivolutionCardPlacer());
                     }
-                    
+
                     IEnumerator PermanentSelectorAndDigivolutionCardPlacer()
                     {
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                        if (targetPermanents.Count == 1)
+                        {
 
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: permanent => targetPermanents.Contains(permanent),
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: 1,
-                            canNoSelect: false,
-                            canEndNotMax: false,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
+                            yield return ContinuousController.instance.StartCoroutine(SelectPermanentCoroutine());                           
+                        }
 
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                        else
+                        {
+                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                            selectPermanentEffect.SetUp(
+                                selectPlayer: card.Owner,
+                                canTargetCondition: permanent => targetPermanents.Contains(permanent),
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                maxCount: 1,
+                                canNoSelect: false,
+                                canEndNotMax: false,
+                                selectPermanentCoroutine: SelectPermanentCoroutine,
+                                afterSelectPermanentCoroutine: null,
+                                mode: SelectPermanentEffect.Mode.Custom,
+                                cardEffect: activateClass);
+
+                            selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
+
+                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                        }
 
                         IEnumerator SelectPermanentCoroutine(Permanent permanent)
                         {
@@ -269,7 +279,7 @@ namespace DCGO.CardEffects.EX11
                             Permanent selectedPermanent = permanent;
 
                             yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(digivolutionCards_fixed, "Digivolution Cards", true, true));
-                            yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass)); ;
+                            yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass));
                         }
                     }
                 }
