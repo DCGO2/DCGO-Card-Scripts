@@ -195,7 +195,7 @@ namespace DCGO.CardEffects.EX11
                         yield return null;
                     }
 
-                    if(selectedCards.Count > 0 && CardEffectCommons.MatchConditionOwnersPermanentCount(card, permanent => targetPermanents.Contains(permanent)) == 1)
+                    if (selectedCards.Count > 0 && CardEffectCommons.MatchConditionOwnersPermanentCount(card, permanent => targetPermanents.Contains(permanent)) == 1)
                     {
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -218,10 +218,56 @@ namespace DCGO.CardEffects.EX11
 
                         IEnumerator SelectPermanentCoroutine(Permanent permanent)
                         {
-                            Permanent selectedPermanent = permanent;
+                            List<CardSource> digivolutionCards_fixed = new List<CardSource>();
 
-                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(selectedCards, "Digivolution Cards", true, true));
-                            yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
+                            SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                            selectCardEffect.SetUp(
+                                canTargetCondition: (cardSource) => true,
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                canNoSelect: () => false,
+                                selectCardCoroutine: null,
+                                afterSelectCardCoroutine: AfterSelectCardCoroutine1,
+                                message: "Specify the order to place the cards in the digivolution cards\n(cards will be placed so that cards with lower numbers are on top).",
+                                maxCount: selectedCards.Count,
+                                canEndNotMax: true,
+                                isShowOpponent: true,
+                                mode: SelectCardEffect.Mode.Custom,
+                                root: SelectCardEffect.Root.Custom,
+                                customRootCardList: selectedCards,
+                                canLookReverseCard: true,
+                                selectPlayer: card.Owner,
+                                cardEffect: activateClass);
+
+                            selectCardEffect.SetUpCustomMessage_ShowCard("Digivolution Cards");
+
+                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+
+                            IEnumerator AfterSelectCardCoroutine1(List<CardSource> cardSources)
+                            {
+                                foreach (CardSource cardSource in cardSources)
+                                {
+                                    digivolutionCards_fixed.Add(cardSource);
+                                }
+
+                                yield return null;
+                            }
+
+                            if (CardEffectCommons.IsExistOnBattleArea(card))
+                            {
+                                digivolutionCards_fixed.Reverse();
+
+                                Permanent selectedPermanent = permanent;
+
+                                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(digivolutionCards_fixed, "Digivolution Cards", true, true));
+                                yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass)); ;
+                            }
+
+                            if (selectedCards.Count > 0)
+                            {
+
+                            }                           
                         }
                     }
 
