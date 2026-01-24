@@ -212,7 +212,7 @@ namespace DCGO.CardEffects.EX11
                             mode: SelectPermanentEffect.Mode.Custom,
                             cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
+                        selectPermanentEffect.SetUpCustomMessage("Select Digimon that will get the digivolution cards.", "The opponent is selecting Digimon that will get the digivolution cards.");
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
