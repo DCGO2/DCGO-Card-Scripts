@@ -248,7 +248,7 @@ namespace DCGO.CardEffects.EX11
                                 selectCardEffect.SetUp(
                                     canTargetCondition: (cardSource) => true,
                                     canTargetCondition_ByPreSelecetedList: null,
-                                    canEndSelectCondition: null,
+                                    canEndSelectCondition: CanEndSelectCondition,
                                     canNoSelect: () => false,
                                     selectCardCoroutine: null,
                                     afterSelectCardCoroutine: AfterSelectCardCoroutine,
@@ -265,6 +265,11 @@ namespace DCGO.CardEffects.EX11
 
                                 selectCardEffect.SetUpCustomMessage_ShowCard("Digivolution Cards");
 
+                                bool CanEndSelectCondition(List<CardSource> cardSources)
+                                {
+                                    return !CardEffectCommons.HasNoElement(cardSources);
+                                }
+
                                 yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
                                 IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
@@ -277,8 +282,6 @@ namespace DCGO.CardEffects.EX11
 
                                     yield return null;
                                 }
-
-                                digivolutionCards_fixed.Reverse();
 
                                 Permanent selectedPermanent = permanent;
 
