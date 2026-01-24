@@ -209,9 +209,9 @@ namespace DCGO.CardEffects.EX11
                     {
                         if (targetPermanents.Count == 1)
                         {
+                            Permanent permanent = targetPermanents[0];
 
-
-                            yield return ContinuousController.instance.StartCoroutine(SelectPermanentCoroutine());                           
+                            yield return ContinuousController.instance.StartCoroutine(SelectPermanentCoroutine(permanent));                           
                         }
 
                         else
