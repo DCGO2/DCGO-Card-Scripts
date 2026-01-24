@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -153,7 +154,7 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.CanActivateSuspendCostEffect(card);
                 }
 
-                bool PermanentCondition(Permanent permanent) => permanent.TopCard.HasText("Vemmon");
+                bool PermanentCondition(Permanent permanent) => permanent.TopCard.HasText("Vemmon") && permanent.IsDigimon;
 
                 bool IsVemmon(CardSource cardSource) => cardSource.EqualsCardName("Vemmon");
 
@@ -211,7 +212,7 @@ namespace DCGO.CardEffects.EX11
                         {
                             Permanent permanent = targetPermanents[0];
 
-                            yield return ContinuousController.instance.StartCoroutine(SelectPermanentCoroutine(permanent));                           
+                            yield return ContinuousController.instance.StartCoroutine(SelectPermanentCoroutine(permanent));
                         }
 
                         else
