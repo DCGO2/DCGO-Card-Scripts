@@ -195,7 +195,7 @@ namespace DCGO.CardEffects.EX11
                         yield return null;
                     }
 
-                    if(selectedCards.Count > 0)
+                    if(selectedCards.Count > 0 && CardEffectCommons.MatchConditionOwnersPermanentCount(card, permanent => targetPermanents.Contains(permanent)) == 1)
                     {
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -212,7 +212,7 @@ namespace DCGO.CardEffects.EX11
                             mode: SelectPermanentEffect.Mode.Custom,
                             cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUpCustomMessage("Select Digimon that will get the digivolution cards.", "The opponent is selecting Digimon that will get the digivolution cards.");
+                        selectPermanentEffect.SetUpCustomMessage("Select first Digimon that will get the digivolution cards.", "The opponent is selecting first Digimon that will get the digivolution cards.");
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
