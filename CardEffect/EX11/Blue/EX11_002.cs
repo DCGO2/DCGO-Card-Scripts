@@ -16,6 +16,7 @@ namespace DCGO.CardEffects.EX11
                 CanAttackTargetDefendingPermanentClass canAttackTargetDefendingPermanentClass = new CanAttackTargetDefendingPermanentClass();
                 canAttackTargetDefendingPermanentClass.SetUpICardEffect($"Can attack to unsuspended Digimon", CanUseCondition, card);
                 canAttackTargetDefendingPermanentClass.SetUpCanAttackTargetDefendingPermanentClass(attackerCondition: AttackerCondition, defenderCondition: DefenderCondition, cardEffectCondition: CardEffectCondition);
+                canAttackTargetDefendingPermanentClass.SetIsInheritedEffect(true);
 
                 cardEffects.Add(canAttackTargetDefendingPermanentClass);
 
