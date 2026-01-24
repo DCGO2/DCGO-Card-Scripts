@@ -347,7 +347,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanPlaceToSecurityCondition(Permanent permanent)
                 {
-                    if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
+                    if (CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent))
                     {
                         foreach (Permanent removed in removedPermanents)
                         {
