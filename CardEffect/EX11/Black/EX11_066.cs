@@ -172,21 +172,18 @@ namespace DCGO.CardEffects.EX11
 
                     List<CardSource> selectedCards = new List<CardSource>();
 
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
-                        revealCount: 2,
-                        simplifiedSelectCardConditions:
-                        new SimplifiedSelectCardConditionClass[]
-                        {
-                        new SimplifiedSelectCardConditionClass(
-                            canTargetCondition:IsVemmon,
-                            message: "Select 2 [Vemmon] to tuck.",
-                            mode: SelectCardEffect.Mode.Custom,
-                            maxCount: 2,
-                            selectCardCoroutine: SelectCardCoroutine),
-                        },
-                        remainingCardsPlace: RemainingCardsPlace.Trash,
-                        activateClass: activateClass
-                    ));
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.RevealDeckTopCardsAndProcessForAll(
+                                     revealCount: 2,
+                                     simplifiedSelectCardCondition:
+                                     new SimplifiedSelectCardConditionClass(
+                                             canTargetCondition: IsVemmon,
+                                             message: "",
+                                             mode: SelectCardEffect.Mode.AddHand,
+                                             maxCount: -1,
+                                             selectCardCoroutine: SelectCardCoroutine),
+                                     remainingCardsPlace: RemainingCardsPlace.Trash,
+                                     activateClass: activateClass
+                                 ));
 
                     IEnumerator SelectCardCoroutine(CardSource cardSource)
                     {
