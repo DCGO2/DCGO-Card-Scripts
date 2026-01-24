@@ -100,21 +100,19 @@ namespace DCGO.CardEffects.BT21
                         if (card.Owner.GetBattleAreaDigimons().Count(HasDigimonOnOwnerBattleArea) > 1)
                         {
                             SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                            var maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(HasDigimonOnOwnerBattleArea));
-
+                            
                             selectPermanentEffect.SetUp(
                                     selectPlayer: card.Owner,
                                     canTargetCondition: HasDigimonOnOwnerBattleArea,
                                     canTargetCondition_ByPreSelecetedList: null,
                                     canEndSelectCondition: null,
-                                    maxCount: maxCount,
+                                    maxCount: 1,
                                     canNoSelect: true,
                                     canEndNotMax: false,
                                     selectPermanentCoroutine: SelectPermanentCoroutine,
                                     afterSelectPermanentCoroutine: null,
                                     mode: SelectPermanentEffect.Mode.Custom,
                                     cardEffect: activateClass);
-
 
                             IEnumerator SelectPermanentCoroutine(Permanent permanent)
                             {
@@ -152,7 +150,6 @@ namespace DCGO.CardEffects.BT21
                     return CardEffectCommons.CanTriggerOnPlay(hashtable, card)
                         && CardEffectCommons.IsExistOnBattleAreaDigimon(card);
                 }
-
             }
 
             #endregion
