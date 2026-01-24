@@ -280,7 +280,6 @@ namespace DCGO.CardEffects.EX11
                                         yield return ContinuousController.instance.StartCoroutine(selectedPermament.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass));
                                     }
                                 }
-
                             }
                         }
                     }
