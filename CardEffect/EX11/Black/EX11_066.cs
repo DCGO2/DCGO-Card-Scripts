@@ -153,7 +153,7 @@ namespace DCGO.CardEffects.EX11
                 }
 
                 bool PermanentCondition(Permanent permanent)
-                { 
+                {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.HasText("Vemmon");
                 }
@@ -163,7 +163,7 @@ namespace DCGO.CardEffects.EX11
                     yield return ContinuousController.instance.StartCoroutine(new SuspendPermanentsClass(new List<Permanent> { card.PermanentOfThisCard() }, hashtable).Tap());
 
                     if (card.Owner.LibraryCards.Count >= 1)
-                    { 
+                    {
                         List<Permanent> playedPermanents = new List<Permanent>();
 
                         foreach (Hashtable hash in CardEffectCommons.GetHashtablesFromHashtable(hashtable))
@@ -190,117 +190,96 @@ namespace DCGO.CardEffects.EX11
 
                         IEnumerator SelectCardCoroutine(CardSource cardSource)
                         {
-                            if (cardSource != null)
-                            {
-                                selectedCards.Add(cardSource);
-                            }
-
+                            if (cardSource != null) selectedCards.Add(cardSource);
                             yield return null;
                         }
 
                         if (selectedCards.Count > 0)
                         {
-                            yield return ContinuousController.instance.StartCoroutine(PermanentSelectorAndDigivolutionCardPlacer());
-                        }
-
-                        if (selectedCards.Count > 0)
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(PermanentSelectorAndDigivolutionCardPlacer());
-                        }
-
-                        IEnumerator PermanentSelectorAndDigivolutionCardPlacer()
-                        {
-                            List<CardSource> digivolutionCards_fixed = new List<CardSource>();
-
-                            if (targetPermanents.Count == 1)
+                            while (selectedCards.Any())
                             {
-                                Permanent permanent = targetPermanents[0];
-
-                                yield return ContinuousController.instance.StartCoroutine(SelectPermanentCoroutine(permanent));
-                            }
-
-                            else
-                            {
-                                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                                selectPermanentEffect.SetUp(
-                                    selectPlayer: card.Owner,
-                                    canTargetCondition: permanent => targetPermanents.Contains(permanent),
-                                    canTargetCondition_ByPreSelecetedList: null,
-                                    canEndSelectCondition: null,
-                                    maxCount: 1,
-                                    canNoSelect: false,
-                                    canEndNotMax: false,
-                                    selectPermanentCoroutine: SelectPermanentCoroutine,
-                                    afterSelectPermanentCoroutine: null,
-                                    mode: SelectPermanentEffect.Mode.Custom,
-                                    cardEffect: activateClass);
-
-                                selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
-
-                                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-                            }
-
-                            IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                            {
-                                if (selectedCards.Count == 1)
+                                Permanent selectedPermament = null;
+                                if (targetPermanents.Count > 1)
                                 {
-                                    List<CardSource> cardSources = selectedCards;
+                                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                                    digivolutionCards_fixed.AddRange(selectedCards);
-                                    selectedCards.Clear();
-
-                                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(digivolutionCards_fixed, "Digivolution Cards", true, true));
-                                    yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass));
-                                }
-
-                                else
-                                {
-                                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-
-                                    selectCardEffect.SetUp(
-                                        canTargetCondition: (cardSource) => true,
-                                        canTargetCondition_ByPreSelecetedList: null,
-                                        canEndSelectCondition: CanEndSelectCondition,
-                                        canNoSelect: () => false,
-                                        selectCardCoroutine: null,
-                                        afterSelectCardCoroutine: AfterSelectCardCoroutine,
-                                        message: "Specify the order to place the cards in the digivolution cards\n(cards will be placed so that cards with lower numbers are on top).",
-                                        maxCount: selectedCards.Count,
-                                        canEndNotMax: true,
-                                        isShowOpponent: true,
-                                        mode: SelectCardEffect.Mode.Custom,
-                                        root: SelectCardEffect.Root.Custom,
-                                        customRootCardList: selectedCards,
-                                        canLookReverseCard: true,
+                                    selectPermanentEffect.SetUp(
                                         selectPlayer: card.Owner,
+                                        canTargetCondition: permanent => targetPermanents.Contains(permanent),
+                                        canTargetCondition_ByPreSelecetedList: null,
+                                        canEndSelectCondition: null,
+                                        maxCount: 1,
+                                        canNoSelect: false,
+                                        canEndNotMax: false,
+                                        selectPermanentCoroutine: SelectPermanentCoroutine,
+                                        afterSelectPermanentCoroutine: null,
+                                        mode: SelectPermanentEffect.Mode.Custom,
                                         cardEffect: activateClass);
 
-                                    selectCardEffect.SetUpCustomMessage_ShowCard("Digivolution Cards");
-
-                                    bool CanEndSelectCondition(List<CardSource> cardSources)
+                                    IEnumerator SelectPermanentCoroutine(Permanent permanent)
                                     {
-                                        return !CardEffectCommons.HasNoElement(cardSources);
-                                    }
-
-                                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                                    IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
-                                    {
-                                        foreach (CardSource cardSource in cardSources)
-                                        {
-                                            digivolutionCards_fixed.Add(cardSource);
-                                            selectedCards.Remove(cardSource);
-                                        }
-
+                                        selectedPermament = permanent;
                                         yield return null;
                                     }
-
-                                    Permanent selectedPermanent = permanent;
-
-                                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(digivolutionCards_fixed, "Digivolution Cards", true, true));
-                                    yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass));
+                                    selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
+                                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                                 }
+                                else selectedPermament = targetPermanents[0];
+
+                                if (selectedPermament != null)
+                                {
+                                    List<CardSource> digivolutionCards_fixed = new List<CardSource>();
+                                    if (selectedCards.Count > 1)
+                                    {
+                                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                                        selectCardEffect.SetUp(
+                                            canTargetCondition: (cardSource) => true,
+                                            canTargetCondition_ByPreSelecetedList: null,
+                                            canEndSelectCondition: CanEndSelectCondition,
+                                            canNoSelect: () => false,
+                                            selectCardCoroutine: null,
+                                            afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                                            message: "Specify the order to place the cards in the digivolution cards\n(cards will be placed so that cards with lower numbers are on top).",
+                                            maxCount: selectedCards.Count,
+                                            canEndNotMax: true,
+                                            isShowOpponent: true,
+                                            mode: SelectCardEffect.Mode.Custom,
+                                            root: SelectCardEffect.Root.Custom,
+                                            customRootCardList: selectedCards,
+                                            canLookReverseCard: true,
+                                            selectPlayer: card.Owner,
+                                            cardEffect: activateClass);
+
+                                        selectCardEffect.SetUpCustomMessage_ShowCard("Digivolution Cards");
+
+                                        bool CanEndSelectCondition(List<CardSource> cardSources)
+                                        {
+                                            return !CardEffectCommons.HasNoElement(cardSources);
+                                        }
+
+                                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+
+                                        IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                                        {
+                                            digivolutionCards_fixed.AddRange(cardSources);
+                                            selectedCards.RemoveAll(cardSources.Contains);
+                                            yield return null;
+                                        }
+
+                                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(digivolutionCards_fixed, "Digivolution Cards", true, true));
+                                        yield return ContinuousController.instance.StartCoroutine(selectedPermament.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass));
+                                    }
+                                    else
+                                    {
+                                        digivolutionCards_fixed.AddRange(selectedCards);
+                                        selectedCards.Clear();
+
+                                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(digivolutionCards_fixed, "Digivolution Cards", true, true));
+                                        yield return ContinuousController.instance.StartCoroutine(selectedPermament.AddDigivolutionCardsBottom(digivolutionCards_fixed, activateClass));
+                                    }
+                                }
+
                             }
                         }
                     }
