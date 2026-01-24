@@ -376,19 +376,7 @@ namespace DCGO.CardEffects.BT18
                     {
                         #region play card from trash
                         Permanent playedPermanent = null;
-                        int frameID = -1;
-
-                        foreach (FieldCardFrame fieldCardFrame in selectedCardSource.Owner.fieldCardFrames)
-                        {
-                            if (card.CanPlayCardTargetFrame(fieldCardFrame, false, null))
-                            {
-                                if (fieldCardFrame.IsEmptyFrame())
-                                {
-                                    frameID = fieldCardFrame.FrameID;
-                                    break;
-                                }
-                            }
-                        }
+                        int frameID = selectedCardSource.PreferredFrame().FrameID;
 
                         if (0 <= frameID && frameID < card.Owner.fieldCardFrames.Count)
                         {

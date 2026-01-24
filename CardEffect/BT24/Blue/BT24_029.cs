@@ -108,7 +108,7 @@ namespace DCGO.CardEffects.BT24
                             yield return null;
                         }
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 card to gain cant unsuspend.", "The opponent is selecting 1 card to gain cant unsuspend.");
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 card to gain cant suspend.", "The opponent is selecting 1 card to gain cant suspend.");
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
                         if (selectedPermanent != null)
@@ -123,7 +123,7 @@ namespace DCGO.CardEffects.BT24
                             bool CanUseCondition1(Hashtable hashtable)
                             {
                                 return selectedPermanent.TopCard != null
-                                    && selectedPermanent.TopCard.CanNotBeAffected(activateClass);
+                                    && !selectedPermanent.TopCard.CanNotBeAffected(activateClass);
                             }
 
                             bool PermanentCondition(Permanent permanent) => permanent == selectedPermanent;

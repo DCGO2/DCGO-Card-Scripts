@@ -321,9 +321,9 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                    return CardEffectCommons.IsExistOnBattleArea(card)
                         && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, PermanentCondition)
-                        && !CardEffectCommons.IsOwnerEffect(activateClass, card);
+                        && !CardEffectCommons.IsByEffect(hashtable, cardEffect => CardEffectCommons.IsOwnerEffect(cardEffect, card));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -333,7 +333,7 @@ namespace DCGO.CardEffects.BT24
                     {
                         removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(PermanentCondition);
 
-                        return CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanPlaceToSecurityCondition);
+                        return CardEffectCommons.HasMatchConditionPermanent(CanPlaceToSecurityCondition);
                     }
                         
                     return false;
@@ -347,14 +347,16 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanPlaceToSecurityCondition(Permanent permanent)
                 {
-                    foreach (Permanent removed in removedPermanents)
+                    if (CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent))
                     {
-                        if (removed != permanent
-                            && CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
-                            && permanent.DigivolutionCards.Count == 0)
-                            return true;
+                        foreach (Permanent removed in removedPermanents)
+                        {
+                            if (removed != permanent)
+                                return permanent.DigivolutionCards.Count == 0;
                         }
-                        return false;
+                    }
+
+                    return false;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -402,7 +404,7 @@ namespace DCGO.CardEffects.BT24
                                 };
                                 #endregion
     
-                                CardSource toSecCard = selectedPermanent.TopCard;
+                                CardSource topCard = selectedPermanent.TopCard;
     
                                 yield return ContinuousController.instance.StartCoroutine(new IPutSecurityPermanent(
                                     permanent: selectedPermanent,
@@ -410,7 +412,7 @@ namespace DCGO.CardEffects.BT24
                                     toTop: false).PutSecurity()
                                 );
     
-                                if (card.Owner.SecurityCards.Contains(toSecCard) || card.Owner.Enemy.SecurityCards.Contains(toSecCard))
+                                if (card.Owner.SecurityCards.Contains(topCard) || card.Owner.Enemy.SecurityCards.Contains(topCard) || (selectedPermanent.IsToken && !CardEffectCommons.IsExistOnBattleArea(topCard)))
                                 {
                                     foreach (Permanent permanent in removedPermanents)
                                     {

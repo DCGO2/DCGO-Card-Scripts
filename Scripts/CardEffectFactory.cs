@@ -192,6 +192,94 @@ public partial class CardEffectFactory
 
     #endregion
 
+    #region Mind Link Tamer's effect to play themself from digivolution cards
+    public static ICardEffect PlayMindLinkTamerFromDigivolutionCards(CardSource card, string cardName, string effectDescription)
+    {
+        ActivateClass activateClass = new ActivateClass();
+        activateClass.SetUpICardEffect($"Play 1 [{cardName}] from this Digimon's digivolution cards", CanUseCondition, card);
+        activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, effectDescription);
+        activateClass.SetIsInheritedEffect(true);
+
+        bool CanSelectCardCondition(CardSource cardSource)
+        {
+            return cardSource.EqualsCardName(cardName)
+                && CardEffectCommons.CanPlayAsNewPermanent(cardSource: cardSource, payCost: false, cardEffect: activateClass);
+        }
+
+        bool CanUseCondition(Hashtable hashtable)
+        {
+            return CardEffectCommons.IsExistOnBattleArea(card);
+        }
+
+        bool CanActivateCondition(Hashtable hashtable)
+        {
+            return CardEffectCommons.IsExistOnBattleArea(card)
+                && card.PermanentOfThisCard().DigivolutionCards.Count(CanSelectCardCondition) >= 1;
+        }
+
+        IEnumerator ActivateCoroutine(Hashtable _hashtable)
+        {
+            if (CardEffectCommons.IsExistOnBattleArea(card))
+            {
+                Permanent selectedPermanent = card.PermanentOfThisCard();
+
+                if (selectedPermanent != null)
+                {
+                    if (selectedPermanent.DigivolutionCards.Count(CanSelectCardCondition) >= 1)
+                    {
+                        int maxCount = 1;
+
+                        List<CardSource> selectedCards = new List<CardSource>();
+
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                        selectCardEffect.SetUp(
+                                    canTargetCondition: CanSelectCardCondition,
+                                    canTargetCondition_ByPreSelecetedList: null,
+                                    canEndSelectCondition: null,
+                                    canNoSelect: () => true,
+                                    selectCardCoroutine: SelectCardCoroutine,
+                                    afterSelectCardCoroutine: null,
+                                    message: "Select 1 digivolution card to play.",
+                                    maxCount: maxCount,
+                                    canEndNotMax: false,
+                                    isShowOpponent: true,
+                                    mode: SelectCardEffect.Mode.Custom,
+                                    root: SelectCardEffect.Root.Custom,
+                                    customRootCardList: selectedPermanent.DigivolutionCards,
+                                    canLookReverseCard: true,
+                                    selectPlayer: card.Owner,
+                                    cardEffect: activateClass);
+
+                        selectCardEffect.SetUpCustomMessage("Select 1 digivolution card to play.",
+                            "The opponent is selecting 1 digivolution card to play.");
+                        selectCardEffect.SetUpCustomMessage_ShowCard("Played Card");
+
+                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+
+                        IEnumerator SelectCardCoroutine(CardSource cardSource)
+                        {
+                            selectedCards.Add(cardSource);
+
+                            yield return null;
+                        }
+
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                            cardSources: selectedCards,
+                            activateClass: activateClass,
+                            payCost: false,
+                            isTapped: false,
+                            root: SelectCardEffect.Root.DigivolutionCards,
+                            activateETB: true));
+                    }
+                }
+            }
+        }
+
+        return activateClass;
+    }   
+    #endregion
+
     #region Digimon's Security effect to play oneself after battle
 
     public static ICardEffect PlaySelfDigimonAfterBattleSecurityEffect(CardSource card, EffectDuration deleteDigimon = EffectDuration.UntilEndBattle)
@@ -524,40 +612,6 @@ public partial class CardEffectFactory
             return CardEffectCommons.CanTriggerOptionMainEffect(hashtable, card);
         }
 
-        IEnumerator ActivateCoroutine(Hashtable hashtable)
-        {
-            if (card.Owner.SecurityCards.Count >= 1)
-            {
-                #region Add Bottom Security Card to Hand
-
-                CardSource bottomCard = card.Owner.SecurityCards.Last();
-
-                yield return ContinuousController.instance.StartCoroutine(
-                    CardObjectController.AddHandCards(new List<CardSource>() { bottomCard }, false, activateClass));
-
-                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                    player: card.Owner,
-                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-
-                #endregion
-            }
-
-            #region Place Face up as Bottom Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: false, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
-        }
-
         return activateClass;
     }
 
@@ -579,40 +633,6 @@ public partial class CardEffectFactory
         bool CanUseCondition(Hashtable hashtable)
         {
             return CardEffectCommons.CanTriggerOptionMainEffect(hashtable, card);
-        }
-
-        IEnumerator ActivateCoroutine(Hashtable hashtable)
-        {
-            if (card.Owner.SecurityCards.Count >= 1)
-            {
-                #region Add Bottom Security Card to Hand
-
-                CardSource topCard = card.Owner.SecurityCards.First();
-
-                yield return ContinuousController.instance.StartCoroutine(
-                    CardObjectController.AddHandCards(new List<CardSource>() { topCard }, false, activateClass));
-
-                yield return ContinuousController.instance.StartCoroutine(new IReduceSecurity(
-                    player: card.Owner,
-                    refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
-
-                #endregion
-            }
-
-            #region Place Face up as Top Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: true, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
         }
 
         return activateClass;
@@ -638,22 +658,22 @@ public partial class CardEffectFactory
                 refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
 
             #endregion
-
-            #region Place Face up as Bottom Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: false, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
         }
+
+        #region Place Face up as Bottom Security Card
+
+        if (card.Owner.CanAddSecurity(activateClass))
+        {
+            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                card, toTop: false, faceUp: true));
+
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
+                .CreateRecoveryEffect(card.Owner));
+
+            yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
+        }
+
+        #endregion
     }
 
     #endregion
@@ -662,10 +682,9 @@ public partial class CardEffectFactory
 
     public static IEnumerator ReplaceTopSecurityWithFaceUpOptionEffect(CardSource card, ActivateClass activateClass)
     {
-
         if (card.Owner.SecurityCards.Count >= 1)
         {
-            #region Add Bottom Security Card to Hand
+            #region Add Top Security Card to Hand
 
             CardSource topCard = card.Owner.SecurityCards.First();
 
@@ -677,23 +696,22 @@ public partial class CardEffectFactory
                 refSkillInfos: ref ContinuousController.instance.nullSkillInfos).ReduceSecurity());
 
             #endregion
-
-
-            #region Place Face up as Top Security Card
-
-            if (card.Owner.CanAddSecurity(activateClass))
-            {
-                yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
-                    card, toTop: true, faceUp: true));
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
-                    .CreateRecoveryEffect(card.Owner));
-
-                yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
-            }
-
-            #endregion
         }
+
+        #region Place Face up as Top Security Card
+
+        if (card.Owner.CanAddSecurity(activateClass))
+        {
+            yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(
+                card, toTop: true, faceUp: true));
+
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>()
+                .CreateRecoveryEffect(card.Owner));
+
+            yield return ContinuousController.instance.StartCoroutine(new IAddSecurity(card).AddSecurity());
+        }
+
+        #endregion
     }
 
     #endregion

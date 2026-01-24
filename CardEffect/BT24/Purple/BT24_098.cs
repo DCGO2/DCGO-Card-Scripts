@@ -66,7 +66,7 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
-            #region All Turns - Delay
+            #region Your Turns - Delay
 
             if(timing == EffectTiming.OnEnterFieldAnyone)
             {
@@ -80,6 +80,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
+                        && CardEffectCommons.IsOwnerTurn(card)
                         && CardEffectCommons.CanDeclareOptionDelayEffect(card)
                         && CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, PermamentCondition);
                 }
@@ -100,6 +101,7 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon
                         && cardSource.HasLevel
                         && cardSource.Level <= 5
+                        && cardSource.EqualsTraits("Titan")
                         && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
                 }
 

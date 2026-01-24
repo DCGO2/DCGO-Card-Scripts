@@ -254,7 +254,7 @@ namespace DCGO.CardEffects.LM
                             mode: SelectPermanentEffect.Mode.Custom,
                             cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimom or Tamer to stun", "The opponent is selecting 1 Digimom or tamer to stun");
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon or Tamer to stun", "The opponent is selecting 1 Digimon or tamer to stun");
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
                         IEnumerator SelectPermanentCoroutine(Permanent permanent)
@@ -353,7 +353,7 @@ namespace DCGO.CardEffects.LM
                             mode: SelectPermanentEffect.Mode.Custom,
                             cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimom or Tamer to stun", "The opponent is selecting 1 Digimom or tamer to stun");
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon or Tamer to stun", "The opponent is selecting 1 Digimon or tamer to stun");
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
                         IEnumerator SelectPermanentCoroutine(Permanent permanent)

@@ -53,8 +53,7 @@ namespace DCGO.CardEffects.P
 
             bool CardSelectCondition(CardSource cardSource)
             {
-                return cardSource.IsDigimon &&
-                    cardSource.HasLevel &&
+                return cardSource.HasLevel &&
                     cardSource.Level <= 4 &&
                     (cardSource.EqualsTraits("Ice-Snow")
                     || cardSource.HasRockMineralTraits);

@@ -122,7 +122,7 @@ namespace DCGO.CardEffects.BT24
                     return cardSource.IsDigimon
                         && (cardSource.CardColors.Contains(CardColor.Blue) || cardSource.CardColors.Contains(CardColor.Yellow))
                         && cardSource.HasTSTraits
-                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, true, activateClass);
+                        && CardEffectCommons.CanPlayAsNewPermanent(cardSource, true, activateClass, fixedCost: cardSource.GetCostItself - 3);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -170,7 +170,7 @@ namespace DCGO.CardEffects.BT24
                             isTapped: false,
                             root: SelectCardEffect.Root.Hand,
                             activateETB: true,
-                            fixedCost: Math.max(0, selectedCard.GetCostItself - 3)));
+                            fixedCost: Math.Max(0, selectedCard.GetCostItself - 3)));
 
                 }
             }

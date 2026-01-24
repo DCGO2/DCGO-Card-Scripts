@@ -79,7 +79,7 @@ namespace DCGO.CardEffects.BT24
 
                 yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
-                if (CardEffectCommons.IsByEffect(hashtable, null))
+                if (CardEffectCommons.IsByEffect(hashtable, null) && CardEffectCommons.CanTriggerOnPlay(hashtable, card))
                 {
                     if (CardEffectCommons.HasMatchConditionPermanent(IsMinDPSuspended))
                     {

@@ -1613,12 +1613,13 @@ public class PlayPermanentClass
                 }
             }
 
+            GManager.instance.GetComponent<SelectDNACondition>().ResetSelectDNAConditionClass();
             GManager.instance.GetComponent<SelectDigiXrosClass>().ResetSelectDigiXrosClass();
             GManager.instance.GetComponent<SelectAssemblyClass>().ResetSelectAssemblyClass();
-            GManager.instance.GetComponent<SelectDNACondition>().ResetSelectDNAConditionClass();
 
             yield return GManager.instance.photonWaitController.StartWait("EndPlayPermanent");
         }
+
 
         // except [On Play] effect
         bool CardEffectCondition(ICardEffect cardEffect)
@@ -4236,6 +4237,7 @@ public class IBattle
                 List<Permanent> WinnerPermanents = new List<Permanent>();
                 List<Permanent> LoserPermanents = new List<Permanent>();
                 CardSource LoserCard = null;
+                bool WasTie = false;
 
                 //add log
                 string log = $"\nBattle:\n{AttackingPermanent.TopCard.BaseENGCardNameFromEntity}({AttackingPermanent.TopCard.CardID})";
@@ -4339,6 +4341,8 @@ public class IBattle
                     }
                     else if (battleResults == 0)
                     {
+                        WasTie = true;
+
                         WinnerPermanents.Add(AttackingPermanent);
                         WinnerPermanents.Add(DefendingPermanent);
 
@@ -4369,6 +4373,8 @@ public class IBattle
                     }
                     else if (AttackingPermanent.DP == DefendingCard.CardDP)
                     {
+                        WasTie = true;
+
                         if (AttackingPermanent.CanBeDestroyedByBattle(AttackingPermanent, DefendingPermanent, DefendingCard))
                         {
                             LoserPermanents.Add(AttackingPermanent);
@@ -4411,6 +4417,7 @@ public class IBattle
                 hashtable.Add("LoserPermanents", _LoserPermanents);
                 hashtable.Add("LoserPermanents_real", LoserPermanents);
                 hashtable.Add("LoserCard", LoserCard);
+                hashtable.Add("WasTie", WasTie);
                 hashtable.Add("battle", this);
 
                 // battle effect
@@ -5019,6 +5026,65 @@ public class IAddSecurity
 
         yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.StackSkillInfos(hashtable, EffectTiming.OnAddSecurity));
 
+        #endregion
+
+        #region "When face up cards are added"
+        if (!_cardSource.IsFlipped)
+        {
+            #region Hashtable setting
+
+            Hashtable faceUpHashtable = new Hashtable()
+            {
+                {"Player", _player},
+                {"CardSources", new List<CardSource> { _cardSource } }
+            };
+
+            #endregion
+
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.StackSkillInfos(faceUpHashtable, EffectTiming.OnFaceUpSecurityIncreased));
+        }
+        #endregion
+    }
+}
+
+#endregion
+
+#region Flip Security Face Up
+
+public class IFlipSecurity
+{
+    public IFlipSecurity(CardSource source)
+    {
+        _player = source.Owner;
+        _cardSource = source;
+    }
+
+    Player _player { get; set; }
+    CardSource _cardSource {  get; set; }
+
+    public IEnumerator FlipFaceUp()
+    {
+        if (!_player.SecurityCards.Contains(_cardSource) || _cardSource.IsFlipped)
+            yield return null;
+
+        _cardSource.SetFace();
+
+        #region "When face up cards are added"
+
+        #region Hashtable setting
+
+        Hashtable hashtable = new Hashtable()
+        {
+            {"Player", _player},
+            {"CardSources", new List<CardSource> { _cardSource } }
+        };
+
+        #endregion
+
+        if (!_cardSource.IsFlipped)
+        {
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.StackSkillInfos(hashtable, EffectTiming.OnFaceUpSecurityIncreased));
+        }
         #endregion
     }
 }

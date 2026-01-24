@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 // Hiyarimon
 namespace DCGO.CardEffects.EX11
@@ -15,6 +16,7 @@ namespace DCGO.CardEffects.EX11
                 CanAttackTargetDefendingPermanentClass canAttackTargetDefendingPermanentClass = new CanAttackTargetDefendingPermanentClass();
                 canAttackTargetDefendingPermanentClass.SetUpICardEffect($"Can attack to unsuspended Digimon", CanUseCondition, card);
                 canAttackTargetDefendingPermanentClass.SetUpCanAttackTargetDefendingPermanentClass(attackerCondition: AttackerCondition, defenderCondition: DefenderCondition, cardEffectCondition: CardEffectCondition);
+                canAttackTargetDefendingPermanentClass.SetIsInheritedEffect(true);
 
                 cardEffects.Add(canAttackTargetDefendingPermanentClass);
 
@@ -31,7 +33,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool DefenderCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(card, permanent)
+                    return CardEffectCommons.IsPermanentExistsOnOpponentBattleAreaDigimon(permanent, card)
                         && !permanent.IsSuspended;
                 }
 

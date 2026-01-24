@@ -325,7 +325,7 @@ namespace DCGO.CardEffects.P
 
                 string EffectDiscription()
                 {
-                    return "[On Deletion] By returning 3 [Composite], [Wicked God] or [DM] trait cards from your trash to the bottom of the deck, you may play 2 level 6 or lower [Composite], [Ver.3] or [Ver.5] trait Digimon cards from your trash without paying the costs. This effect can'’'t play cards of the same level.";
+                    return "[On Deletion] By returning 3 [Composite], [Wicked God] or [DM] trait cards from your trash to the bottom of the deck, you may play 2 level 6 or lower [Composite], [Ver.3] or [Ver.5] trait Digimon cards from your trash without paying the costs. This effect can't play cards of the same level.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -423,7 +423,7 @@ namespace DCGO.CardEffects.P
                             if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CardSelectCondition1)){
                                 List<CardSource> selectedCards1 = new List<CardSource>();
 
-                                int maxCount1 = Math.Min(2, CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, CardSelectCondition1));
+                                int maxCount1 = Math.Min(2, card.Owner.TrashCards.Filter(CardSelectCondition1).Map(cardSource => cardSource.Level).Distinct().Count());
 
                                 SelectCardEffect selectCardEffect1 = GManager.instance.GetComponent<SelectCardEffect>();
 

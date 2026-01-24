@@ -118,7 +118,7 @@ namespace DCGO.CardEffects.LM
                             mode: SelectPermanentEffect.Mode.Destroy,
                             cardEffect: activateClass);
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimom to delete", "The opponent is selecting 1 Digimom to delete");
+                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to delete", "The opponent is selecting 1 Digimon to delete");
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                     }
                 }

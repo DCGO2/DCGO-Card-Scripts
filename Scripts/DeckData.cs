@@ -455,7 +455,7 @@ public class DeckData
 
         DeckCards1 = DeckCards1
             .OrderBy(value => Array.IndexOf(DataBase.SetIDs, value.SetID))
-            .ThenBy(value => Array.IndexOf(DataBase.cardColors, value.cardColors[0]))
+            .ThenBy(value => Array.IndexOf(DataBase.cardColors, value.cardColors.Count > 0 ? value.cardColors[0] : "None"))
             .ThenBy(value => value.CardID)
             .ThenBy(value => value.CardIndex)
             .ToList();
