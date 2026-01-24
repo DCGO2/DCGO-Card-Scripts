@@ -179,7 +179,7 @@ namespace DCGO.CardEffects.EX11
                                 canTargetCondition: IsVemmon,
                                 message: "",
                                 mode: SelectCardEffect.Mode.Custom,
-                                maxCount: -1,
+                                maxCount: 2,
                                 selectCardCoroutine: SelectCardCoroutine),
                         remainingCardsPlace: RemainingCardsPlace.Trash,
                         activateClass: activateClass
