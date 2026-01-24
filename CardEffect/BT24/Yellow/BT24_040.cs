@@ -347,9 +347,16 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanPlaceToSecurityCondition(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnBattleAreaDigimon(permanent)
-                        && permanent.DigivolutionCards.Count == 0
-                        && removedPermanents.Some(removed => removed != permanent);
+                    if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
+                    {
+                        foreach (Permanent removed in removedPermanents)
+                        {
+                            if (removed != permanent)
+                                return permanent.DigivolutionCards.Count == 0;
+                        }
+                    }
+
+                    return false;
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
