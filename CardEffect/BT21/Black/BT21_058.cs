@@ -100,7 +100,7 @@ namespace DCGO.CardEffects.BT21
                         if (card.Owner.GetBattleAreaDigimons().Count(HasDigimonOnOwnerBattleArea) > 1)
                         {
                             SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-                            
+
                             selectPermanentEffect.SetUp(
                                     selectPlayer: card.Owner,
                                     canTargetCondition: HasDigimonOnOwnerBattleArea,
@@ -125,7 +125,7 @@ namespace DCGO.CardEffects.BT21
                         }
                         else
                         {
-                            selectedPermanent = card.Owner.GetBattleAreaDigimons().First(HasDigimonOnOwnerBattleArea);
+                            selectedPermanent = card.Owner.GetBattleAreaDigimons().FirstOrDefault();
                         }
 
                         if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(
