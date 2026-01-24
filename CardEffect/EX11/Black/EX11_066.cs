@@ -173,17 +173,17 @@ namespace DCGO.CardEffects.EX11
                     List<CardSource> selectedCards = new List<CardSource>();
 
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.RevealDeckTopCardsAndProcessForAll(
-                                     revealCount: 2,
-                                     simplifiedSelectCardCondition:
-                                     new SimplifiedSelectCardConditionClass(
-                                             canTargetCondition: IsVemmon,
-                                             message: "",
-                                             mode: SelectCardEffect.Mode.Custom,
-                                             maxCount: -1,
-                                             selectCardCoroutine: SelectCardCoroutine),
-                                     remainingCardsPlace: RemainingCardsPlace.Trash,
-                                     activateClass: activateClass
-                                 ));
+                        revealCount: 2,
+                        simplifiedSelectCardCondition:
+                        new SimplifiedSelectCardConditionClass(
+                                canTargetCondition: IsVemmon,
+                                message: "",
+                                mode: SelectCardEffect.Mode.Custom,
+                                maxCount: -1,
+                                selectCardCoroutine: SelectCardCoroutine),
+                        remainingCardsPlace: RemainingCardsPlace.Trash,
+                        activateClass: activateClass
+                    ));
 
                     IEnumerator SelectCardCoroutine(CardSource cardSource)
                     {
@@ -195,7 +195,7 @@ namespace DCGO.CardEffects.EX11
                         yield return null;
                     }
 
-                    if(selectedCards.Count == 1)
+                    if(selectedCards.Count > 0)
                     {
                         SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
@@ -213,38 +213,6 @@ namespace DCGO.CardEffects.EX11
                             cardEffect: activateClass);
 
                         selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution cards.", "The opponent is selecting 1 Digimon that will get the digivolution cards.");
-
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                        {
-                            Permanent selectedPermanent = permanent;
-
-                            yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect2(selectedCards, "Digivolution Cards", true, true));
-                            yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
-                        }
-                    }
-
-                    if (selectedCards.Count == 2)
-                    {
-                        int maxCount = Math.Min(2, CardEffectCommons.MatchConditionPermanentCount(permanent => targetPermanents.Contains(permanent)));
-
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: permanent => targetPermanents.Contains(permanent),
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: maxCount,
-                            canNoSelect: false,
-                            canEndNotMax: true,
-                            selectPermanentCoroutine: SelectPermanentCoroutine,
-                            afterSelectPermanentCoroutine: null,
-                            mode: SelectPermanentEffect.Mode.Custom,
-                            cardEffect: activateClass);
-
-                        selectPermanentEffect.SetUpCustomMessage("Select Digimon that will get the digivolution cards.", "The opponent is selecting Digimon that will get the digivolution cards.");
 
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
 
