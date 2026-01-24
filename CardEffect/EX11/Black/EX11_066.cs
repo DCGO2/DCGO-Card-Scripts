@@ -224,6 +224,11 @@ namespace DCGO.CardEffects.EX11
                             yield return ContinuousController.instance.StartCoroutine(permanent.AddDigivolutionCardsBottom(selectedCards, activateClass));
                         }
                     }
+
+                    if (selectedCards.Count > 0 && CardEffectCommons.MatchConditionOwnersPermanentCount(card, permanent => targetPermanents.Contains(permanent)) >= 2)
+                    {
+
+                    }
                 }
             }
 
