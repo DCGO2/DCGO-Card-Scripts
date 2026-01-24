@@ -178,7 +178,7 @@ namespace DCGO.CardEffects.EX11
                                      new SimplifiedSelectCardConditionClass(
                                              canTargetCondition: IsVemmon,
                                              message: "",
-                                             mode: SelectCardEffect.Mode.AddHand,
+                                             mode: SelectCardEffect.Mode.Custom,
                                              maxCount: -1,
                                              selectCardCoroutine: SelectCardCoroutine),
                                      remainingCardsPlace: RemainingCardsPlace.Trash,
