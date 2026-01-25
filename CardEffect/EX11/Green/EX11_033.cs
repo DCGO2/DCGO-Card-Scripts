@@ -37,7 +37,7 @@ namespace DCGO.CardEffects.EX11
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
                 bool validHandCard = CardEffectCommons.HasMatchConditionOwnersHand(card, IsMaquinamonCard);
-                bool validLinkCard = card.PermanentOfThisCard().DigivolutionCards.Some(IsMaquinamonCard);
+                bool validLinkCard = card.PermanentOfThisCard().LinkedCards.Some(IsMaquinamonCard);
 
                 if (validHandCard || validLinkCard)
                 {
