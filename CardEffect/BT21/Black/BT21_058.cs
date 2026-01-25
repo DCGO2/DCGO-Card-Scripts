@@ -122,6 +122,7 @@ namespace DCGO.CardEffects.BT21
                         selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution card(s).", "The opponent is selecting 1 Digimon that will get the digivolution card(s).");
                         yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                     }
+                    
                     else
                     {
                         selectedPermanent = card.Owner.GetBattleAreaDigimons().FirstOrDefault();
