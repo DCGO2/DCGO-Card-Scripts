@@ -40,8 +40,6 @@ namespace DCGO.CardEffects.BT21
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                List<CardSource> selectedCards = new List<CardSource>();
-
                 yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SimplifiedRevealDeckTopCardsAndSelect(
                     revealCount: 3,
                     simplifiedSelectCardConditions:
@@ -96,40 +94,39 @@ namespace DCGO.CardEffects.BT21
 
                     Permanent selectedPermanent = null;
 
-                    if (selectedCardsFromTrash.Count != 0 && card.Owner.GetBattleAreaDigimons().Count(HasDigimonOnOwnerBattleArea) > 1)
+                    if (selectedCardsFromTrash.Count != 0)
                     {
-                        SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                        selectPermanentEffect.SetUp(
-                                selectPlayer: card.Owner,
-                                canTargetCondition: HasDigimonOnOwnerBattleArea,
-                                canTargetCondition_ByPreSelecetedList: null,
-                                canEndSelectCondition: null,
-                                maxCount: 1,
-                                canNoSelect: true,
-                                canEndNotMax: false,
-                                selectPermanentCoroutine: SelectPermanentCoroutine,
-                                afterSelectPermanentCoroutine: null,
-                                mode: SelectPermanentEffect.Mode.Custom,
-                                cardEffect: activateClass);
-
-                        IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                        if (card.Owner.GetBattleAreaDigimons().Count(HasDigimonOnOwnerBattleArea) > 1)
                         {
-                            selectedPermanent = permanent;
-                            yield return null;
+                            SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                            selectPermanentEffect.SetUp(
+                                    selectPlayer: card.Owner,
+                                    canTargetCondition: HasDigimonOnOwnerBattleArea,
+                                    canTargetCondition_ByPreSelecetedList: null,
+                                    canEndSelectCondition: null,
+                                    maxCount: 1,
+                                    canNoSelect: true,
+                                    canEndNotMax: false,
+                                    selectPermanentCoroutine: SelectPermanentCoroutine,
+                                    afterSelectPermanentCoroutine: null,
+                                    mode: SelectPermanentEffect.Mode.Custom,
+                                    cardEffect: activateClass);
+
+                            IEnumerator SelectPermanentCoroutine(Permanent permanent)
+                            {
+                                selectedPermanent = permanent;
+                                yield return null;
+                            }
+
+                            selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution card(s).", "The opponent is selecting 1 Digimon that will get the digivolution card(s).");
+                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                         }
 
-                        selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon that will get the digivolution card(s).", "The opponent is selecting 1 Digimon that will get the digivolution card(s).");
-                        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                        else selectedPermanent = card.Owner.GetBattleAreaDigimons().FirstOrDefault();
+                        if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(
+                            selectedPermanent.AddDigivolutionCardsBottom(selectedCardsFromTrash, activateClass));
                     }
-                    
-                    else
-                    {
-                        selectedPermanent = card.Owner.GetBattleAreaDigimons().FirstOrDefault();
-                    }
-
-                    if (selectedPermanent != null) yield return ContinuousController.instance.StartCoroutine(
-                        selectedPermanent.AddDigivolutionCardsBottom(selectedCardsFromTrash, activateClass));
                 }
             }
 
