@@ -94,7 +94,7 @@ namespace DCGO.CardEffects.BT21
                     selectCardEffect.SetUpCustomMessage_ShowCard("Digivolution Card");
                     yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
-                    Permanent selectedPermanent = null!;
+                    Permanent selectedPermanent = null;
 
                     if (selectedCardsFromTrash.Count != 0 && card.Owner.GetBattleAreaDigimons().Count(HasDigimonOnOwnerBattleArea) > 1)
                     {
