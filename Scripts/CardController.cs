@@ -997,8 +997,9 @@ public class PlayCardClass
 
         #region filter cards
 
-        List<CardSource> permanentCards = playedCards_fixed.Filter(cardSource => cardSource.IsPermanent);
-        List<CardSource> optionCards = playedCards_fixed.Filter(cardSource => !cardSource.IsPermanent);
+        bool isDualCardAsOption(CardSource cardSource) => cardSource.IsDualCard && !isEvolution;
+        List<CardSource> permanentCards = playedCards_fixed.Filter(cardSource => cardSource.IsPermanent && !isDualCardAsOption(cardSource));
+        List<CardSource> optionCards = playedCards_fixed.Filter(cardSource => !cardSource.IsPermanent || isDualCardAsOption(cardSource));
 
         #region play permanent
 
@@ -1752,6 +1753,11 @@ public class UseOptionClass
             }
 
             #endregion
+
+            if (card.Owner.ExecutingCards.Contains(card) && card.IsDualCard)
+            {
+                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ArtsDigivolve(card));
+            }
 
             if (card.Owner.ExecutingCards.Contains(card))
             {
