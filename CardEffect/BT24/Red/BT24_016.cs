@@ -174,7 +174,7 @@ namespace DCGO.CardEffects.BT24
                 }
 
                 CardSource selectedCard = null;
-                if (card.Owner.Enemy.HandCards.Count() >= 1)
+                if (card.Owner.Enemy.HandCards.Count() >= 1 && card.Owner.CanAddSecurity(activateClass))
                 {
                     int maxCount = 1;
 
