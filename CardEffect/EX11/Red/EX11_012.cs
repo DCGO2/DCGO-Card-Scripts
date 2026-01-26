@@ -80,9 +80,9 @@ namespace DCGO.CardEffects.EX11
                         isShowOpponent: true,
                         mode: SelectCardEffect.Mode.Custom,
                         root: SelectCardEffect.Root.Trash,
-                        customRootCardList: null,
+                        customRootCardList: card.Owner.Enemy.TrashCards,
                         canLookReverseCard: true,
-                        selectPlayer: card.Owner.Enemy,
+                        selectPlayer: card.Owner,
                         cardEffect: activateClass);
 
                     selectCardEffect.SetUpCustomMessage("Select a card to return to bottom of deck.", "The opponent is selecting a card to return to bottom of deck.");
