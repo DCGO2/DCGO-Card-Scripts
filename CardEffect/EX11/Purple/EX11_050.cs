@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 // Loudmon
 namespace DCGO.CardEffects.EX11
@@ -193,7 +192,6 @@ namespace DCGO.CardEffects.EX11
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card) 
-                        && CardEffectCommons.HasMatchConditionPermanent(PermanentCondition)
                         && card.Owner.HandCards.Count <= 4;
                 }
 
@@ -207,7 +205,6 @@ namespace DCGO.CardEffects.EX11
                 bool CardSourceCondition(CardSource cardSource)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(cardSource)
-                        && cardSource.Owner == card.Owner
                         && cardSource == cardSource.PermanentOfThisCard().TopCard
                         && PermanentCondition(cardSource.PermanentOfThisCard());
                 }
