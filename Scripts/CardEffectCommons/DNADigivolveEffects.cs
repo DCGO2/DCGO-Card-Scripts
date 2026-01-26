@@ -17,7 +17,7 @@ public partial class CardEffectCommons
     private static int PlayTempPermanentReturnFrame(CardSource card, bool finalCard = false)
     {
         Permanent playedPermanent = null;
-        if (card = null)
+        if (card != null)
         {
             int frameID = card.PreferredFrame().FrameID;
 
