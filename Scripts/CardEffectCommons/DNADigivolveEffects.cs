@@ -556,7 +556,8 @@ public partial class CardEffectCommons
 
         if (dnaTarget != null)
         {
-            SetJogressEvoRootsController controller = new();
+            Component component = activateClass.EffectSourceCard.cEntity_EffectController.gameObject.AddComponent(typeof (SetJogressEvoRootsController));
+            SetJogressEvoRootsController controller = (SetJogressEvoRootsController)component;
             int[] _jogressEvoRootsFrameIDs = new int[0];
 
             yield return GManager.instance.photonWaitController.StartWait("DNA_Digivolve_by_Effect");
@@ -586,7 +587,7 @@ public partial class CardEffectCommons
                     yield return null;
                 }
 
-                activateClass.EffectSourceCard.PhotonView.RPC("SetJogressEvoRootsFrameIDs", RpcTarget.All, _jogressEvoRootsFrameIDs);
+                controller.photonView.RPC("SetJogressEvoRootsFrameIDs", RpcTarget.All, _jogressEvoRootsFrameIDs);
             }
             else
             {
@@ -619,7 +620,8 @@ public partial class CardEffectCommons
         }
     }
 
-    private class SetJogressEvoRootsController
+    //Private class used to register the callback so this doesn't need to be defined in every card that uses DNA by effect
+    private class SetJogressEvoRootsController : MonoBehaviourPunCallbacks
     {
         public bool EndSelect = false;
         public int[] JogressEvoRootsFrameIDs = new int[0];
