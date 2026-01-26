@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 // Yaamon
 namespace DCGO.CardEffects.EX11
@@ -19,6 +18,7 @@ namespace DCGO.CardEffects.EX11
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Digivolve into [Dark Dragon]/[Evil Dragon] trait for 1 less, if so trash 2 from hand.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDescription());
+                activateClass.SetIsInheritedEffect(true);
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
