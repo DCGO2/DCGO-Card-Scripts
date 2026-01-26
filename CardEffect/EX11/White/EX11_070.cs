@@ -64,12 +64,13 @@ namespace DCGO.CardEffects.EX11
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
+
                     #region DNA digivolve
                     yield return ContinuousController.instance.StartCoroutine(
                         CardEffectCommons.DNADigivolvePermanentsIntoHandOrTrashCard(
                             CanSelectDNACardCondition,
-                            true,
-                            true,
+                            payCost: true,
+                            isHand: true,
                             activateClass
                         ));
                     #endregion
