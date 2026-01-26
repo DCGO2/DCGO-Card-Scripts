@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -99,18 +99,26 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanBeEffectCandidate(ICardEffect cardEffect)
                 {
-                    
-                    if (cardEffect != null && 
-                        cardEffect is ActivateICardEffect && 
-                        !cardEffect.IsSecurityEffect && 
-                        (cardEffect.IsWhenDigivolving ||
-                            cardEffect.IsOnPlay))
-                            {
-                                Hashtable onPlayHashtable = CardEffectCommons.OnPlayCheckHashtableOfCard(cardEffect.EffectSourceCard);
-                                Hashtable digivolvingHashtable = CardEffectCommons.WhenDigivolvingCheckHashtableOfCard(cardEffect.EffectSourceCard);
 
-                                return cardEffect.CanUse(digivolvingHashtable) || cardEffect.CanUse(onPlayHashtable);
-                            }
+                    if (cardEffect != null &&
+                        cardEffect is ActivateICardEffect &&
+                        !cardEffect.IsSecurityEffect)
+                    {
+                        if (cardEffect.IsOnPlay)
+                        {
+                            Hashtable onPlayHashtable = CardEffectCommons.OnPlayCheckHashtableOfCard(cardEffect.EffectSourceCard);
+
+                            return cardEffect.CanUse(onPlayHashtable);
+                        }
+
+                        if (cardEffect.IsWhenDigivolving)
+                        {
+                            Hashtable digivolvingHashtable = CardEffectCommons.WhenDigivolvingCheckHashtableOfCard(cardEffect.EffectSourceCard);
+
+                            return cardEffect.CanUse(digivolvingHashtable);
+                        }
+                    }
+
                     return false;
                 }
 
