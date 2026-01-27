@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 // ExMaquinamon
 namespace DCGO.CardEffects.EX11
@@ -133,24 +134,20 @@ namespace DCGO.CardEffects.EX11
                         {
                             goto END_LOOP;
                         }
-                        int index = 0;
                         List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>();
                         if (validHandCardCount > 0)
                         {
-                            selectionElements.Add(new (message: $"Link from Hand", value : 1, spriteIndex: index));
-                            index++;
+                            selectionElements.Add(new (message: $"Link from Hand", value : 1, spriteIndex: 0));
                         }
                         if (validTrashCardCount > 0)
                         {
-                            selectionElements.Add(new (message: $"Link from Trash", value : 2, spriteIndex: index));
-                            index++;
+                            selectionElements.Add(new (message: $"Link from Trash", value : 2, spriteIndex: 0));
                         }
                         if (validDigivolutionCardCount > 0)
                         {
-                            selectionElements.Add(new (message: $"Link from Digivolution Cards", value : 3, spriteIndex: index));
-                            index++;
+                            selectionElements.Add(new (message: $"Link from Digivolution Cards", value : 3, spriteIndex: 0));
                         }
-                        selectionElements.Add( new (message: selectedCards.Count == 0 ? $"Don't link" : $"Finish Linking", value: 4, spriteIndex: index));
+                        selectionElements.Add( new (message: (selectedCards.Count == 0 ? $"Don't link" : $"Finish Linking"), value: 4, spriteIndex: 1));
 
                         string selectPlayerMessage = "From which area will you link a Maquinamon?";
                         string notSelectPlayerMessage = "The opponent is choosing from which area to select a card.";
