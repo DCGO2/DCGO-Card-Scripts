@@ -79,7 +79,7 @@ namespace DCGO.CardEffects.EX11
                         canEndNotMax: false,
                         isShowOpponent: true,
                         mode: SelectCardEffect.Mode.Custom,
-                        root: SelectCardEffect.Root.Trash,
+                        root: SelectCardEffect.Root.Custom,
                         customRootCardList: card.Owner.Enemy.TrashCards,
                         canLookReverseCard: true,
                         selectPlayer: card.Owner,
