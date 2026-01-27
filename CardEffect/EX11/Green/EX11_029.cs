@@ -339,7 +339,7 @@ namespace DCGO.CardEffects.EX11
             #endregion
 
             #region ESS - Piercing
-            if (timing == EffectTiming.None)
+            if (timing == EffectTiming.OnDetermineDoSecurityCheck)
             {
                 cardEffects.Add(CardEffectFactory.PierceSelfEffect(isInheritedEffect: true, card: card, condition: null));
             }
