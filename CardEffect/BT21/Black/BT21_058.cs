@@ -62,7 +62,7 @@ namespace DCGO.CardEffects.BT21
                     List<CardSource> selectedCardsFromTrash = new List<CardSource>();
 
                     SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-                    int maxCountFromTrash = Math.Max(2, CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, IsVemmon));
+                    int maxCountFromTrash = Math.Min(2, CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, IsVemmon));
 
                     selectCardEffect.SetUp(
                         canTargetCondition: IsVemmon,
