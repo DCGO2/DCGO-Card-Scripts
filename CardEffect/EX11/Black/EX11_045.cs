@@ -221,6 +221,7 @@ namespace DCGO.CardEffects.EX11
                 bool CanDigivolveCardCondition(CardSource cardSource, Permanent permanent)
                 {
                     return CanSelectCardCondition(cardSource)
+                        && CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && cardSource.CanPlayCardTargetFrame(permanent.PermanentFrame, false, activateClass);
                 }
 
