@@ -56,7 +56,8 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleArea(card);
+                    return CardEffectCommons.IsExistOnBattleArea(card)
+                        && CardEffectCommons.IsOwnerTurn(card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
