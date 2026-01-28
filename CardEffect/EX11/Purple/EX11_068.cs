@@ -87,7 +87,7 @@ namespace DCGO.CardEffects.EX11
 
                     if (triggeringEffect != null && triggeringEffect.EffectName == "Execute")
                     {
-                        CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                             targetPermanent: GManager.instance.attackProcess.AttackingPermanent,
                             cardCondition: CardSelectCondition,
                             payCost: true,
@@ -97,7 +97,7 @@ namespace DCGO.CardEffects.EX11
                             isHand: true,
                             activateClass: activateClass,
                             successProcess: null
-                        );
+                        ));
                     }
                 }
             }
