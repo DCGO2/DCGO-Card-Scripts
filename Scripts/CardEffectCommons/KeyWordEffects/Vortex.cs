@@ -8,9 +8,10 @@ public partial class CardEffectCommons
     {
         return IsExistOnBattleArea(cardSource) &&
                cardSource.PermanentOfThisCard().CanAttack(activateClass, isVortex: true) &&
-               HasMatchConditionOpponentsPermanent(cardSource, permanent =>
+               (HasMatchConditionOpponentsPermanent(cardSource, permanent =>
                    permanent.IsDigimon &&
-                   cardSource.PermanentOfThisCard().CanAttackTargetDigimon(permanent, activateClass, isVortex: true));
+                   cardSource.PermanentOfThisCard().CanAttackTargetDigimon(permanent, activateClass, isVortex: true))
+                || PermanentHasVortexCanAttackPlayers(cardSource.PermanentOfThisCard()));
     }
 
     #endregion
