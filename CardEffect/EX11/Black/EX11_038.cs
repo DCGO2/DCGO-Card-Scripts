@@ -1,0 +1,218 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+//Sunarizamon
+namespace DCGO.CardEffects.EX11
+{
+    public class EX11_038 : CEntity_Effect
+    {
+        public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
+        {
+            List<ICardEffect> cardEffects = new List<ICardEffect>();
+
+            #region Shared WM/OP
+
+            string SharedEffectName() => "By trashing 1 card, <Draw 1>.";
+
+            string SharedEffectDescription(string tag) => $"[{tag}] By trashing 1 [Mineral] or [Rock] trait card from your hand or your Digimon's digivolution cards, <Draw 1>.";
+
+            bool SharedCanActivateCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                    && (CardEffectCommons.HasMatchConditionOwnersHand(card, HasMineralOrRock)
+                        || CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanSelectTrashTargetCondition));
+            }
+
+            bool HasMineralOrRock(CardSource source)
+            {
+                return source.EqualsTraits("Mineral") 
+                        || source.EqualsTraits("Rock");
+            }
+
+            bool CanSelectTrashTargetCondition(Permanent permanent)
+            {
+                int totalSourceCount = 0;
+
+                totalSourceCount = permanent.DigivolutionCards.Count(HasMineralOrRock);
+
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                    && totalSourceCount >= 1;
+            }
+
+            IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
+            {
+                bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, HasMineralOrRock);
+                bool canSelectDigivolutionSource = CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanSelectTrashTargetCondition);
+
+                if (canSelectHand || canSelectDigivolutionSource)
+                {
+                    #region Setup Location Selection
+
+                    if (canSelectHand && canSelectDigivolutionSource)
+                    {
+                        List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
+                            {
+                                new SelectionElement<bool>(message: $"From hand", value : true, spriteIndex: 0),
+                                new SelectionElement<bool>(message: $"From digivolution source", value : false, spriteIndex: 1),
+                            };
+
+                        string selectPlayerMessage = "From which area do you select a card?";
+                        string notSelectPlayerMessage = "The opponent is choosing from which area to select a card.";
+
+                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
+                    }
+                    else
+                    {
+                        GManager.instance.userSelectionManager.SetBool(canSelectHand);
+                    }
+
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+
+                    #endregion
+
+                    bool fromHand = GManager.instance.userSelectionManager.SelectedBoolValue;
+
+                    bool discarded = false;
+
+                    if (fromHand)
+                    {                     
+                        SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+
+                        selectHandEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: HasMineralOrRock,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: 1,
+                            canNoSelect: true,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            selectCardCoroutine: null,
+                            afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                            mode: SelectHandEffect.Mode.Discard,
+                            cardEffect: activateClass);
+
+                        yield return StartCoroutine(selectHandEffect.Activate());
+
+                        IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                        {
+                            if (cardSources.Count >= 1)
+                            {
+                                discarded = true;
+
+                                yield return null;
+                            }
+                        }                      
+                    }
+                    else
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
+                            permanentCondition: CanSelectTrashTargetCondition,
+                            cardCondition: HasMineralOrRock,
+                            maxCount: 1,
+                            canNoTrash: true,
+                            isFromOnly1Permanent: false,
+                            activateClass: activateClass,
+                            afterSelectionCoroutine: AfterTrashedCards
+                        ));
+
+                        IEnumerator AfterTrashedCards(Permanent permanent, List<CardSource> cards)
+                        {
+                            discarded = true;
+
+                            yield return null;
+                        }
+                    }
+
+                    if (discarded)
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                    }
+                }
+            }
+
+            #endregion
+
+            #region When Moving
+
+            if (timing == EffectTiming.OnMove)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashTable) => SharedActivateCoroutine(hashTable, activateClass), -1, false, SharedEffectDescription("When Moving"));
+                cardEffects.Add(activateClass);
+
+                bool PermanentCondition(Permanent permanent)
+                {
+                    return permanent == card.PermanentOfThisCard();
+                }
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerOnMove(hashtable, PermanentCondition);
+                }
+            }
+            #endregion
+
+            #region On Play
+
+            if (timing == EffectTiming.OnEnterFieldAnyone)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+                activateClass.SetUpActivateClass(SharedCanActivateCondition, (hashTable) => SharedActivateCoroutine(hashTable, activateClass), -1, false, SharedEffectDescription("On Play"));
+                cardEffects.Add(activateClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+                }
+            }
+
+            #endregion
+
+            #region Inherited
+
+            if (timing == EffectTiming.OnDigivolutionCardDiscarded)
+            {
+                ActivateClass activateClass = new ActivateClass();
+                activateClass.SetUpICardEffect("<Draw 1>", CanUseCondition, card);
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+                activateClass.SetIsInheritedEffect(true);
+                cardEffects.Add(activateClass);
+
+                string EffectDiscription()
+                {
+                    return "When effects trash this card from a [Mineral] or [Rock] trait Digimon's digivolution cards, <Draw 1>.";
+                }
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    Permanent trashedPermanent = CardEffectCommons.GetPermanentFromHashtable(hashtable);
+                    return (trashedPermanent.TopCard.EqualsTraits("Mineral") || trashedPermanent.TopCard.EqualsTraits("Rock")) &&
+                           CardEffectCommons.CanTriggerOnTrashSelfDigivolutionCard(hashtable, cardEffect => cardEffect != null, card);
+                }
+
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.IsExistOnTrash(card);
+                }
+
+                IEnumerator ActivateCoroutine(Hashtable hashtable)
+                {
+                    if (card.Owner.LibraryCards.Count >= 1)
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                    }
+                }
+            }
+
+            #endregion
+
+            return cardEffects;
+        }
+    }
+}
