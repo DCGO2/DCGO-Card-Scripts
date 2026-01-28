@@ -215,13 +215,13 @@ namespace DCGO.CardEffects.EX11
                 bool CanDigivolvePermanentCondition(Permanent permanent)
                 {
                     return permanent != card.PermanentOfThisCard()
+                        && CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && CardEffectCommons.HasMatchConditionOwnersHand(card, cardSource => CanDigivolveCardCondition(cardSource, permanent));
                 }
 
                 bool CanDigivolveCardCondition(CardSource cardSource, Permanent permanent)
                 {
                     return CanSelectCardCondition(cardSource)
-                        && CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && cardSource.CanPlayCardTargetFrame(permanent.PermanentFrame, false, activateClass);
                 }
 
