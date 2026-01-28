@@ -24,7 +24,7 @@ namespace DCGO.CardEffects.EX11
             #endregion
 
             #region Vortex
-            if (timing == EffectTiming.None)
+            if (timing == EffectTiming.OnEndTurn)
             {
                 cardEffects.Add(CardEffectFactory.VortexSelfEffect(isInheritedEffect: false, card: card, condition: null));
             }
