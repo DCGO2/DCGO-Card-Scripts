@@ -100,12 +100,21 @@ namespace DCGO.CardEffects.EX11
 
                         if (selectedPermanent != null)
                         {
-                            List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>()
+                            bool CanDigivolveCondition(CardSource cardSource)
                             {
-                                new(message: "From hand", value: 0, spriteIndex: 0),
-                                new(message: "From trash", value: 1, spriteIndex: 0),
-                                new(message: "Do not digivolve", value: 2, spriteIndex: 1),
-                            };
+                                return CanSelectCardCondition(cardSource)
+                                    && cardSource.CanPlayCardTargetFrame(selectedPermanent.PermanentFrame, false, activateClass);
+                            }
+                            List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>();
+                            if (CardEffectCommons.HasMatchConditionOwnersHand(card, CanDigivolveCondition))
+                            {
+                                selectionElements.Add(new(message: "From hand", value: 0, spriteIndex: 0));
+                            }
+                            if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanDigivolveCondition))
+                            {
+                                selectionElements.Add(new(message: "From trash", value: 1, spriteIndex: 0));
+                            }
+                            selectionElements.Add(new(message: "Do not digivolve", value: 2, spriteIndex: 1));
 
                             string selectPlayerMessage = "From which area do you select a card?";
                             string notSelectPlayerMessage = "The opponent is choosing from which area to digivolve.";
