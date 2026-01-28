@@ -180,6 +180,7 @@ namespace DCGO.CardEffects.EX11
                 bool CanDigivolvePermanentCondition(Permanent permanent)
                 {
                     return permanent != card.PermanentOfThisCard()
+                        && CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && CardEffectCommons.HasMatchConditionOwnersHand(card, cardSource => CanDigivolveCardCondition(cardSource, permanent));
                 }
 
