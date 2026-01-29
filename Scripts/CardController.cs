@@ -4152,16 +4152,18 @@ public class IDestroySecurity
 
 public class IBattle
 {
-    public IBattle(Permanent AttackingPermanent, Permanent DefendingPermanent, CardSource DefendingCard)
+    public IBattle(Permanent AttackingPermanent, Permanent DefendingPermanent, CardSource DefendingCard, bool IsWithoutAttack = false)
     {
         this.AttackingPermanent = AttackingPermanent;
         this.DefendingPermanent = DefendingPermanent;
         this.DefendingCard = DefendingCard;
+        this.IsWithoutAttack = IsWithoutAttack;
     }
 
     public Permanent AttackingPermanent { get; private set; } = null;
     public Permanent DefendingPermanent { get; private set; } = null;
     CardSource DefendingCard { get; set; } = null;
+    bool IsWithoutAttack { get; set; } = false;
     public Hashtable hashtable { get; set; } = new Hashtable();
 
     public Permanent enemyPermanent(Permanent permanent)
@@ -4318,14 +4320,17 @@ public class IBattle
 
                 #endregion
 
-                // auto process check
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
+                if (!IsWithoutAttack)//If started by effect, do not perform processing during this battle
+                {
+                    // auto process check
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
 
-                GManager.instance.turnStateMachine.IsSelecting = true;
+                    GManager.instance.turnStateMachine.IsSelecting = true;
 
-                //Preemptive end battle if the attack process is ended
-                if (GManager.instance.attackProcess.IsEndAttack)
-                    yield break;
+                    //Preemptive end battle if the attack process is ended
+                    if (GManager.instance.attackProcess.IsEndAttack )
+                        yield break;
+                }
 
                 #region battle with permanent
 
@@ -4435,6 +4440,7 @@ public class IBattle
                     hashtable["LoserPermanents_real"] = LoserPermanents;
                 }
 
+                
                 // "At the end of battle" effect
                 yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.StackSkillInfos(hashtable, EffectTiming.OnEndBattle));
 
@@ -4448,7 +4454,7 @@ public class IBattle
                 #endregion
 
                 #region effect when determine whether to do security check
-
+                
                 List<SkillInfo> skillInfos_Pierce = AutoProcessing.GetSkillInfos(hashtable, EffectTiming.OnDetermineDoSecurityCheck)
                     .Filter(skillInfo => skillInfo.CardEffect != null && skillInfo.CardEffect.CanActivate(skillInfo.Hashtable));
 
@@ -4461,22 +4467,25 @@ public class IBattle
             }
         }
 
-        // auto process check
-        yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
-
-        #region reset effect until the end of battle
-
-        foreach (Player player in GManager.instance.turnStateMachine.gameContext.Players_ForTurnPlayer)
+        if (!IsWithoutAttack)//If started by effect, do not perform processing & don't reset effects relevant to the actual attack process
         {
-            foreach (Permanent permanent in player.GetFieldPermanents())
+            // auto process check
+            yield return ContinuousController.instance.StartCoroutine(GManager.instance.autoProcessing.AutoProcessCheck());
+
+            #region reset effect until the end of battle
+
+            foreach (Player player in GManager.instance.turnStateMachine.gameContext.Players_ForTurnPlayer)
             {
-                permanent.UntilEndBattleEffects = new List<Func<EffectTiming, ICardEffect>>();
+                foreach (Permanent permanent in player.GetFieldPermanents())
+                {
+                    permanent.UntilEndBattleEffects = new List<Func<EffectTiming, ICardEffect>>();
+                }
+
+                player.UntilEndBattleEffects = new List<Func<EffectTiming, ICardEffect>>();
             }
 
-            player.UntilEndBattleEffects = new List<Func<EffectTiming, ICardEffect>>();
+            #endregion
         }
-
-        #endregion
 
         if (AttackingPermanent != null)
         {
