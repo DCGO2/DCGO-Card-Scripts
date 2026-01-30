@@ -29,6 +29,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card) &&
+                            CardEffectCommons.IsOwnerTurn(card) &&
                            CardEffectCommons.CanTriggerOnAddDigivolutionCard(
                                hashtable: hashtable,
                                permanentCondition: permanent => permanent == card.PermanentOfThisCard(),
