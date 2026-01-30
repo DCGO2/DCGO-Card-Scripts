@@ -158,11 +158,6 @@ namespace DCGO.CardEffects.BT24
                 return CardEffectCommons.CanTriggerOnDeletion(hashtable, card);
             }
 
-            bool SharedCanActivateCondition1(Hashtable hashtable)
-            {
-                return CardEffectCommons.IsExistOnTrash(card);
-            }
-
             IEnumerator SharedActivateCoroutine1(Hashtable _hashtable, ActivateClass activateClass)
             {
                 if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, (cardSource) => CanSelectCardCondition1(cardSource, activateClass)))
@@ -215,8 +210,13 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName1(), SharedCanUseCondition1, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition1, hash => SharedActivateCoroutine1(hash, activateClass), -1, true, SharedEffectDescription1());
+                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine1(hash, activateClass), -1, true, SharedEffectDescription1());
                 cardEffects.Add(activateClass);
+
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanActivateOnDeletion(card);
+                }
             }
 
             #endregion
@@ -227,9 +227,14 @@ namespace DCGO.CardEffects.BT24
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect(SharedEffectName1(), SharedCanUseCondition1, card);
-                activateClass.SetUpActivateClass(SharedCanActivateCondition1, hash => SharedActivateCoroutine1(hash, activateClass), -1, true, SharedEffectDescription1());
+                activateClass.SetUpActivateClass(CanActivateCondition, hash => SharedActivateCoroutine1(hash, activateClass), -1, true, SharedEffectDescription1());
                 activateClass.SetIsLinkedEffect(true);
                 cardEffects.Add(activateClass);
+
+                bool CanActivateCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanActivateOnDeletionInherited(hashtable, card);
+                }
             }
 
             #endregion
