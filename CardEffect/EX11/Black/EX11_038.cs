@@ -38,93 +38,98 @@ namespace DCGO.CardEffects.EX11
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, HasMineralOrRock);
-                bool canSelectDigivolutionSource = CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanSelectTrashTargetCondition);
-
                 #region Setup Location Selection
 
-                if (canSelectHand && canSelectDigivolutionSource)
+                bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, HasMineralOrRock);
+                bool canSelectDigivolutionSource = CardEffectCommons.HasMatchConditionOwnersPermanent(card, CanSelectTrashTargetCondition);
+                List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>();
+
+                if (canSelectHand)
                 {
-                    List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
-                        {
-                            new SelectionElement<bool>(message: $"From hand", value : true, spriteIndex: 0),
-                            new SelectionElement<bool>(message: $"From digivolution source", value : false, spriteIndex: 1),
-                        };
-
-                    string selectPlayerMessage = "From which area do you select a card?";
-                    string notSelectPlayerMessage = "The opponent is choosing from which area to select a card.";
-
-                    GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
+                    selectionElements.Add(new(message: "From hand", value: 0, spriteIndex: 0));
                 }
-                else
+                if (canSelectDigivolutionSource)
                 {
-                    GManager.instance.userSelectionManager.SetBool(canSelectHand);
+                    selectionElements.Add(new(message: "From digivolution cards", value: 1, spriteIndex: 0));
                 }
+                selectionElements.Add(new(message: "Do not trash", value: 2, spriteIndex: 1));
 
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+                string selectPlayerMessage = "From which area will you trash a card?";
+                string notSelectPlayerMessage = "The opponent is choosing if they will activate their effect.";
+
+                GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements,
+                    selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage,
+                    notSelectPlayerMessage: notSelectPlayerMessage);
+
+                yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager
+                    .WaitForEndSelect());
+
+                int selection = GManager.instance.userSelectionManager.SelectedIntValue;
 
                 #endregion
-
-                bool fromHand = GManager.instance.userSelectionManager.SelectedBoolValue;
-
-                bool discarded = false;
-
-                if (fromHand)
+                if (selection != 2)
                 {
-                    SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+                    bool fromHand = GManager.instance.userSelectionManager.SelectedBoolValue;
 
-                    selectHandEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: HasMineralOrRock,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: 1,
-                        canNoSelect: true,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        selectCardCoroutine: null,
-                        afterSelectCardCoroutine: AfterSelectCardCoroutine,
-                        mode: SelectHandEffect.Mode.Discard,
-                        cardEffect: activateClass);
+                    bool discarded = false;
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
-
-                    IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                    if (selection == 1)
                     {
-                        if (cardSources.Count >= 1)
-                        {
-                            discarded = true;
+                        SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
-                            yield return null;
+                        selectHandEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: HasMineralOrRock,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: 1,
+                            canNoSelect: true,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            selectCardCoroutine: null,
+                            afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                            mode: SelectHandEffect.Mode.Discard,
+                            cardEffect: activateClass);
+
+                        yield return StartCoroutine(selectHandEffect.Activate());
+
+                        IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                        {
+                            if (cardSources.Count >= 1)
+                            {
+                                discarded = true;
+
+                                yield return null;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
-                        permanentCondition: CanSelectTrashTargetCondition,
-                        cardCondition: HasMineralOrRock,
-                        maxCount: 1,
-                        canNoTrash: true,
-                        isFromOnly1Permanent: false,
-                        activateClass: activateClass,
-                        afterSelectionCoroutine: AfterTrashedCards
-                    ));
-
-                    IEnumerator AfterTrashedCards(Permanent permanent, List<CardSource> cards)
+                    else
                     {
-                        if (cards.Count >= 1)
-                        {
-                            discarded = true;
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.SelectTrashDigivolutionCards(
+                            permanentCondition: CanSelectTrashTargetCondition,
+                            cardCondition: HasMineralOrRock,
+                            maxCount: 1,
+                            canNoTrash: true,
+                            isFromOnly1Permanent: false,
+                            activateClass: activateClass,
+                            afterSelectionCoroutine: AfterTrashedCards
+                        ));
 
-                            yield return null;
+                        IEnumerator AfterTrashedCards(Permanent permanent, List<CardSource> cards)
+                        {
+                            if (cards.Count >= 1)
+                            {
+                                discarded = true;
+
+                                yield return null;
+                            }
                         }
                     }
-                }
 
-                if (discarded)
-                {
-                    yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                    if (discarded)
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(new DrawClass(card.Owner, 1, activateClass).Draw());
+                    }
                 }
             }
 
