@@ -61,101 +61,101 @@ namespace DCGO.CardEffects.EX11
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, cardSource => CanSelectCardCondition(cardSource, activateClass));
-                bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, cardSource => CanSelectCardCondition(cardSource, activateClass));
-
                 #region Setup Location Selection
 
-                if (canSelectHand && canSelectTrash)
+                bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, cardSource => CanSelectCardCondition(cardSource, activateClass));
+                bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, cardSource => CanSelectCardCondition(cardSource, activateClass));
+                List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>();
+
+                if (canSelectHand)
                 {
-                    List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>()
-                    {
-                        new(message: "From hand", value: 0, spriteIndex: 0),
-                        new(message: "From trash", value: 1, spriteIndex: 0),
-                        new(message: "Do not play", value: 2, spriteIndex: 1),
-                    };
-
-                    string selectPlayerMessage = "From which area do you select a card?";
-                    string notSelectPlayerMessage = "The opponent is choosing from which area to select a card.";
-
-                    GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements,
-                                selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage,
-                                notSelectPlayerMessage: notSelectPlayerMessage);
+                    selectionElements.Add(new(message: "From hand", value: 0, spriteIndex: 0));
                 }
-                else
+                if (canSelectTrash)
                 {
-                    GManager.instance.userSelectionManager.SetBool(canSelectHand);
+                    selectionElements.Add(new(message: "From trash", value: 1, spriteIndex: 0));
                 }
+                selectionElements.Add(new(message: "Do not play", value: 2, spriteIndex: 1));
 
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+                string selectPlayerMessage = "From which area will you play?";
+                string notSelectPlayerMessage = "The opponent is choosing if they will activate their effect.";
+
+                GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements,
+                    selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage,
+                    notSelectPlayerMessage: notSelectPlayerMessage);
+
+                yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager
+                    .WaitForEndSelect());
 
                 int selection = GManager.instance.userSelectionManager.SelectedIntValue;
 
                 #endregion
 
-                CardSource selectedCard = null;
-
-                IEnumerator SelectCardCoroutine(CardSource cardSource)
-                {
-                    selectedCard = cardSource;
-                    yield return null;
-                }
-
                 #region Hand/Trash Card Selection & Play
 
-                if (selection == 0)
+                if (selection != 2)
                 {
-                    SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+                    CardSource selectedCard = null;
 
-                    selectHandEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: cardSource => CanSelectCardCondition(cardSource, activateClass),
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        maxCount: 1,
-                        canNoSelect: true,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        selectCardCoroutine: SelectCardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        mode: SelectHandEffect.Mode.Custom,
-                        cardEffect: activateClass);
+                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    {
+                        selectedCard = cardSource;
+                        yield return null;
+                    }
 
-                    selectHandEffect.SetUpCustomMessage("Select 1 Digimon to play.", "The opponent is selecting 1 Digimon to play.");
+                    if (selection == 0)
+                    {
+                        SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
-                    yield return StartCoroutine(selectHandEffect.Activate());
+                        selectHandEffect.SetUp(
+                            selectPlayer: card.Owner,
+                            canTargetCondition: cardSource => CanSelectCardCondition(cardSource, activateClass),
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            maxCount: 1,
+                            canNoSelect: true,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            selectCardCoroutine: SelectCardCoroutine,
+                            afterSelectCardCoroutine: null,
+                            mode: SelectHandEffect.Mode.Custom,
+                            cardEffect: activateClass);
 
-                    if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(
-                        CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Hand, true));
-                }
-                
-                if(selection == 1)
-                {
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                        selectHandEffect.SetUpCustomMessage("Select 1 Digimon to play.", "The opponent is selecting 1 Digimon to play.");
 
-                    selectCardEffect.SetUp(
-                        canTargetCondition: cardSource => CanSelectCardCondition(cardSource, activateClass),
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        canNoSelect: () => true,
-                        selectCardCoroutine: SelectCardCoroutine,
-                        afterSelectCardCoroutine: null,
-                        message: "Select 1 Digimon to play.",
-                        maxCount: 1,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        mode: SelectCardEffect.Mode.Custom,
-                        root: SelectCardEffect.Root.Trash,
-                        customRootCardList: null,
-                        canLookReverseCard: true,
-                        selectPlayer: card.Owner,
-                        cardEffect: activateClass);
+                        yield return StartCoroutine(selectHandEffect.Activate());
 
-                    selectCardEffect.SetUpCustomMessage("Select 1 Digimon to play.", "The opponent is selecting 1 Digimon to play.");
+                        if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(
+                            CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Hand, true));
+                    }
+                    else
+                    {
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
-                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-                    if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(
-                        CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Trash, true));
+                        selectCardEffect.SetUp(
+                            canTargetCondition: cardSource => CanSelectCardCondition(cardSource, activateClass),
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            canNoSelect: () => true,
+                            selectCardCoroutine: SelectCardCoroutine,
+                            afterSelectCardCoroutine: null,
+                            message: "Select 1 Digimon to play.",
+                            maxCount: 1,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            mode: SelectCardEffect.Mode.Custom,
+                            root: SelectCardEffect.Root.Trash,
+                            customRootCardList: null,
+                            canLookReverseCard: true,
+                            selectPlayer: card.Owner,
+                            cardEffect: activateClass);
+
+                        selectCardEffect.SetUpCustomMessage("Select 1 Digimon to play.", "The opponent is selecting 1 Digimon to play.");
+
+                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                        if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(
+                            CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Trash, true));
+                    }
                 }
 
                 #endregion
