@@ -3049,27 +3049,30 @@ public class CardSource : MonoBehaviour
         {
             if (targetPermanent.TopCard != null && !targetPermanent.TopCard.IsToken)
             {
-                if (this.CanLink(PayCost, allowBreeding))
+                if(allowBreeding || !targetPermanent.TopCard.Owner.GetBreedingAreaPermanents().Contains(targetPermanent))
                 {
-                    if (linkCondition != null)
+                    if (this.CanLink(PayCost, allowBreeding))
                     {
-                        if (linkCondition.digimonCondition(targetPermanent))
+                        if (linkCondition != null)
                         {
-                            if (PayCost)
+                            if (linkCondition.digimonCondition(targetPermanent))
                             {
-                                int cost = linkCondition.cost;
-
-                                cost = GetChangedCostItselef(cost, SelectCardEffect.Root.Hand, new List<Permanent>() { targetPermanent }, checkAvailability: true);
-
-                                if (Owner.MaxMemoryCost < cost)
+                                if (PayCost)
                                 {
-                                    return false;
-                                }
-                            }
+                                    int cost = linkCondition.cost;
 
-                            return true;
+                                    cost = GetChangedCostItselef(cost, SelectCardEffect.Root.Hand, new List<Permanent>() { targetPermanent }, checkAvailability: true);
+
+                                    if (Owner.MaxMemoryCost < cost)
+                                    {
+                                        return false;
+                                    }
+                                }
+
+                                return true;
+                            }
                         }
-                    }
+                }
                 }
             }
         }
