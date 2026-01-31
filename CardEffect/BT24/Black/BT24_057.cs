@@ -186,7 +186,7 @@ namespace DCGO.CardEffects.BT24
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.CanActivateOnDeletion(card);
+                    return CardEffectCommons.CanActivateOnDeletionInherited(card);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable _hashtable)
