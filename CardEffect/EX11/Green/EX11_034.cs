@@ -72,8 +72,8 @@ namespace DCGO.CardEffects.EX11
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && permanent.IsDigimon
-                    && permanent.TopCard.GetCostItself <= maxCost()
                     && permanent.TopCard.HasPlayCost;
+                    && permanent.TopCard.GetCostItself <= maxCost()
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
