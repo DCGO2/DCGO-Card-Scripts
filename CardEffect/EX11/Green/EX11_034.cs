@@ -72,8 +72,8 @@ namespace DCGO.CardEffects.EX11
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
                     && permanent.IsDigimon
-                    && permanent.TopCard.HasPlayCost;
-                    && permanent.TopCard.GetCostItself <= maxCost()
+                    && permanent.TopCard.HasPlayCost
+                    && permanent.TopCard.GetCostItself <= maxCost();
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -119,6 +119,7 @@ namespace DCGO.CardEffects.EX11
                         IEnumerator SelectCardCoroutine(CardSource cardSource)
                         {
                             selectedCard = cardSource;
+
                             yield return null;
                         }
 
@@ -142,9 +143,7 @@ namespace DCGO.CardEffects.EX11
 
                             selectHandEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
 
-                            yield return StartCoroutine(selectHandEffect.Activate());
-
-                            // Have selected card here to pass down to Top/Bottom Selection
+                            yield return StartCoroutine(selectHandEffect.Activate());                          
                         }
                         else
                         {
@@ -171,40 +170,38 @@ namespace DCGO.CardEffects.EX11
                             selectCardEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
 
                             yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                            // Have selected card here to pass down to Top/Bottom Selection
                         }
-                    }
 
-                    #endregion
+                        #endregion
 
-                    #region Top/Bottom Selection
+                        #region Top/Bottom Selection
 
-                    CardSource topCard = ; // Assigned from previous selection
+                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(new List<CardSource>() { selectedCard }, "Security Top card", true, true));
 
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(new List<CardSource>() { topCard }, "Security Top card", true, true));
-
-                    List<SelectionElement<bool>> selectionElements1 = new List<SelectionElement<bool>>()
+                        List<SelectionElement<bool>> selectionElements1 = new List<SelectionElement<bool>>()
                         {
                             new SelectionElement<bool>(message: $"Security Top", value : true, spriteIndex: 0),
                             new SelectionElement<bool>(message: $"Security Bottom", value : false, spriteIndex: 1),
                         };
 
-                    string selectPlayerMessage1 = "Do you place the card on the top or bottom of the security?";
-                    string notSelectPlayerMessage1 = "The opponent is choosing whether to place the card on the top or bottom of security.";
+                        string selectPlayerMessage1 = "Do you place the card on the top or bottom of the security?";
+                        string notSelectPlayerMessage1 = "The opponent is choosing whether to place the card on the top or bottom of security.";
 
-                    GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements1, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage1, notSelectPlayerMessage: notSelectPlayerMessage1);
+                        GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements1, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage1, notSelectPlayerMessage: notSelectPlayerMessage1);
 
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+                        yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
 
-                    #endregion
+                        bool toTop = GManager.instance.userSelectionManager.SelectedBoolValue;
 
-                    #region Send to Security
+                        #endregion
 
-                    // And this is where I would have the Send to Security code if I had any.
+                        #region Send to Security
 
-                    #endregion
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(selectedCard, toTop: toTop));
 
+                        #endregion
+
+                    }
                 }
 
                 #region Delete Opponent's Digimon
@@ -431,7 +428,7 @@ namespace DCGO.CardEffects.EX11
                         {
                             if (PermanentsCondition(targetPermanents))
                             {
-                                Cost -= ReducedPlayCost;
+                                Cost -= ReducedPlayCost();
                             }
                         }
                     }
