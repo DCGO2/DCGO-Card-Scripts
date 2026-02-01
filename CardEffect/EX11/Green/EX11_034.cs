@@ -354,6 +354,7 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition1(Hashtable hashtable, ActivateClass activateClass)
             {
+                activateClass.SetEffectName(SharedEffectName1(card.Owner.SecurityCards.Count(cardSource => !cardSource.IsFlipped)));
                 return CardEffectCommons.IsExistOnBattleArea(card)
                     && CardEffectCommons.HasMatchConditionOwnersHand(card, cardSource => CanSelectCardCondition1(cardSource, activateClass));
             }
