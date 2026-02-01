@@ -43,10 +43,10 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleArea(card) 
+                return CardEffectCommons.IsExistOnBattleArea(card)
                     && card.Owner.Enemy.GetBattleAreaPermanents().Count(permanent => permanent.IsDigimon || permanent.IsTamer) > 0;
             }
-            
+
             bool CanSelectPermanentCondition(Permanent permanent)
             {
                 return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
@@ -267,28 +267,14 @@ namespace DCGO.CardEffects.EX11
             {
                 bool CanUseCondition()
                 {
-                    if (CardEffectCommons.IsExistInSecurity(card, false))
-                    {
-                        if (CardEffectCommons.IsOpponentTurn(card))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return CardEffectCommons.IsExistInSecurity(card, false)
+                        && CardEffectCommons.IsOpponentTurn(card);
                 }
 
                 bool PermanentCondition(Permanent permanent)
                 {
-                    if (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card))
-                    {
-                        if (permanent.TopCard.EqualsTraits("Royal Base"))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                        && permanent.TopCard.EqualsTraits("Royal Base");
                 }
 
                 cardEffects.Add(CardEffectFactory.BlockerStaticEffect(
