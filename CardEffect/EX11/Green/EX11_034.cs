@@ -143,7 +143,7 @@ namespace DCGO.CardEffects.EX11
 
                             selectHandEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
 
-                            yield return StartCoroutine(selectHandEffect.Activate());                          
+                            yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
                         }
                         else
                         {
