@@ -73,7 +73,7 @@ namespace DCGO.CardEffects.EX11
 
                     bool discarded = false;
 
-                    if (selection == 1)
+                    if (selection == 0)
                     {
                         SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
