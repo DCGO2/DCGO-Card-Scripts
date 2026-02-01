@@ -56,7 +56,7 @@ namespace DCGO.CardEffects.EX11
                     && cardSource.HasDP
                     && cardSource.CardDP <= 4000
                     && cardSource.EqualsTraits("Puppet")
-                    && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass); ;
+                    && CardEffectCommons.CanPlayAsNewPermanent(cardSource, false, activateClass);
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -209,7 +209,7 @@ namespace DCGO.CardEffects.EX11
                 activateClass.SetUpICardEffect("Delete your 1 other token or [Puppet] Digimon to prevent this Digimon from leaving Battle Area", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetHashString("Substitute_EX9_032");
+                activateClass.SetHashString("Substitute_EX11_022");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
