@@ -175,7 +175,7 @@ namespace DCGO.CardEffects.EX11
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, CanSelectPermanentCondition)
+                        && CardEffectCommons.CanTriggerWhenPermanentRemoveField(hashtable, CanSelectPermanentCondition1)
                         && !CardEffectCommons.IsByEffect(hashtable, cardEffect => CardEffectCommons.IsOwnerEffect(cardEffect, card));
                 }
 
@@ -185,7 +185,7 @@ namespace DCGO.CardEffects.EX11
                         && card.Owner.SecurityCards.Count(source => !source.IsFlipped) > 0;
                 }
 
-                bool CanSelectPermanentCondition(Permanent permanent)
+                bool CanSelectPermanentCondition1(Permanent permanent)
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent.TopCard.HasRoyalBaseTraits;
@@ -198,7 +198,7 @@ namespace DCGO.CardEffects.EX11
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(CanSelectPermanentCondition);
+                    removedPermanents = CardEffectCommons.GetPermanentsFromHashtable(hashtable).Filter(CanSelectPermanentCondition1);
 
                     var flippedSecurity = false;
                     foreach (CardSource source in card.Owner.SecurityCards)
