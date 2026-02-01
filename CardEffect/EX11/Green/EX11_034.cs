@@ -221,7 +221,7 @@ namespace DCGO.CardEffects.EX11
 
             string SharedHashString1 = "EX11_034_WD_WA";
 
-            int ReducedPlayCost = Math.Min(0, card.Owner.SecurityCards.Count(source => !source.IsFlipped));
+            int ReducedPlayCost = Math.Max(0, card.Owner.SecurityCards.Count(source => !source.IsFlipped));
 
             string SharedEffectName1()
             {
