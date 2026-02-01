@@ -170,6 +170,7 @@ namespace DCGO.CardEffects.EX11
                         selectCardEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
 
                         yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                        
                         if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(
                             CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Trash, true));
                     }
