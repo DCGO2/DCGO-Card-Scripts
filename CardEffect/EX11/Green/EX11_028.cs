@@ -178,14 +178,14 @@ namespace DCGO.CardEffects.EX11
             if (timing == EffectTiming.OnEndBattle)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("May Unsuspend", CanUseCondition, card);
+                activateClass.SetUpICardEffect("Gain 1 memory.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
                 activateClass.SetHashString("EX11_032_ESS_Unsuspend");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription()
-                    => "[Your Turn] [Once Per Turn] When this Digimon wins a battle, this [Vortex Warriors] trait Digimon may unsuspend.";
+                    => "[Your Turn] [Once Per Turn] When this Digimon wins a battle, gain 1 memory.";
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
