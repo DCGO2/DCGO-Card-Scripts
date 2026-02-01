@@ -344,7 +344,7 @@ namespace DCGO.CardEffects.EX11
 
             string SharedEffectName1()
             {
-                return $"May play 1 card with [Royal Base] in it's text for {ReducedPlayCost} less.";
+                return $"May play 1 card with [Royal Base] in it's text for {ReducedPlayCost()} less.";
             }
 
             string SharedEffectDescription1(string tag)
@@ -402,7 +402,7 @@ namespace DCGO.CardEffects.EX11
                 #region Reduce play cost
 
                 ChangeCostClass changeCostClass = new ChangeCostClass();
-                changeCostClass.SetUpICardEffect($"Play Cost -{ReducedPlayCost}", CanUseCondition1, card);
+                changeCostClass.SetUpICardEffect($"Play Cost -{ReducedPlayCost()}", CanUseCondition1, card);
                 changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
                 Func<EffectTiming, ICardEffect> getCardEffect = GetCardEffect;
                 card.Owner.UntilCalculateFixedCostEffect.Add(getCardEffect);
