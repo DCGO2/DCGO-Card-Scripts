@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+// QueenBeemon
 namespace DCGO.CardEffects.EX11
 {
     public class EX11_034 : CEntity_Effect
@@ -53,6 +54,26 @@ namespace DCGO.CardEffects.EX11
             bool CanSelectCardCondition(CardSource cardSource)
             {
                 return cardSource.EqualsTraits("Royal Base");
+            }
+
+            int maxCost()
+            {
+                int maxCost = 8;
+
+                if (CardEffectCommons.IsExistOnBattleArea(card))
+                {
+                    maxCost += 2*card.Owner.SecurityCards.Count(source => !source.IsFlipped);
+                }
+
+                return maxCost;
+            }
+
+            bool CanSelectPermanentCondition(Permanent permanent)
+            {
+                return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
+                    && permanent.IsDigimon
+                    && permanent.TopCard.GetCostItself <= maxCost()
+                    && permanent.TopCard.HasPlayCost;
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
@@ -155,6 +176,74 @@ namespace DCGO.CardEffects.EX11
                 }
 
                 #endregion
+
+                #region Delete Opponent's Digimon
+
+                int _maxCost = maxCost();
+
+                List<Permanent> selectedPermanents = new List<Permanent>();
+
+                int maxCount = card.Owner.Enemy.GetBattleAreaPermanents().Count(CanSelectPermanentCondition);
+
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                selectPermanentEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: CanSelectPermanentCondition,
+                    canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
+                    canEndSelectCondition: CanEndSelectCondition,
+                    maxCount: maxCount,
+                    canNoSelect: false,
+                    canEndNotMax: true,
+                    selectPermanentCoroutine: null,
+                    afterSelectPermanentCoroutine: null,
+                    mode: SelectPermanentEffect.Mode.Destroy,
+                    cardEffect: activateClass);
+
+                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                bool CanEndSelectCondition(List<Permanent> permanents)
+                {
+                    if (permanents.Count <= 0)
+                    {
+                        return false;
+                    }
+
+                    int sumCost = 0;
+
+                    foreach (Permanent permanent1 in permanents)
+                    {
+                        sumCost += permanent1.TopCard.GetCostItself;
+                    }
+
+                    if (sumCost > _maxCost)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                bool CanTargetCondition_ByPreSelecetedList(List<Permanent> permanents, Permanent permanent)
+                {
+                    int sumCost = 0;
+
+                    foreach (Permanent permanent1 in permanents)
+                    {
+                        sumCost += permanent1.TopCard.GetCostItself;
+                    }
+
+                    sumCost += permanent.TopCard.GetCostItself;
+
+                    if (sumCost > _maxCost)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+
+            #endregion
 
             }
 
