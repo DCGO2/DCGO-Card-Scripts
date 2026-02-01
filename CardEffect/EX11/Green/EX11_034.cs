@@ -78,105 +78,134 @@ namespace DCGO.CardEffects.EX11
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                #region Setup Location Selection
-
-                bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, cardSource => CanSelectCardCondition(cardSource));
-                bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, cardSource => CanSelectCardCondition(cardSource));
-                List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>();
-
-                if (canSelectHand)
+                if (card.Owner.CanAddSecurity(activateClass))
                 {
-                    selectionElements.Add(new(message: "From hand", value: 0, spriteIndex: 0));
-                }
-                if (canSelectTrash)
-                {
-                    selectionElements.Add(new(message: "From trash", value: 1, spriteIndex: 0));
-                }
-                selectionElements.Add(new(message: "Do not place", value: 2, spriteIndex: 1));
+                    #region Setup Location Selection
 
-                string selectPlayerMessage = "From which area will you select?";
-                string notSelectPlayerMessage = "The opponent is choosing if they will activate their effect.";
+                    bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, cardSource => CanSelectCardCondition(cardSource));
+                    bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, cardSource => CanSelectCardCondition(cardSource));
+                    List<SelectionElement<int>> selectionElements = new List<SelectionElement<int>>();
 
-                GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements,
-                    selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage,
-                    notSelectPlayerMessage: notSelectPlayerMessage);
-
-                yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager
-                    .WaitForEndSelect());
-
-                int selection = GManager.instance.userSelectionManager.SelectedIntValue;
-
-                #endregion
-
-                #region Hand/Trash Card Selection
-
-                if (selection != 2)
-                {
-                    CardSource selectedCard = null;
-
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
+                    if (canSelectHand)
                     {
-                        selectedCard = cardSource;
-                        yield return null;
+                        selectionElements.Add(new(message: "From hand", value: 0, spriteIndex: 0));
+                    }
+                    if (canSelectTrash)
+                    {
+                        selectionElements.Add(new(message: "From trash", value: 1, spriteIndex: 0));
+                    }
+                    selectionElements.Add(new(message: "Do not place", value: 2, spriteIndex: 1));
+
+                    string selectPlayerMessage = "From which area will you select?";
+                    string notSelectPlayerMessage = "The opponent is choosing if they will activate their effect.";
+
+                    GManager.instance.userSelectionManager.SetIntSelection(selectionElements: selectionElements,
+                        selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage,
+                        notSelectPlayerMessage: notSelectPlayerMessage);
+
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager
+                        .WaitForEndSelect());
+
+                    int selection = GManager.instance.userSelectionManager.SelectedIntValue;
+
+                    #endregion
+
+                    #region Hand/Trash Card Selection
+
+                    if (selection != 2)
+                    {
+                        CardSource selectedCard = null;
+
+                        IEnumerator SelectCardCoroutine(CardSource cardSource)
+                        {
+                            selectedCard = cardSource;
+                            yield return null;
+                        }
+
+                        if (selection == 0)
+                        {
+                            SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+
+                            selectHandEffect.SetUp(
+                                selectPlayer: card.Owner,
+                                canTargetCondition: cardSource => CanSelectCardCondition(cardSource),
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                maxCount: 1,
+                                canNoSelect: true,
+                                canEndNotMax: false,
+                                isShowOpponent: true,
+                                selectCardCoroutine: SelectCardCoroutine,
+                                afterSelectCardCoroutine: null,
+                                mode: SelectHandEffect.Mode.Custom,
+                                cardEffect: activateClass);
+
+                            selectHandEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
+
+                            yield return StartCoroutine(selectHandEffect.Activate());
+
+                            // Have selected card here to pass down to Top/Bottom Selection
+                        }
+                        else
+                        {
+                            SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                            selectCardEffect.SetUp(
+                                canTargetCondition: cardSource => CanSelectCardCondition(cardSource),
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                canNoSelect: () => true,
+                                selectCardCoroutine: SelectCardCoroutine,
+                                afterSelectCardCoroutine: null,
+                                message: "Select 1 card to place.",
+                                maxCount: 1,
+                                canEndNotMax: false,
+                                isShowOpponent: true,
+                                mode: SelectCardEffect.Mode.Custom,
+                                root: SelectCardEffect.Root.Trash,
+                                customRootCardList: null,
+                                canLookReverseCard: true,
+                                selectPlayer: card.Owner,
+                                cardEffect: activateClass);
+
+                            selectCardEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
+
+                            yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+
+                            // Have selected card here to pass down to Top/Bottom Selection
+                        }
                     }
 
-                    if (selection == 0)
-                    {
-                        SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
+                    #endregion
 
-                        selectHandEffect.SetUp(
-                            selectPlayer: card.Owner,
-                            canTargetCondition: cardSource => CanSelectCardCondition(cardSource),
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            maxCount: 1,
-                            canNoSelect: true,
-                            canEndNotMax: false,
-                            isShowOpponent: true,
-                            selectCardCoroutine: SelectCardCoroutine,
-                            afterSelectCardCoroutine: null,
-                            mode: SelectHandEffect.Mode.Custom,
-                            cardEffect: activateClass);
+                    #region Top/Bottom Selection
 
-                        selectHandEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
+                    CardSource topCard = ; // Assigned from previous selection
 
-                        yield return StartCoroutine(selectHandEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().ShowCardEffect(new List<CardSource>() { topCard }, "Security Top card", true, true));
 
-                        if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(
-                            CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Hand, true));
-                    }
-                    else
-                    {
-                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    List<SelectionElement<bool>> selectionElements1 = new List<SelectionElement<bool>>()
+                        {
+                            new SelectionElement<bool>(message: $"Security Top", value : true, spriteIndex: 0),
+                            new SelectionElement<bool>(message: $"Security Bottom", value : false, spriteIndex: 1),
+                        };
 
-                        selectCardEffect.SetUp(
-                            canTargetCondition: cardSource => CanSelectCardCondition(cardSource),
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            canNoSelect: () => true,
-                            selectCardCoroutine: SelectCardCoroutine,
-                            afterSelectCardCoroutine: null,
-                            message: "Select 1 card to place.",
-                            maxCount: 1,
-                            canEndNotMax: false,
-                            isShowOpponent: true,
-                            mode: SelectCardEffect.Mode.Custom,
-                            root: SelectCardEffect.Root.Trash,
-                            customRootCardList: null,
-                            canLookReverseCard: true,
-                            selectPlayer: card.Owner,
-                            cardEffect: activateClass);
+                    string selectPlayerMessage1 = "Do you place the card on the top or bottom of the security?";
+                    string notSelectPlayerMessage1 = "The opponent is choosing whether to place the card on the top or bottom of security.";
 
-                        selectCardEffect.SetUpCustomMessage("Select 1 card to place.", "The opponent is selecting 1 card to place.");
+                    GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements1, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage1, notSelectPlayerMessage: notSelectPlayerMessage1);
 
-                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
 
-                        if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(
-                            CardEffectCommons.PlayPermanentCards(new List<CardSource>() { selectedCard }, activateClass, false, false, SelectCardEffect.Root.Trash, true));
-                    }
+                    #endregion
+
+                    #region Send to Security
+
+                    // And this is where I would have the Send to Security code if I had any.
+
+                    #endregion
+
                 }
-
-                #endregion
 
                 #region Delete Opponent's Digimon
 
