@@ -45,10 +45,7 @@ namespace DCGO.CardEffects.EX11
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.IsExistOnBattleArea(card)
-                    && (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition)
-                        || CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition)
-                        || card.Owner.Enemy.GetBattleAreaDigimons().Count() > 0);
+                return CardEffectCommons.IsExistOnBattleArea(card);
             }
 
             bool CanSelectCardCondition(CardSource cardSource)
