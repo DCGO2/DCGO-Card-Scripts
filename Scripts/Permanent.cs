@@ -1142,7 +1142,7 @@ public class Permanent
 
                 if (LinkedCards.Contains(addedDigivolutionCard))
                 {
-                    RemoveLinkedCard(addedDigivolutionCard, trashCard: false);
+                    yield return ContinuousController.instance.StartCoroutine(RemoveLinkedCard(addedDigivolutionCard, trashCard: false));
                 }
                 else if (addedDigivolutionCard == TopCard)
                 {

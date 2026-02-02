@@ -391,7 +391,14 @@ public class CardObjectController : MonoBehaviour
             {
                 if (permanent.cardSources.Contains(cardSource))
                 {
-                    yield return ContinuousController.instance.StartCoroutine(permanent.RemoveCardSource(cardSource));
+                    if (permanent.LinkedCards.Contains(cardSource))
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(permanent.RemoveLinkedCard(cardSource, trashCard: false));
+                    }
+                    else
+                    {
+                        yield return ContinuousController.instance.StartCoroutine(permanent.RemoveCardSource(cardSource));
+                    }
                 }
             }
         }

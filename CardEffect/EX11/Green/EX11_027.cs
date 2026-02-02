@@ -65,7 +65,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectLinkTarget(Permanent permanent, CardSource cardSource)
                 {
-                    return permanent.IsDigimon
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent != card.PermanentOfThisCard()
                         && cardSource.CanLinkToTargetPermanent(permanent, false);
                 }
@@ -106,14 +106,12 @@ namespace DCGO.CardEffects.EX11
                         {
                             new (message: $"Link this Maquinamon", value : 1, spriteIndex: 0)
                         };
-                        int index = 1;
                         bool canLinkHand = CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
                         if (canLinkHand)
                         {
-                            selectionElements.Add( new (message: $"Link from Hand", value : 2, spriteIndex: 1));
-                            index++;
+                            selectionElements.Add( new (message: $"Link from Hand", value : 2, spriteIndex: 0));
                         }
-                        selectionElements.Add( new (message: $"Don't link", value: 3, spriteIndex: index));
+                        selectionElements.Add( new (message: $"Don't link", value: 3, spriteIndex: 1));
 
                         string selectPlayerMessage = canLinkHand ? "From which area will you link a Maquinamon?" : "Will you link your Maquinamon to another Digimon?";
                         string notSelectPlayerMessage = "The opponent is choosing from which area to select a card.";
