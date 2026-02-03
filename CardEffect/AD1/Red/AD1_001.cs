@@ -123,7 +123,7 @@ namespace DCGO.CardEffects.AD1
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("may digivolve into a Digimon card with [Greymon] in its name in the hand for free.", CanUseCondition, card);
+                activateClass.SetUpICardEffect("May digivolve into a Digimon card with [Greymon] in its name in the hand for free.", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
