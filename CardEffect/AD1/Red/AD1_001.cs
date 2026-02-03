@@ -153,7 +153,7 @@ namespace DCGO.CardEffects.AD1
 
                 bool ActivateRequirement(Permanent permanent)
                 {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && (permanent.TopCard.ContainsCardName("Garurumon")
                             || permanent.TopCard.ContainsCardName("Tai Kamiya"));
                 }
