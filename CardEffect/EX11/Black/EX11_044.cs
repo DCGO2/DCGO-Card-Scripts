@@ -63,14 +63,12 @@ namespace DCGO.CardEffects.EX11
 
             bool CanSelectPermanentCondition1(Permanent permanent)
             {
-                return CardEffectCommons.IsMaxCost(permanent, card.Owner.Enemy, false)
-                    && (permanent.IsDigimon 
-                        || permanent.IsTamer);
+                return CardEffectCommons.IsMaxCost(permanent, card.Owner.Enemy, false);
             }
 
             bool HasProperTrait(CardSource cardSource)
             {
-                return cardSource.EqualsTraits("Mineral") 
+                return cardSource.EqualsTraits("Mineral")
                         || cardSource.EqualsTraits("Rock");
             }
 
@@ -202,17 +200,12 @@ namespace DCGO.CardEffects.EX11
                 string EffectDiscription()
                 {
                     return "[All Turns] [Once Per Turn] When effects trash any of this Digimon's digivolution cards, you may place 3 [Mineral] or [Rock] trait cards from your trash as this Digimon's bottom digivolution cards.";
-                }
-
-                bool PermanentCondition(Permanent permanent)
-                {
-                    return card.Owner.GetBattleAreaDigimons().Contains(card.PermanentOfThisCard());
-                }
+                }              
 
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleArea(card)
-                        && CardEffectCommons.CanTriggerOnTrashDigivolutionCard(hashtable, PermanentCondition, effect => effect != null, source => source != null);
+                        && CardEffectCommons.CanTriggerOnTrashSelfDigivolutionCard(hashtable, effect => effect != null, card);
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -225,6 +218,8 @@ namespace DCGO.CardEffects.EX11
                 {
                     List<CardSource> selectedCards = new List<CardSource>();
 
+                    int maxCount = Math.Min(3, CardEffectCommons.MatchConditionOwnersCardCountInTrash(card, HasProperTrait));
+
                     SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                     selectCardEffect.SetUp(
@@ -235,7 +230,7 @@ namespace DCGO.CardEffects.EX11
                         selectCardCoroutine: SelectCardCoroutine,
                         afterSelectCardCoroutine: null,
                         message: "Select [Mineral] or [Rock] to place on bottom of digivolution cards\n(cards will be placed so that cards with lower numbers are on top).",
-                        maxCount: 3,
+                        maxCount: maxCount,
                         canEndNotMax: true,
                         isShowOpponent: true,
                         mode: SelectCardEffect.Mode.Custom,
