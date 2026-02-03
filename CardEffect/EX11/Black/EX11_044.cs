@@ -231,7 +231,7 @@ namespace DCGO.CardEffects.EX11
                         afterSelectCardCoroutine: null,
                         message: "Select [Mineral] or [Rock] to place on bottom of digivolution cards\n(cards will be placed so that cards with lower numbers are on top).",
                         maxCount: maxCount,
-                        canEndNotMax: true,
+                        canEndNotMax: false,
                         isShowOpponent: true,
                         mode: SelectCardEffect.Mode.Custom,
                         root: SelectCardEffect.Root.Trash,
