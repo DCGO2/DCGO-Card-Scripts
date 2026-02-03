@@ -226,7 +226,7 @@ namespace DCGO.CardEffects.EX11
                         canTargetCondition: HasProperTrait,
                         canTargetCondition_ByPreSelecetedList: null,
                         canEndSelectCondition: CanEndSelectCondition,
-                        canNoSelect: () => true,
+                        canNoSelect: () => false,
                         selectCardCoroutine: SelectCardCoroutine,
                         afterSelectCardCoroutine: null,
                         message: "Select [Mineral] or [Rock] to place on bottom of digivolution cards\n(cards will be placed so that cards with lower numbers are on top).",
