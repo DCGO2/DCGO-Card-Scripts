@@ -18,7 +18,7 @@ namespace DCGO.CardEffects.AD1
             {
                 static bool PermanentCondition(Permanent targetPermanent)
                 {
-                    return targetPermanent.TopCard.IsLevel3 
+                    return targetPermanent.TopCard.IsLevel3
                         && (targetPermanent.TopCard.HasText("Omnimon")
                             || targetPermanent.TopCard.EqualsTraits("ADVENTURE"));
                 }
@@ -142,7 +142,6 @@ namespace DCGO.CardEffects.AD1
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-                    // Missing some kind of check here to make sure the played/digivolved have the ActivateRequirement
                 }
 
                 bool TriggerRequirement(Permanent permanent)
@@ -150,13 +149,6 @@ namespace DCGO.CardEffects.AD1
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                         && (permanent.IsDigimon
                             || permanent.IsTamer);
-                }
-
-                bool ActivateRequirement(Permanent permanent)
-                {
-                    return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
-                        && (permanent.TopCard.ContainsCardName("Garurumon")
-                            || permanent.TopCard.ContainsCardName("Tai Kamiya"));
                 }
 
                 bool CanSelectCardCondition1(CardSource cardSource)
@@ -167,7 +159,16 @@ namespace DCGO.CardEffects.AD1
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                    List<Permanent> permanents = CardEffectCommons.GetPlayedPermanentsFromEnterFieldHashtable(
+                        hashtable: hashtable,
+                        rootCondition: null);
+
+                    if (permanents != null)
+                    {
+                        if (permanents.Some(permanent => permanent.TopCard.ContainsCardName("Garurumon") 
+                            || permanent.TopCard.ContainsCardName("Tai Kamiya")))
+                        {
+                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                                 targetPermanent: card.PermanentOfThisCard(),
                                 cardCondition: CanSelectCardCondition1,
                                 payCost: false,
@@ -177,6 +178,8 @@ namespace DCGO.CardEffects.AD1
                                 isHand: true,
                                 activateClass: activateClass,
                                 successProcess: null));
+                        }
+                    }
                 }
             }
 
