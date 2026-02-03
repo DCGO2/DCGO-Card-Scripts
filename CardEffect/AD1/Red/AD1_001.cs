@@ -142,6 +142,7 @@ namespace DCGO.CardEffects.AD1
                 bool CanActivateCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                    // Missing some kind of check here to make sure the played/digivolved have the ActivateRequirement
                 }
 
                 bool TriggerRequirement(Permanent permanent)
