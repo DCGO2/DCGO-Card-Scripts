@@ -136,12 +136,19 @@ namespace DCGO.CardEffects.AD1
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, TriggerRequirement)
-                            || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, TriggerRequirement));
+                            || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, TriggerRequirement));                 
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
-                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
+                    List<Permanent> permanents = CardEffectCommons.GetPlayedPermanentsFromEnterFieldHashtable(
+                        hashtable: hashtable,
+                        rootCondition: null);
+
+                    return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                        && permanents != null 
+                        && permanents.Some(permanent => permanent.TopCard.ContainsCardName("Garurumon")
+                            || permanent.TopCard.ContainsCardName("Tai Kamiya"));
                 }
 
                 bool TriggerRequirement(Permanent permanent)
@@ -159,27 +166,16 @@ namespace DCGO.CardEffects.AD1
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
-                    List<Permanent> permanents = CardEffectCommons.GetPlayedPermanentsFromEnterFieldHashtable(
-                        hashtable: hashtable,
-                        rootCondition: null);
-
-                    if (permanents != null)
-                    {
-                        if (permanents.Some(permanent => permanent.TopCard.ContainsCardName("Garurumon") 
-                            || permanent.TopCard.ContainsCardName("Tai Kamiya")))
-                        {
-                            yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
-                                targetPermanent: card.PermanentOfThisCard(),
-                                cardCondition: CanSelectCardCondition1,
-                                payCost: false,
-                                reduceCostTuple: null,
-                                fixedCostTuple: null,
-                                ignoreDigivolutionRequirementFixedCost: -1,
-                                isHand: true,
-                                activateClass: activateClass,
-                                successProcess: null));
-                        }
-                    }
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                        targetPermanent: card.PermanentOfThisCard(),
+                        cardCondition: CanSelectCardCondition1,
+                        payCost: false,
+                        reduceCostTuple: null,
+                        fixedCostTuple: null,
+                        ignoreDigivolutionRequirementFixedCost: -1,
+                        isHand: true,
+                        activateClass: activateClass,
+                        successProcess: null));
                 }
             }
 
