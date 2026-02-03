@@ -241,7 +241,7 @@ namespace DCGO.CardEffects.BT24
                         yield return null;
                     }
 
-                    if (selectedPermanent != null && selectedPermanent.CanAttack(activateClass))
+                    if (selectedPermanent != null)
                     {
                         // Give +5000 DP until end of turn
                         yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.ChangeDigimonDP(
@@ -250,15 +250,20 @@ namespace DCGO.CardEffects.BT24
                            effectDuration: EffectDuration.UntilEachTurnEnd,
                            activateClass: activateClass));
 
-                        SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
+                        if (selectedPermanent.CanAttack(activateClass))
+                        {
+                            SelectAttackEffect selectAttackEffect = GManager.instance.GetComponent<SelectAttackEffect>();
 
-                        selectAttackEffect.SetUp(
-                            attacker: selectedPermanent,
-                            canAttackPlayerCondition: () => false,
-                            defenderCondition: _ => true,
-                            cardEffect: activateClass);
+                            selectAttackEffect.SetUp(
+                                attacker: selectedPermanent,
+                                canAttackPlayerCondition: () => false,
+                                defenderCondition: _ => true,
+                                cardEffect: activateClass);
 
-                        yield return ContinuousController.instance.StartCoroutine(selectAttackEffect.Activate());
+                            selectAttackEffect.SetCanNotSelectNotAttack();
+
+                            yield return ContinuousController.instance.StartCoroutine(selectAttackEffect.Activate());
+                        }
                     }
                 }
             }
