@@ -121,7 +121,7 @@ namespace DCGO.CardEffects.AD1
                 
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && permanents != null 
-                        && (permanents.Some(permanent => permanent.TopCard.ContainsCardName("Greymon") 
+                        && permanents.Some(permanent => permanent.TopCard.ContainsCardName("Greymon") 
                             || permanent.TopCard.ContainsCardName("Matt Ishida"));
                 }
 
