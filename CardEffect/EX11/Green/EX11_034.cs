@@ -194,7 +194,7 @@ namespace DCGO.CardEffects.EX11
 
                         #region Send to Security
 
-                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(selectedCard, toTop: toTop));
+                        yield return ContinuousController.instance.StartCoroutine(CardObjectController.AddSecurityCard(selectedCard, toTop: toTop, faceUp: true));
 
                         #endregion
 
