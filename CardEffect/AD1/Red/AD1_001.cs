@@ -55,19 +55,17 @@ namespace DCGO.CardEffects.AD1
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                int maxCount = Math.Min(1, card.Owner.TrashCards.Count(CanSelectCardCondition));
-
                 SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
                 selectCardEffect.SetUp(
                     canTargetCondition: CanSelectCardCondition,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
-                    canNoSelect: () => false,
+                    canNoSelect: () => true,
                     selectCardCoroutine: null,
                     afterSelectCardCoroutine: null,
                     message: "Select 1 card to add to your hand.",
-                    maxCount: maxCount,
+                    maxCount: 1,
                     canEndNotMax: false,
                     isShowOpponent: true,
                     mode: SelectCardEffect.Mode.AddHand,
@@ -136,7 +134,7 @@ namespace DCGO.CardEffects.AD1
                 {
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
                         && (CardEffectCommons.CanTriggerOnPermanentPlay(hashtable, TriggerRequirement)
-                            || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, TriggerRequirement));                 
+                            || CardEffectCommons.CanTriggerWhenPermanentDigivolving(hashtable, TriggerRequirement));
                 }
 
                 bool CanActivateCondition(Hashtable hashtable)
@@ -146,7 +144,7 @@ namespace DCGO.CardEffects.AD1
                         rootCondition: null);
 
                     return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
-                        && permanents != null 
+                        && permanents != null
                         && permanents.Some(permanent => permanent.TopCard.ContainsCardName("Garurumon")
                             || permanent.TopCard.ContainsCardName("Tai Kamiya"));
                 }
