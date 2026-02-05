@@ -13,7 +13,7 @@ namespace DCGO.CardEffects.EX11
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
             #region Start of Main
-            if (timing == EffectTiming.OnStartTurn)
+            if (timing == EffectTiming.OnStartMainPhase)
             {
                 cardEffects.Add(CardEffectFactory.Gain1MemoryTamerOpponentDigimonEffect(card));
             }
