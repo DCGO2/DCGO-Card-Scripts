@@ -98,7 +98,8 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Play 1 [Shoto Kazama] from your hand", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, true, EffectDiscription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDiscription());
+                activateClass.SetHashString("EX11_028_AT");
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
