@@ -158,6 +158,10 @@ namespace DCGO.CardEffects.EX11
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
+                    yield return ContinuousController.instance.StartCoroutine(
+                        new SuspendPermanentsClass(new List<Permanent>() { card.PermanentOfThisCard() },
+                            CardEffectCommons.CardEffectHashtable(activateClass)).Tap());
+
                     yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DNADigivolveWithHandOrTrashCardIntoHandOrTrash(
                         targetCardCondition: IsNSoDigimonCard, 
                         permanentCondition: IsNSoPermanent, 
