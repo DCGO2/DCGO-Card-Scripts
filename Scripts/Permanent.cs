@@ -2591,6 +2591,28 @@ public class Permanent
                     #endregion
                 }
 
+                #region Effects of faceup security
+                foreach (CardSource source in player.SecurityCards)
+                {
+                    if (source.IsFlipped)
+                        continue;
+
+                    foreach (ICardEffect cardEffect in source.EffectList(EffectTiming.None))
+                    {
+                        if (cardEffect is IRebootEffect)
+                        {
+                            if (cardEffect.CanTrigger(null))
+                            {
+                                if (((IRebootEffect)cardEffect).HasReboot(this))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                #endregion
+
                 #region プレイヤーの効果
                 foreach (ICardEffect cardEffect in player.EffectList(EffectTiming.None))
                 {
