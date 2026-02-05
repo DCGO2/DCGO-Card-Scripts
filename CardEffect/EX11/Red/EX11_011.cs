@@ -132,7 +132,7 @@ namespace DCGO.CardEffects.EX11
 
                     yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
                 }
-                else if (card.Owner.GetBattleAreaDigimons().Count == 1)
+                else if (card.Owner.Enemy.GetBattleAreaDigimons().Count == 1)
                 {
                     selectedPermanents.Add(card.Owner.Enemy.GetBattleAreaDigimons()[0]);
                 }
