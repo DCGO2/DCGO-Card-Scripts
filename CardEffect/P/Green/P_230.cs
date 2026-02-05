@@ -72,7 +72,7 @@ namespace DCGO.CardEffects.P
 
             #region Your turn - Delay
 
-            if (timing == EffectTiming.OnTappedAnyone)
+            if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Digivolve into a level 6 or lower [LIBERATOR] Digimon for 3 less.", CanUseCondition, card);
