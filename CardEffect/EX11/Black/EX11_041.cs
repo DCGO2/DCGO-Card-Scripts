@@ -117,6 +117,7 @@ namespace DCGO.CardEffects.EX11
             
                 if (CardEffectCommons.IsOpponentTurn(card))
                 {
+                    yield return ContinuousController.instance.StartCoroutine(
                     CardEffectCommons.DigivolveIntoHandOrTrashCard(
                         targetPermanent: card.PermanentOfThisCard(),
                         cardCondition: IsInvisimonCardCondition,
@@ -127,7 +128,7 @@ namespace DCGO.CardEffects.EX11
                         isHand: true,
                         activateClass,
                         null
-                    );
+                    ));
                 }
 
                 yield return null;
