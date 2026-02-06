@@ -212,7 +212,7 @@ namespace DCGO.CardEffects.EX11
                                     {
                                         if (cardSource.GetCostItself >= 4)
                                         {
-                                            if (cardSource.EqualsTraits ("Royal Knight"))
+                                            if (cardSource.EqualsTraits("Royal Knight"))
                                             {
                                                 return true;
                                             }
