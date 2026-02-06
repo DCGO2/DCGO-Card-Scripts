@@ -221,7 +221,7 @@ namespace DCGO.CardEffects.EX11
                             yield return null;
                         }
 
-                        if (selection == 1)
+                        if (selection == 0)
                         {
                             SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
