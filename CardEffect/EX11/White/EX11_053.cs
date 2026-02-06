@@ -65,7 +65,7 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
+                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
                             || CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card))
                         && permanent.IsDigimon
                         && permanent.TopCard.EqualsCardName("King Drasil_7D6");
