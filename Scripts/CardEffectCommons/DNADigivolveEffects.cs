@@ -313,7 +313,7 @@ public partial class CardEffectCommons
             yield return null;
         }
 
-        if (isWithHandCard && owner.HandCards.Some(cardSource => CanJogressWithHandOrTrash(cardSource, owner, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition)))
+        if (isIntoHandCard && owner.HandCards.Some(cardSource => CanJogressWithHandOrTrash(cardSource, owner, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition)))
         {
             SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
