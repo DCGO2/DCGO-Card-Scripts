@@ -94,10 +94,8 @@ public partial class CardEffectCommons
         return isValid;
     }
 
-    private static CardSource SelectHandCard(Player owner, CardSource jogressTarget, Permanent firstCondition, bool isOptional, ICardEffect activateClass, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
+    private static IEnumerator SelectHandCard(Player owner, CardSource jogressTarget, Permanent firstCondition, bool isOptional, ICardEffect activateClass, Func<CardSource, IEnumerator> SelectCardCoroutine, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
     {
-        CardSource selectedCardSource = null;
-
         SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
         selectHandEffect.SetUp(
@@ -117,23 +115,11 @@ public partial class CardEffectCommons
         selectHandEffect.SetUpCustomMessage("Select 1 Digimon to DNA digivolve.", "The opponent is selecting DNA digivolution cards.");
         selectHandEffect.SetNotShowCard();
 
-        ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
-
-        IEnumerator SelectCardCoroutine(CardSource cardSource)
-        {
-            selectedCardSource = cardSource;
-
-            yield return null;
-
-        }
-
-        return selectedCardSource;
+        yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
     }
 
-    private static CardSource SelectTrashCard(Player owner, CardSource jogressTarget, Permanent firstCondition, bool isOptional, ICardEffect activateClass, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
+    private static IEnumerator SelectTrashCard(Player owner, CardSource jogressTarget, Permanent firstCondition, bool isOptional, ICardEffect activateClass, Func<CardSource, IEnumerator> SelectCardCoroutine, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
     {
-        CardSource selectedCardSource = null;
-
         SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
         selectCardEffect.SetUp(
@@ -157,17 +143,7 @@ public partial class CardEffectCommons
         selectCardEffect.SetNotShowCard();
         selectCardEffect.SetNotAddLog();
 
-        ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-        IEnumerator SelectCardCoroutine(CardSource cardSource)
-        {
-            selectedCardSource = cardSource;
-
-            yield return null;
-
-        }
-
-        return selectedCardSource;
+        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
     }
 
     /// <summary>
@@ -229,7 +205,7 @@ public partial class CardEffectCommons
         return false;
     }
 
-    private static Permanent SelectPermanent(Player owner, CardSource jogressTarget, Permanent firstCondition, bool isOptional, ICardEffect activateClass, bool isWithHand, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
+    private static IEnumerator SelectPermanent(Player owner, CardSource jogressTarget, Permanent firstCondition, bool isOptional, ICardEffect activateClass, bool isWithHand, Func<Permanent, IEnumerator> SelectPermanentCoroutine, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
     {
         Permanent selectedPermanent = null;
 
@@ -250,16 +226,7 @@ public partial class CardEffectCommons
 
         selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to DNA digivolve.", "The opponent is selecting 1 Digimon to DNA digivolve.");
 
-        ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-        IEnumerator SelectPermanentCoroutine(Permanent permanent)
-        {
-            selectedPermanent = permanent;
-
-            yield return null;
-        }
-
-        return selectedPermanent;
+        yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
     }
 
     public static bool CanJogressWithHandOrTrash(CardSource source, Player owner, bool isWithHandCard, bool isIntoHandCard, Func<CardSource, bool> targetCardCondition = null, Func<Permanent, bool> permanentCondition = null, Func<CardSource, bool> digivolutionCardCondition = null)
@@ -311,6 +278,21 @@ public partial class CardEffectCommons
             dnaTarget = source;
 
             yield return null;
+        }
+
+        IEnumerator SelectPermanentCoroutine(Permanent permanent)
+        {
+            selectedPermanent = permanent;
+
+            yield return null;
+        }
+
+        IEnumerator SelectCardCoroutine(CardSource cardSource)
+        {
+            selectedCardSource = cardSource;
+
+            yield return null;
+
         }
 
         if (isIntoHandCard && owner.HandCards.Some(cardSource => CanJogressWithHandOrTrash(cardSource, owner, isWithHandCard, isIntoHandCard, targetCardCondition, permanentCondition, digivolutionCardCondition)))
@@ -401,13 +383,14 @@ public partial class CardEffectCommons
             bool isPermanentFirst = GManager.instance.userSelectionManager.SelectedBoolValue;
             if (isPermanentFirst)
             {
-                selectedPermanent = SelectPermanent(owner, dnaTarget, null, isOptional, activateClass, isWithHandCard, permanentCondition, digivolutionCardCondition);
+                yield return ContinuousController.instance.StartCoroutine(SelectPermanent(owner, dnaTarget, null, isOptional, activateClass, isWithHandCard, SelectPermanentCoroutine, permanentCondition, digivolutionCardCondition));
 
                 if (selectedPermanent != null)
                 {
-                    selectedCardSource = isWithHandCard ? 
-                                            SelectHandCard(owner, dnaTarget, selectedPermanent, isOptional, activateClass, permanentCondition, digivolutionCardCondition) : 
-                                            SelectTrashCard(owner, dnaTarget, selectedPermanent, isOptional, activateClass, permanentCondition, digivolutionCardCondition);
+                    if (isWithHandCard)
+                        yield return ContinuousController.instance.StartCoroutine(SelectHandCard(owner, dnaTarget, selectedPermanent, isOptional, activateClass, SelectCardCoroutine, permanentCondition, digivolutionCardCondition));
+                    else 
+                        yield return ContinuousController.instance.StartCoroutine(SelectTrashCard(owner, dnaTarget, selectedPermanent, isOptional, activateClass, SelectCardCoroutine, permanentCondition, digivolutionCardCondition));
                     if (selectedCardSource != null)
                     {
                         int frameID = PlayTempPermanentReturnFrame(selectedCardSource, true);
@@ -420,9 +403,10 @@ public partial class CardEffectCommons
             }
             else
             {
-                selectedCardSource = isWithHandCard ? 
-                                            SelectHandCard(owner, dnaTarget, null, isOptional, activateClass, permanentCondition, digivolutionCardCondition) : 
-                                            SelectTrashCard(owner, dnaTarget, null, isOptional, activateClass, permanentCondition, digivolutionCardCondition);
+                if (isWithHandCard)
+                    yield return ContinuousController.instance.StartCoroutine(SelectHandCard(owner, dnaTarget, null, isOptional, activateClass, SelectCardCoroutine, permanentCondition, digivolutionCardCondition));
+                else
+                    yield return ContinuousController.instance.StartCoroutine(SelectTrashCard(owner, dnaTarget, null, isOptional, activateClass, SelectCardCoroutine, permanentCondition, digivolutionCardCondition));
 
                 if(selectedCardSource != null)
                 {
@@ -431,7 +415,7 @@ public partial class CardEffectCommons
                         yield break;
                     playedPermanent = owner.FieldPermanents[frameID];
 
-                    selectedPermanent = SelectPermanent(owner, dnaTarget, playedPermanent, isOptional, activateClass, isWithHandCard, permanentCondition, digivolutionCardCondition);
+                    yield return ContinuousController.instance.StartCoroutine(SelectPermanent(owner, dnaTarget, playedPermanent, isOptional, activateClass, isWithHandCard, SelectPermanentCoroutine, permanentCondition, digivolutionCardCondition));
                 }
             }
             #endregion
