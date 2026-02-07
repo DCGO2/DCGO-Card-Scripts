@@ -83,7 +83,7 @@ namespace DCGO.CardEffects.ST23
                             yield return null;
                         }
                     }
-                    else selectedPermanent = card.Owner.GetBattleAreaDigimons().FirstOrDefault();
+                    else selectedPermanent = card.Owner.GetBattleAreaPermanents().FirstOrDefault();
 
                     List<CardSource> selectedCards = new List<CardSource>();
 
