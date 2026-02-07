@@ -12,7 +12,7 @@ namespace DCGO.CardEffects.ST23
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
             #region Digivolution Condition
-            
+
             if (timing == EffectTiming.None)
             {
                 bool PermanentCondition(Permanent targetPermanent)
@@ -23,7 +23,7 @@ namespace DCGO.CardEffects.ST23
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 0, ignoreDigivolutionRequirement: false, card: card, condition: null));
             }
-            
+
             #endregion
 
             #region Shared WM/OP
@@ -45,7 +45,7 @@ namespace DCGO.CardEffects.ST23
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                return permanent.IsTamer
+                return CardEffectCommons.IsPermanentExistsOnBattleAreaTamer(permanent)
                     && permanent.TopCard.EqualsTraits("Glowing Dawn");
             }
 
@@ -69,7 +69,7 @@ namespace DCGO.CardEffects.ST23
                                 selectCardCoroutine: null),
                             new SimplifiedSelectCardConditionClass(
                                 canTargetCondition:CanSelectCardCondition,
-                                message: "Select 1 card with [Glowing Dawn]] trait to place under a [Glowing Dawn] tamer.",
+                                message: "Select 1 card with [Glowing Dawn] trait to place under a [Glowing Dawn] tamer.",
                                 mode: SelectCardEffect.Mode.Custom,
                                 maxCount: 1,
                                 selectCardCoroutine: PlaceUnderTamer),
@@ -86,7 +86,7 @@ namespace DCGO.CardEffects.ST23
                     {
                             new SimplifiedSelectCardConditionClass(
                                 canTargetCondition:CanSelectCardCondition,
-                                message: "Select 1 card with [Knightmon] in its text or the [Twilight] trait to add to hand.",
+                                message: "Select 1 card with [Glowing Dawn] trait to add to hand.",
                                 mode: SelectCardEffect.Mode.AddHand,
                                 maxCount: 1,
                                 selectCardCoroutine: null),
