@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+// Kekkomon
 namespace DCGO.CardEffects.ST23
 {
     public class ST23_01 : CEntity_Effect
