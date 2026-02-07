@@ -190,7 +190,6 @@ namespace DCGO.CardEffects.EX11
                             {
                                 return cardSource != null
                                     && cardSource.Owner == card.Owner
-                                    && cardSource.GetCostItself >= 4
                                     && (cardSource.EqualsTraits("Royal Knight")
                                         || cardSource.EqualsTraits("LIBERATOR"));
                             }
