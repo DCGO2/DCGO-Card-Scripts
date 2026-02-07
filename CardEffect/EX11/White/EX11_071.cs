@@ -195,7 +195,7 @@ namespace DCGO.CardEffects.EX11
                                         || cardSource.EqualsTraits("LIBERATOR"));
                             }
 
-                            bool RootCondition(SelectCardEffect.Root root) =>true;
+                            bool RootCondition(SelectCardEffect.Root root) => true;
 
                             bool isUpDown() => true;
 
