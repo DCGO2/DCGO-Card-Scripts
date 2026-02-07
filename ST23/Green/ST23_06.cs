@@ -45,8 +45,8 @@ namespace DCGO.CardEffects.ST23
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                return permanent.TopCard.EqualsTraits("Glowing Dawn")
-                    && permanent.IsTamer;
+                return permanent.IsTamer
+                    && permanent.TopCard.EqualsTraits("Glowing Dawn");
             }
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
