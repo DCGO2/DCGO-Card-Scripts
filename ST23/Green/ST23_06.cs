@@ -45,7 +45,7 @@ namespace DCGO.CardEffects.ST23
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                return CardEffectCommons.IsPermanentExistsOnBattleAreaTamer(permanent)
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaTamer(permanent, card)
                     && permanent.TopCard.EqualsTraits("Glowing Dawn");
             }
 
