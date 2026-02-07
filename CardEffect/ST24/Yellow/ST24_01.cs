@@ -19,7 +19,7 @@ namespace DCGO.CardEffects.ST24
                 activateClass.SetUpICardEffect("Digivolve into [DATA SQUAD] for 2 less", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
-                activateClass.SetHashString("ST23_01_WA");
+                activateClass.SetHashString("ST24_01_WA");
                 cardEffects.Add(activateClass);
 
                 string EffectDescription() => "[When Attacking] [Once Per Turn] By trashing the bottom face-down card from under any of your Tamers, this Digimon may digivolve into a [DATA SQUAD] trait Digimon card in the hand with the cost reduced by 2.";
@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.ST24
 
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
-                    return cardSource.EqualsTraits("DATASQUAD");
+                    return cardSource.EqualsTraits("DATA SQUAD");
                 }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
@@ -50,7 +50,8 @@ namespace DCGO.CardEffects.ST24
 
                 bool CanSelectTrashSourceCardCondition(CardSource cardSource)
                 {
-                    return cardSource.IsFlipped;
+                    return cardSource.IsFlipped 
+                        && !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -68,7 +69,7 @@ namespace DCGO.CardEffects.ST24
                             canEndSelectCondition: null,
                             maxCount: 1,
                             canNoSelect: false,
-                            canEndNotMax: false,                       
+                            canEndNotMax: false,
                             selectPermanentCoroutine: SelectPermanentCoroutine,
                             afterSelectPermanentCoroutine: null,
                             mode: SelectPermanentEffect.Mode.Custom,
@@ -89,37 +90,9 @@ namespace DCGO.CardEffects.ST24
 
                     List<CardSource> selectedCards = new List<CardSource>();
 
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    CardSource trashTargetCard = selectedPermanent.DigivolutionCards.Filter(CanSelectTrashSourceCardCondition)[^1];
 
-                    selectCardEffect.SetUp(
-                                canTargetCondition: CanSelectTrashSourceCardCondition,
-                                canTargetCondition_ByPreSelecetedList: null,
-                                canEndSelectCondition: null,
-                                canNoSelect: () => false,
-                                selectCardCoroutine: SelectCardCoroutine,
-                                afterSelectCardCoroutine: null,
-                                message: "Select 1 face-down card to trash.",
-                                maxCount: 1,
-                                canEndNotMax: false,
-                                isShowOpponent: true,
-                                mode: SelectCardEffect.Mode.Custom,
-                                root: SelectCardEffect.Root.Custom,
-                                customRootCardList: selectedPermanent.DigivolutionCards,
-                                canLookReverseCard: true,
-                                selectPlayer: card.Owner,
-                                cardEffect: activateClass);
-
-                    selectCardEffect.SetUpCustomMessage("Select 1 face-down card to trash.", "The opponent is selecting 1 face-down card to trash.");
-                    selectCardEffect.SetUpCustomMessage_ShowCard("Trashed Card");
-
-                    yield return StartCoroutine(selectCardEffect.Activate());
-
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
-                    {
-                        selectedCards.Add(cardSource);
-
-                        yield return null;
-                    }
+                    selectedCards.Add(trashTargetCard);
 
                     yield return ContinuousController.instance.StartCoroutine(
                         new ITrashDigivolutionCards(selectedPermanent, selectedCards, activateClass).TrashDigivolutionCards());
