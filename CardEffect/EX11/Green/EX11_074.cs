@@ -146,9 +146,9 @@ namespace DCGO.CardEffects.EX11
                     CanNotAffectedClass canNotAffectedClass = new CanNotAffectedClass();
                     canNotAffectedClass.SetUpICardEffect("Not affected by opponent's Digimon's effects", CanUseCondition1, card);
                     canNotAffectedClass.SetUpCanNotAffectedClass(CardCondition: CardCondition, SkillCondition: SkillCondition);
-                    selectedPermanent.UntilOpponentTurnEndEffects.Add((_timing) => canNotAffectedClass);
+                    card.PermanentOfThisCard().UntilOpponentTurnEndEffects.Add((_timing) => canNotAffectedClass);
 
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateBuffEffect(selectedPermanent));
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateBuffEffect(card.PermanentOfThisCard()));
 
                     #endregion
 
