@@ -12,7 +12,7 @@ namespace DCGO.CardEffects.ST24
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
             #region Digivolution Condition
-            
+
             if (timing == EffectTiming.None)
             {
                 bool PermanentCondition(Permanent targetPermanent)
@@ -24,7 +24,7 @@ namespace DCGO.CardEffects.ST24
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 0, ignoreDigivolutionRequirement: false, card: card, condition: null));
             }
-            
+
             #endregion
 
             #region Shared WM/OP
@@ -46,7 +46,7 @@ namespace DCGO.CardEffects.ST24
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                return permanent.IsTamer
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaTamer(permanent, card)
                     && permanent.TopCard.EqualsTraits("DATA SQUAD");
             }
 
@@ -70,7 +70,7 @@ namespace DCGO.CardEffects.ST24
                                 selectCardCoroutine: null),
                             new SimplifiedSelectCardConditionClass(
                                 canTargetCondition:CanSelectCardCondition,
-                                message: "Select 1 card with [DATA SQUAD]] trait to place under a [DATA SQUAD] tamer.",
+                                message: "Select 1 card with [DATA SQUAD] trait to place under a [DATA SQUAD] tamer.",
                                 mode: SelectCardEffect.Mode.Custom,
                                 maxCount: 1,
                                 selectCardCoroutine: PlaceUnderTamer),
@@ -87,7 +87,7 @@ namespace DCGO.CardEffects.ST24
                     {
                             new SimplifiedSelectCardConditionClass(
                                 canTargetCondition:CanSelectCardCondition,
-                                message: "Select 1 card with [Knightmon] in its text or the [Twilight] trait to add to hand.",
+                                message: "Select 1 card with [DATA SQUAD] trait to add to hand.",
                                 mode: SelectCardEffect.Mode.AddHand,
                                 maxCount: 1,
                                 selectCardCoroutine: null),
