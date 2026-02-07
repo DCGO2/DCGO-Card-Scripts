@@ -182,7 +182,7 @@ namespace DCGO.CardEffects.EX11
                                     canTargetCondition: cardSource => cardSource.EqualsCardName("Vemmon"),
                                     message: "",
                                     mode: SelectCardEffect.Mode.Custom,
-                                    maxCount: 2,
+                                    maxCount: -1,
                                     selectCardCoroutine: SelectCardCoroutine),
                             remainingCardsPlace: RemainingCardsPlace.Trash,
                             activateClass: activateClass
