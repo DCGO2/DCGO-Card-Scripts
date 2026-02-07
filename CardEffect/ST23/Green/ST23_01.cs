@@ -12,6 +12,7 @@ namespace DCGO.CardEffects.ST23
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
             #region Inherit
+            
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
