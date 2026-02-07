@@ -12,7 +12,7 @@ namespace DCGO.CardEffects.ST23
             List<ICardEffect> cardEffects = new List<ICardEffect>();
 
             #region Inherit
-            
+
             if (timing == EffectTiming.OnAllyAttack)
             {
                 ActivateClass activateClass = new ActivateClass();
@@ -50,7 +50,8 @@ namespace DCGO.CardEffects.ST23
 
                 bool CanSelectTrashSourceCardCondition(CardSource cardSource)
                 {
-                    return cardSource.IsFlipped && !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
+                    return cardSource.IsFlipped 
+                        && !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
@@ -68,7 +69,7 @@ namespace DCGO.CardEffects.ST23
                             canEndSelectCondition: null,
                             maxCount: 1,
                             canNoSelect: false,
-                            canEndNotMax: false,                       
+                            canEndNotMax: false,
                             selectPermanentCoroutine: SelectPermanentCoroutine,
                             afterSelectPermanentCoroutine: null,
                             mode: SelectPermanentEffect.Mode.Custom,
@@ -89,37 +90,9 @@ namespace DCGO.CardEffects.ST23
 
                     List<CardSource> selectedCards = new List<CardSource>();
 
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                    CardSource trashTargetCard = selectedPermanent.DigivolutionCards.Filter(CanSelectTrashSourceCardCondition)[^1];
 
-                    selectCardEffect.SetUp(
-                                canTargetCondition: CanSelectTrashSourceCardCondition,
-                                canTargetCondition_ByPreSelecetedList: null,
-                                canEndSelectCondition: null,
-                                canNoSelect: () => false,
-                                selectCardCoroutine: SelectCardCoroutine,
-                                afterSelectCardCoroutine: null,
-                                message: "Select 1 face-down card to trash.",
-                                maxCount: 1,
-                                canEndNotMax: false,
-                                isShowOpponent: true,
-                                mode: SelectCardEffect.Mode.Custom,
-                                root: SelectCardEffect.Root.Custom,
-                                customRootCardList: selectedPermanent.DigivolutionCards,
-                                canLookReverseCard: true,
-                                selectPlayer: card.Owner,
-                                cardEffect: activateClass);
-
-                    selectCardEffect.SetUpCustomMessage("Select 1 face-down card to trash.", "The opponent is selecting 1 face-down card to trash.");
-                    selectCardEffect.SetUpCustomMessage_ShowCard("Trashed Card");
-
-                    yield return StartCoroutine(selectCardEffect.Activate());
-
-                    IEnumerator SelectCardCoroutine(CardSource cardSource)
-                    {
-                        selectedCards.Add(cardSource);
-
-                        yield return null;
-                    }
+                    selectedCards.Add(trashTargetCard);
 
                     yield return ContinuousController.instance.StartCoroutine(
                         new ITrashDigivolutionCards(selectedPermanent, selectedCards, activateClass).TrashDigivolutionCards());
