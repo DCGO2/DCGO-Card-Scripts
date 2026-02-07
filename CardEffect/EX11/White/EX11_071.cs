@@ -166,10 +166,7 @@ namespace DCGO.CardEffects.EX11
                                 return null;
                             }
 
-                            bool CanUseCondition1(Hashtable hashtable)
-                            {
-                                return true;
-                            }
+                            bool CanUseCondition1(Hashtable hashtable) => true;
 
                             int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
                             {
@@ -198,15 +195,9 @@ namespace DCGO.CardEffects.EX11
                                         || cardSource.EqualsTraits("LIBERATOR"));
                             }
 
-                            bool RootCondition(SelectCardEffect.Root root)
-                            {
-                                return true;
-                            }
+                            bool RootCondition(SelectCardEffect.Root root) =>true;
 
-                            bool isUpDown()
-                            {
-                                return true;
-                            }
+                            bool isUpDown() => true;
 
                             #endregion
 
