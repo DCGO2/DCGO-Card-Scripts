@@ -50,7 +50,7 @@ namespace DCGO.CardEffects.ST23
 
                 bool CanSelectTrashSourceCardCondition(CardSource cardSource)
                 {
-                    return cardSource.IsFlipped;
+                    return cardSource.IsFlipped && !cardSource.CanNotTrashFromDigivolutionCards(activateClass);
                 }
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
