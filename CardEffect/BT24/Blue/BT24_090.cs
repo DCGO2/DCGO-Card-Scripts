@@ -161,16 +161,80 @@ namespace DCGO.CardEffects.BT24
 
                     yield return ContinuousController.instance.StartCoroutine(selectHandEffect.Activate());
 
-                    #endregion
+                    if (selectedCard != null)
+                    {
+                        #region reduce play cost
 
-                    if (selectedCard != null) yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
+                        ChangeCostClass changeCostClass = new ChangeCostClass();
+                        changeCostClass.SetUpICardEffect($"Play Cost -3", CanUseCondition1, card);
+                        changeCostClass.SetUpChangeCostClass(changeCostFunc: ChangeCost, cardSourceCondition: CardSourceCondition, rootCondition: RootCondition, isUpDown: isUpDown, isCheckAvailability: () => false, isChangePayingCost: () => true);
+                        Func<EffectTiming, ICardEffect> getCardEffect = GetCardEffect;
+                        card.Owner.UntilCalculateFixedCostEffect.Add(getCardEffect);
+
+                        ICardEffect GetCardEffect(EffectTiming _timing)
+                        {
+                            if (_timing == EffectTiming.None)
+                            {
+                                return changeCostClass;
+                            }
+
+                            return null;
+                        }
+
+                        bool CanUseCondition1(Hashtable hashtable) => true;
+
+                        int ChangeCost(CardSource cardSource, int Cost, SelectCardEffect.Root root, List<Permanent> targetPermanents)
+                        {
+                            if (CardSourceCondition(cardSource)
+                                && RootCondition(root)
+                                && PermanentsCondition(targetPermanents))
+                            {
+                                Cost -= 3;
+                            }
+
+                            return Cost;
+                        }
+
+                        bool PermanentsCondition(List<Permanent> targetPermanents)
+                        {
+                            return targetPermanents == null || targetPermanents.Count((targetPermanent) => targetPermanent != null) == 0;
+                        }
+
+                        bool CardSourceCondition(CardSource cardSource)
+                        {
+                            return cardSource.IsDigimon
+                                && (cardSource.CardColors.Contains(CardColor.Blue)
+                                    || cardSource.CardColors.Contains(CardColor.Yellow))
+                                && cardSource.HasTSTraits;
+                        }
+
+                        bool RootCondition(SelectCardEffect.Root root) => true;
+
+                        bool isUpDown() => true;
+
+                        #endregion
+
+                        #region Play card
+
+                        yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.PlayPermanentCards(
                             cardSources: new List<CardSource>() { selectedCard },
                             activateClass: activateClass,
                             payCost: true,
                             isTapped: false,
                             root: SelectCardEffect.Root.Hand,
-                            activateETB: true,
-                            fixedCost: Math.Max(0, selectedCard.GetCostItself - 3)));
+                            activateETB: true));
+
+                        #endregion
+
+                        #region release effect reducing play cost
+
+                        card.Owner.UntilCalculateFixedCostEffect.Remove(getCardEffect);
+
+                        #endregion
+
+                    }
+
+                    #endregion
 
                 }
             }
