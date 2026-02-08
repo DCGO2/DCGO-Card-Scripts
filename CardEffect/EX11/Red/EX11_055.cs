@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.EX11
 
                 selectHandEffect.SetUp(
                     selectPlayer: card.Owner,
-                    canTargetCondition: (cardSource) => true,
+                    canTargetCondition: ValidDiscardCard,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     maxCount: discardCount,
