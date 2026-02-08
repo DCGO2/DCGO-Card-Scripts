@@ -35,44 +35,22 @@ public class P_094 : CEntity_Effect
 
                     bool CanSelectCardCondition(CardSource cardSource)
                     {
-                        if (cardSource != null)
-                        {
-                            if (cardSource.Owner == card.Owner)
-                            {
-                                if (cardSource.IsDigimon)
-                                {
-                                    if (cardSource.CardNames_DigiXros.Contains("Snatchmon"))
-                                    {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-
-                        return false;
+                        return cardSource != null
+                            && cardSource.Owner == card.Owner
+                            && cardSource.IsDigimon
+                            && cardSource.CardNames_DigiXros.Contains("Snatchmon");
                     }
 
                     elements.Add(element);
 
-                    DigiXrosConditionElement element1 = new DigiXrosConditionElement(CanSelectCardCondition1, "Vemmon", true);
+                    DigiXrosConditionElement element1 = new DigiXrosConditionElement(CanSelectCardCondition1, "Vemmon");
 
                     bool CanSelectCardCondition1(CardSource cardSource)
                     {
-                        if (cardSource != null)
-                        {
-                            if (cardSource.Owner == card.Owner)
-                            {
-                                if (cardSource.IsDigimon)
-                                {
-                                    if (cardSource.CardNames_DigiXros.Contains("Vemmon"))
-                                    {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-
-                        return false;
+                        return cardSource != null
+                            && cardSource.Owner == card.Owner
+                            && cardSource.IsDigimon
+                            && cardSource.CardNames_DigiXros.Contains("Vemmon");
                     }
 
                     for (int i = 0; i < 4; i++)
