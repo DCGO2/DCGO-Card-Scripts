@@ -16,20 +16,14 @@ namespace DCGO.CardEffects.EX11
 
             if (timing == EffectTiming.None)
             {
-                static bool PermanentCondition(Permanent targetPermanent)
-                {
-                    return targetPermanent.TopCard.EqualsCardName("Snatchmon");
-                }
+                static bool PermanentCondition(Permanent targetPermanent) =>targetPermanent.TopCard.EqualsCardName("Snatchmon");
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 9, ignoreDigivolutionRequirement: false, card: card, condition: null));
             }
 
             if (timing == EffectTiming.None)
             {
-                static bool PermanentCondition(Permanent targetPermanent)
-                {
-                    return targetPermanent.TopCard.EqualsCardName("Galacticmon");
-                }
+                static bool PermanentCondition(Permanent targetPermanent) => targetPermanent.TopCard.EqualsCardName("Galacticmon");
 
                 cardEffects.Add(CardEffectFactory.AddSelfDigivolutionRequirementStaticEffect(permanentCondition: PermanentCondition, digivolutionCost: 5, ignoreDigivolutionRequirement: false, card: card, condition: null));
             }
@@ -42,35 +36,43 @@ namespace DCGO.CardEffects.EX11
 
             string SharedEffectDescription(string tag) => $"[{tag}] Choose 1 of your opponent's highest play cost Digimon and delete all of their other Digimon. Then, if this Digimon has 4 or more [Vemmon] in its digivolution cards, until your opponent's turn ends, it gains <Blocker> and isn't affected by their effects.";
 
-            bool SharedCanActivateCondition(Hashtable hashtable)
-            {
-                return CardEffectCommons.IsExistOnBattleAreaDigimon(card);
-            }
+            bool SharedCanActivateCondition(Hashtable hashtable) => CardEffectCommons.IsExistOnBattleAreaDigimon(card);
 
             bool CanSelectHighestCostCondition(Permanent permanent) => CardEffectCommons.IsMaxCost(permanent, card.Owner.Enemy, true);
 
             IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
             {
-                int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectHighestCostCondition));
+                if (CardEffectCommons.MatchConditionPermanentCount(CanSelectHighestCostCondition) == 1)
+                {
+                    Permanent permanent = null;
 
-                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                    permanent = card.Owner.Enemy.GetBattleAreaPermanents().FirstOrDefault(CanSelectHighestCostCondition);
 
-                selectPermanentEffect.SetUp(
-                    selectPlayer: card.Owner,
-                    canTargetCondition: CanSelectHighestCostCondition,
-                    canTargetCondition_ByPreSelecetedList: null,
-                    canEndSelectCondition: null,
-                    maxCount: maxCount,
-                    canNoSelect: false,
-                    canEndNotMax: false,
-                    selectPermanentCoroutine: SelectPermanentCoroutine,
-                    afterSelectPermanentCoroutine: null,
-                    mode: SelectPermanentEffect.Mode.Custom,
-                    cardEffect: activateClass);
+                    yield return ContinuousController.instance.StartCoroutine(SelectPermanentCoroutine(permanent));
+                }
+                else
+                { 
+                    int maxCount = Math.Min(1, CardEffectCommons.MatchConditionPermanentCount(CanSelectHighestCostCondition));
 
-                selectPermanentEffect.SetUpCustomMessage("Select 1 Opponent's Digimon, you will delete all other digimon.", "Opponent is selecting 1 digimon and will delete all others.");
+                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
 
-                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                    selectPermanentEffect.SetUp(
+                        selectPlayer: card.Owner,
+                        canTargetCondition: CanSelectHighestCostCondition,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        maxCount: maxCount,
+                        canNoSelect: false,
+                        canEndNotMax: false,
+                        selectPermanentCoroutine: SelectPermanentCoroutine,
+                        afterSelectPermanentCoroutine: null,
+                        mode: SelectPermanentEffect.Mode.Custom,
+                        cardEffect: activateClass);
+
+                    selectPermanentEffect.SetUpCustomMessage("Select 1 Opponent's Digimon, you will delete all other digimon.", "Opponent is selecting 1 digimon and will delete all others.");
+
+                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                }
 
                 IEnumerator SelectPermanentCoroutine(Permanent permanent)
                 {
@@ -82,58 +84,34 @@ namespace DCGO.CardEffects.EX11
                     }
                 }
 
-                Permanent thisPermanent = card.PermanentOfThisCard();
-                if (thisPermanent != null && thisPermanent.DigivolutionCards.Count(cardSource => cardSource.EqualsCardName("Vemmon")) >= 4)
+                if (card.PermanentOfThisCard() != null && card.PermanentOfThisCard().DigivolutionCards.Count(cardSource => cardSource.EqualsCardName("Vemmon")) >= 4)
                 {
-                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(targetPermanent: thisPermanent, effectDuration: EffectDuration.UntilOpponentTurnEnd, activateClass: activateClass));
+                    yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.GainBlocker(targetPermanent: card.PermanentOfThisCard(), effectDuration: EffectDuration.UntilOpponentTurnEnd, activateClass: activateClass));
 
                     CanNotAffectedClass canNotAffectedClass = new CanNotAffectedClass();
                     canNotAffectedClass.SetUpICardEffect("Isn't affected by opponent's effect", CanUseCondition1, card);
                     canNotAffectedClass.SetUpCanNotAffectedClass(CardCondition: CardCondition, SkillCondition: SkillCondition);
-                    thisPermanent.UntilOpponentTurnEndEffects.Add((_timing) => canNotAffectedClass);
+                    card.PermanentOfThisCard().UntilOpponentTurnEndEffects.Add((_timing) => canNotAffectedClass);
 
-                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateBuffEffect(thisPermanent));
+                    yield return ContinuousController.instance.StartCoroutine(GManager.instance.GetComponent<Effects>().CreateBuffEffect(card.PermanentOfThisCard()));
 
                     bool CanUseCondition1(Hashtable hashtable)
                     {
-                        if (thisPermanent.TopCard != null)
-                        {
-                            return true;
-                        }
-
-                        return false;
+                        return card.PermanentOfThisCard().TopCard != null;
                     }
 
                     bool CardCondition(CardSource cardSource)
                     {
-                        if (thisPermanent.TopCard != null)
-                        {
-                            if (thisPermanent.TopCard.Owner.GetBattleAreaPermanents().Contains(thisPermanent))
-                            {
-                                if (cardSource == thisPermanent.TopCard)
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-
-                        return false;
+                        return card.PermanentOfThisCard().TopCard != null
+                            && card.PermanentOfThisCard().TopCard.Owner.GetBattleAreaPermanents().Contains(card.PermanentOfThisCard())
+                            && cardSource == card.PermanentOfThisCard().TopCard;
                     }
 
                     bool SkillCondition(ICardEffect cardEffect)
                     {
-                        if (cardEffect != null)
-                        {
-                            if (cardEffect.EffectSourceCard != null)
-                            {
-                                if (cardEffect.EffectSourceCard.Owner == card.Owner.Enemy)
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-
-                        return false;
+                        return cardEffect != null
+                            && cardEffect.EffectSourceCard != null
+                            && cardEffect.EffectSourceCard.Owner == card.Owner.Enemy;
                     }
                 }
             }
@@ -141,6 +119,7 @@ namespace DCGO.CardEffects.EX11
             #endregion
 
             #region On Play
+
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
@@ -154,9 +133,11 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
                 }
             }
+
             #endregion
 
             #region When Digivolving
+
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
@@ -170,6 +151,7 @@ namespace DCGO.CardEffects.EX11
                         && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
                 }
             }
+
             #endregion
 
             #region End Of Opponent's Turn
@@ -196,10 +178,7 @@ namespace DCGO.CardEffects.EX11
                             || CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition));
                 }
 
-                bool CanSelectCardCondition(CardSource cardSource)
-                {
-                    return cardSource.EqualsCardName("Galacticmon");
-                }
+                bool CanSelectCardCondition(CardSource cardSource) => cardSource.EqualsCardName("Galacticmon");
 
                 IEnumerator ActivateCoroutine(Hashtable hashtable)
                 {
@@ -216,8 +195,8 @@ namespace DCGO.CardEffects.EX11
                                 new SelectionElement<bool>(message: $"From trash", value : false, spriteIndex: 1),
                             };
 
-                            string selectPlayerMessage = "From which area do you play a card?";
-                            string notSelectPlayerMessage = "The opponent is choosing from which area to play a card.";
+                            string selectPlayerMessage = "From which area do you digivolve a card?";
+                            string notSelectPlayerMessage = "The opponent is choosing from which area to digivolve a card.";
 
                             GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
                         }
@@ -248,6 +227,7 @@ namespace DCGO.CardEffects.EX11
             #endregion
 
             #region Assembly
+
             if (timing == EffectTiming.None)
             {
                 AddAssemblyConditionClass addAssemblyConditionClass = new AddAssemblyConditionClass();
@@ -256,10 +236,7 @@ namespace DCGO.CardEffects.EX11
                 addAssemblyConditionClass.SetNotShowUI(true);
                 cardEffects.Add(addAssemblyConditionClass);
 
-                bool CanUseCondition(Hashtable hashtable)
-                {
-                    return true;
-                }
+                bool CanUseCondition(Hashtable hashtable) => true;
 
                 AssemblyCondition GetAssembly(CardSource cardSource)
                 {
@@ -287,6 +264,7 @@ namespace DCGO.CardEffects.EX11
                     return null;
                 }
             }
+
             #endregion
 
             return cardEffects;
