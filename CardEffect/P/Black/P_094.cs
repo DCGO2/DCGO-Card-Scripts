@@ -1,280 +1,260 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using Photon;
-using System;
-using Photon.Pun;
 
+// Destromon
 public class P_094 : CEntity_Effect
 {
     public override List<ICardEffect> CardEffects(EffectTiming timing, CardSource card)
     {
         List<ICardEffect> cardEffects = new List<ICardEffect>();
 
-        if (timing == EffectTiming.OnEnterFieldAnyone)
+        #region DigiXros
+
+        if (timing == EffectTiming.None)
         {
-            ActivateClass activateClass = new ActivateClass();
-            activateClass.SetUpICardEffect("Delete Digimon and Tamer so that their play cost total is up to 3", CanUseCondition, card);
-            activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
-            cardEffects.Add(activateClass);
-
-            string EffectDiscription()
-            {
-                return "[On Play] Delete your opponent's Digimon and Tamers with a total play cost of 3. For every [Vemmon] in this Digimon's digivolution cards, increase the maximum play cost you can choose by this effect by 1.";
-            }
-
-            int maxCost()
-            {
-                int maxCost = 3;
-
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    maxCost += card.PermanentOfThisCard().DigivolutionCards.Count((cardSource) => cardSource.CardNames.Contains("Vemmon"));
-                }
-
-                return maxCost;
-            }
-
-            bool CanSelectPermanentCondition(Permanent permanent)
-            {
-                if (CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card))
-                {
-                    if (permanent.IsDigimon || permanent.IsTamer)
-                    {
-                        if (permanent.TopCard.GetCostItself <= maxCost())
-                        {
-                            if (permanent.TopCard.HasPlayCost)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                return false;
-            }
+            AddDigiXrosConditionClass addDigiXrosConditionClass = new AddDigiXrosConditionClass();
+            addDigiXrosConditionClass.SetUpICardEffect($"DigiXros", CanUseCondition, card);
+            addDigiXrosConditionClass.SetUpAddDigiXrosConditionClass(getDigiXrosCondition: GetDigiXros);
+            addDigiXrosConditionClass.SetNotShowUI(true);
+            cardEffects.Add(addDigiXrosConditionClass);
 
             bool CanUseCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.CanTriggerOnPlay(hashtable, card);
+                return true;
             }
 
-            bool CanActivateCondition(Hashtable hashtable)
+            DigiXrosCondition GetDigiXros(CardSource cardSource)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
+                if (cardSource == card)
                 {
-                    if (card.Owner.Enemy.GetBattleAreaPermanents().Count(CanSelectPermanentCondition) >= 1)
+                    List<DigiXrosConditionElement> elements = new List<DigiXrosConditionElement>();
+
+                    DigiXrosConditionElement element = new DigiXrosConditionElement(CanSelectCardCondition, "Snatchmon");
+
+                    bool CanSelectCardCondition(CardSource cardSource)
                     {
-                        return true;
+                        if (cardSource != null)
+                        {
+                            if (cardSource.Owner == card.Owner)
+                            {
+                                if (cardSource.IsDigimon)
+                                {
+                                    if (cardSource.CardNames_DigiXros.Contains("Snatchmon"))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+
+                        return false;
                     }
+
+                    elements.Add(element);
+
+                    DigiXrosConditionElement element1 = new DigiXrosConditionElement(CanSelectCardCondition1, "Vemmon", true);
+
+                    bool CanSelectCardCondition1(CardSource cardSource)
+                    {
+                        if (cardSource != null)
+                        {
+                            if (cardSource.Owner == card.Owner)
+                            {
+                                if (cardSource.IsDigimon)
+                                {
+                                    if (cardSource.CardNames_DigiXros.Contains("Vemmon"))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        elements.Add(element1);
+                    }
+
+                    DigiXrosCondition digiXrosCondition = new DigiXrosCondition(elements, null, 1);
+
+                    return digiXrosCondition;
                 }
 
-                return false;
+                return null;
+            }
+        }
+
+        #endregion
+
+        #region Deletion Play Cost Calculation and Update
+
+        int maxCost()
+        {
+            int maxCost = 3;
+
+            if (CardEffectCommons.IsExistOnBattleArea(card))
+            {
+                maxCost += card.PermanentOfThisCard().DigivolutionCards.Count((cardSource) => cardSource.EqualsCardName("Vemmon"));
             }
 
-            IEnumerator ActivateCoroutine(Hashtable _hashtable)
+            return maxCost;
+        }
+
+        #endregion
+
+        #region Shared OP/WD
+
+        string SharedEffectName() => $"Delete Digimon and/or Tamer(s) up to play cost of 3 + 1 per [Vemmon] in digivolution sources.";
+        // for when we get it to update when we add sources to stack - $"Delete Digimon and/or Tamer(s) up to play cost of {maxCost()}."
+
+        string SharedEffectDescription(string tag) => $"[{tag}] Delete your opponent's Digimon and Tamers with a total play cost of 3. For every [Vemmon] in this Digimon's digivolution cards, increase the maximum play cost you can choose by this effect by 1.";
+
+        bool SharedCanActivateCondition(Hashtable hashtable)
+        {
+            return CardEffectCommons.IsExistOnBattleArea(card)
+                && card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) >= 1;
+        }
+      
+        bool SharedCanSelectPermanentCondition(Permanent permanent)
+        {
+            return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
+                && (permanent.IsDigimon
+                    || permanent.IsTamer)
+                && permanent.TopCard.HasPlayCost
+                && permanent.TopCard.GetCostItself <= maxCost();
+        }
+
+        IEnumerator SharedActivateCoroutine(Hashtable hashtable, ActivateClass activateClass)
+        {
+            if (card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) == 1)
             {
-                if (card.Owner.Enemy.GetBattleAreaPermanents().Count(CanSelectPermanentCondition) >= 1)
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                selectPermanentEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: SharedCanSelectPermanentCondition,
+                    canTargetCondition_ByPreSelecetedList: null,
+                    canEndSelectCondition: null,
+                    maxCount: 1,
+                    canNoSelect: false,
+                    canEndNotMax: false,
+                    selectPermanentCoroutine: null,
+                    afterSelectPermanentCoroutine: null,
+                    mode: SelectPermanentEffect.Mode.Destroy,
+                    cardEffect: activateClass);
+
+                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+            }
+            else if(card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) >= 1)
+            {
+                List<Permanent> selectedPermanents = new List<Permanent>();
+
+                int maxCount = card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition);
+
+                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                selectPermanentEffect.SetUp(
+                    selectPlayer: card.Owner,
+                    canTargetCondition: SharedCanSelectPermanentCondition,
+                    canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
+                    canEndSelectCondition: CanEndSelectCondition,
+                    maxCount: maxCount,
+                    canNoSelect: false,
+                    canEndNotMax: true,
+                    selectPermanentCoroutine: null,
+                    afterSelectPermanentCoroutine: null,
+                    mode: SelectPermanentEffect.Mode.Destroy,
+                    cardEffect: activateClass);
+
+                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                bool CanEndSelectCondition(List<Permanent> permanents)
                 {
-                    int _maxCost = maxCost();
-
-                    List<Permanent> selectedPermanents = new List<Permanent>();
-
-                    int maxCount = card.Owner.Enemy.GetBattleAreaPermanents().Count(CanSelectPermanentCondition);
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
-                        canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
-                        canEndSelectCondition: CanEndSelectCondition,
-                        maxCount: maxCount,
-                        canNoSelect: false,
-                        canEndNotMax: true,
-                        selectPermanentCoroutine: null,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Destroy,
-                        cardEffect: activateClass);
-
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    bool CanEndSelectCondition(List<Permanent> permanents)
+                    if (permanents.Count <= 0)
                     {
-                        if (permanents.Count <= 0)
-                        {
-                            return false;
-                        }
-
-                        int sumCost = 0;
-
-                        foreach (Permanent permanent1 in permanents)
-                        {
-                            sumCost += permanent1.TopCard.GetCostItself;
-                        }
-
-                        if (sumCost > _maxCost)
-                        {
-                            return false;
-                        }
-
-                        return true;
+                        return false;
                     }
 
-                    bool CanTargetCondition_ByPreSelecetedList(List<Permanent> permanents, Permanent permanent)
+                    int sumCost = 0;
+
+                    foreach (Permanent permanent1 in permanents)
                     {
-                        int sumCost = 0;
-
-                        foreach (Permanent permanent1 in permanents)
-                        {
-                            sumCost += permanent1.TopCard.GetCostItself;
-                        }
-
-                        sumCost += permanent.TopCard.GetCostItself;
-
-                        if (sumCost > _maxCost)
-                        {
-                            return false;
-                        }
-
-                        return true;
+                        sumCost += permanent1.TopCard.GetCostItself;
                     }
+
+                    if (sumCost > maxCost())
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                bool CanTargetCondition_ByPreSelecetedList(List<Permanent> permanents, Permanent permanent)
+                {
+                    int sumCost = 0;
+
+                    foreach (Permanent permanent1 in permanents)
+                    {
+                        sumCost += permanent1.TopCard.GetCostItself;
+                    }
+
+                    sumCost += permanent.TopCard.GetCostItself;
+
+                    if (sumCost > maxCost())
+                    {
+                        return false;
+                    }
+
+                    return true;
                 }
             }
         }
 
+        #endregion
+
+        #region On Play
+
         if (timing == EffectTiming.OnEnterFieldAnyone)
         {
             ActivateClass activateClass = new ActivateClass();
-            activateClass.SetUpICardEffect("Delete Digimon and Tamer so that their play cost total is up to 3", CanUseCondition, card);
-            activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, -1, false, EffectDiscription());
+            activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+            activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("On Play"));
             cardEffects.Add(activateClass);
-
-            string EffectDiscription()
-            {
-                return "[When Digivolving] Delete your opponent's Digimon and Tamers with a total play cost of 3. For every [Vemmon] in this Digimon's digivolution cards, increase the maximum play cost you can choose by this effect by 1.";
-            }
-
-            int maxCost()
-            {
-                int maxCost = 3;
-
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    maxCost += card.PermanentOfThisCard().DigivolutionCards.Count((cardSource) => cardSource.CardNames.Contains("Vemmon"));
-                }
-
-                return maxCost;
-            }
-
-            bool CanSelectPermanentCondition(Permanent permanent)
-            {
-                if (CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card))
-                {
-                    if (permanent.IsDigimon || permanent.IsTamer)
-                    {
-                        if (permanent.TopCard.GetCostItself <= maxCost())
-                        {
-                            if (permanent.TopCard.HasPlayCost)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                return false;
-            }
 
             bool CanUseCondition(Hashtable hashtable)
             {
-                return CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
-            }
-
-            bool CanActivateCondition(Hashtable hashtable)
-            {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (card.Owner.Enemy.GetBattleAreaPermanents().Count(CanSelectPermanentCondition) >= 1)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            IEnumerator ActivateCoroutine(Hashtable _hashtable)
-            {
-                if (card.Owner.Enemy.GetBattleAreaPermanents().Count(CanSelectPermanentCondition) >= 1)
-                {
-                    int _maxCost = maxCost();
-
-                    List<Permanent> selectedPermanents = new List<Permanent>();
-
-                    int maxCount = card.Owner.Enemy.GetBattleAreaPermanents().Count(CanSelectPermanentCondition);
-
-                    SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                    selectPermanentEffect.SetUp(
-                        selectPlayer: card.Owner,
-                        canTargetCondition: CanSelectPermanentCondition,
-                        canTargetCondition_ByPreSelecetedList: CanTargetCondition_ByPreSelecetedList,
-                        canEndSelectCondition: CanEndSelectCondition,
-                        maxCount: maxCount,
-                        canNoSelect: false,
-                        canEndNotMax: true,
-                        selectPermanentCoroutine: null,
-                        afterSelectPermanentCoroutine: null,
-                        mode: SelectPermanentEffect.Mode.Destroy,
-                        cardEffect: activateClass);
-
-                    yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                    bool CanEndSelectCondition(List<Permanent> permanents)
-                    {
-                        if (permanents.Count <= 0)
-                        {
-                            return false;
-                        }
-
-                        int sumCost = 0;
-
-                        foreach (Permanent permanent1 in permanents)
-                        {
-                            sumCost += permanent1.TopCard.GetCostItself;
-                        }
-
-                        if (sumCost > _maxCost)
-                        {
-                            return false;
-                        }
-
-                        return true;
-                    }
-
-                    bool CanTargetCondition_ByPreSelecetedList(List<Permanent> permanents, Permanent permanent)
-                    {
-                        int sumCost = 0;
-
-                        foreach (Permanent permanent1 in permanents)
-                        {
-                            sumCost += permanent1.TopCard.GetCostItself;
-                        }
-
-                        sumCost += permanent.TopCard.GetCostItself;
-
-                        if (sumCost > _maxCost)
-                        {
-                            return false;
-                        }
-
-                        return true;
-                    }
-                }
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                    && CardEffectCommons.CanTriggerOnPlay(hashtable, card);
             }
         }
+
+        #endregion
+
+        #region When Digivolving
+
+        if (timing == EffectTiming.OnEnterFieldAnyone)
+        {
+            ActivateClass activateClass = new ActivateClass();
+            activateClass.SetUpICardEffect(SharedEffectName(), CanUseCondition, card);
+            activateClass.SetUpActivateClass(SharedCanActivateCondition, hash => SharedActivateCoroutine(hash, activateClass), -1, false, SharedEffectDescription("When Digivolving"));
+            cardEffects.Add(activateClass);
+
+            bool CanUseCondition(Hashtable hashtable)
+            {
+                return CardEffectCommons.IsExistOnBattleAreaDigimon(card)
+                    && CardEffectCommons.CanTriggerWhenDigivolving(hashtable, card);
+            }
+        }
+
+        #endregion
+
+        #region Inherited Effect: Switch Attack Target
 
         if (timing == EffectTiming.OnAllyAttack)
         {
@@ -297,18 +277,9 @@ public class P_094 : CEntity_Effect
 
             bool CanSelectPermanentCondition(Permanent permanent)
             {
-                if (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card))
-                {
-                    if (permanent.TopCard.CardNames.Contains("Galacticmon"))
-                    {
-                        if (permanent.DigivolutionCards.Count(CanSelectCardCondition) >= 2)
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
+                return CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                    && permanent.TopCard.CardNames.Contains("Galacticmon")
+                    && permanent.DigivolutionCards.Count(CanSelectCardCondition) >= 2;
             }
 
             bool PermanentCondition(Permanent permanent)
@@ -318,31 +289,15 @@ public class P_094 : CEntity_Effect
 
             bool CanUseCondition(Hashtable hashtable)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (CardEffectCommons.IsOpponentTurn(card))
-                    {
-                        if (CardEffectCommons.CanTriggerOnPermanentAttack(hashtable, PermanentCondition))
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
+                return CardEffectCommons.IsExistOnBattleArea(card)
+                    && CardEffectCommons.IsOpponentTurn(card)
+                    && CardEffectCommons.CanTriggerOnPermanentAttack(hashtable, PermanentCondition);
             }
 
             bool CanActivateCondition(Hashtable hashtable)
             {
-                if (CardEffectCommons.IsExistOnBattleArea(card))
-                {
-                    if (card.Owner.GetBattleAreaPermanents().Count(CanSelectPermanentCondition) >= 1)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return CardEffectCommons.IsExistOnBattleArea(card)
+                    && card.Owner.GetBattleAreaPermanents().Count(CanSelectPermanentCondition) >= 1;
             }
 
             IEnumerator ActivateCoroutine(Hashtable _hashtable)
@@ -415,6 +370,7 @@ public class P_094 : CEntity_Effect
                         IEnumerator SelectCardCoroutine(CardSource cardSource)
                         {
                             selectedCards.Add(cardSource);
+
                             yield return null;
                         }
 
@@ -432,84 +388,7 @@ public class P_094 : CEntity_Effect
             }
         }
 
-        if (timing == EffectTiming.None)
-        {
-            AddDigiXrosConditionClass addDigiXrosConditionClass = new AddDigiXrosConditionClass();
-            addDigiXrosConditionClass.SetUpICardEffect($"DigiXros", CanUseCondition, card);
-            addDigiXrosConditionClass.SetUpAddDigiXrosConditionClass(getDigiXrosCondition: GetDigiXros);
-            addDigiXrosConditionClass.SetNotShowUI(true);
-            cardEffects.Add(addDigiXrosConditionClass);
-
-            bool CanUseCondition(Hashtable hashtable)
-            {
-                return true;
-            }
-
-
-
-            DigiXrosCondition GetDigiXros(CardSource cardSource)
-            {
-                if (cardSource == card)
-                {
-                    List<DigiXrosConditionElement> elements = new List<DigiXrosConditionElement>();
-
-                    DigiXrosConditionElement element = new DigiXrosConditionElement(CanSelectCardCondition, "Snatchmon");
-
-                    bool CanSelectCardCondition(CardSource cardSource)
-                    {
-                        if (cardSource != null)
-                        {
-                            if (cardSource.Owner == card.Owner)
-                            {
-                                if (cardSource.IsDigimon)
-                                {
-                                    if (cardSource.CardNames_DigiXros.Contains("Snatchmon"))
-                                    {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-
-                        return false;
-                    }
-
-                    elements.Add(element);
-
-                    DigiXrosConditionElement element1 = new DigiXrosConditionElement(CanSelectCardCondition1, "Vemmon", true);
-
-                    bool CanSelectCardCondition1(CardSource cardSource)
-                    {
-                        if (cardSource != null)
-                        {
-                            if (cardSource.Owner == card.Owner)
-                            {
-                                if (cardSource.IsDigimon)
-                                {
-                                    if (cardSource.CardNames_DigiXros.Contains("Vemmon"))
-                                    {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-
-                        return false;
-                    }
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        elements.Add(element1);
-                    }
-
-                    DigiXrosCondition digiXrosCondition = new DigiXrosCondition(elements, null, 1);
-
-                    return digiXrosCondition;
-                }
-
-                return null;
-            }
-        }
+        #endregion
 
         return cardEffects;
     }
