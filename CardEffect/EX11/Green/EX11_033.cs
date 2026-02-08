@@ -263,7 +263,7 @@ namespace DCGO.CardEffects.EX11
             {
                 ActivateClass activateClass = new ActivateClass();
                 activateClass.SetUpICardEffect("Unsuspend this Digimon", CanUseCondition, card);
-                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, false, EffectDescription());
+                activateClass.SetUpActivateClass(CanActivateCondition, ActivateCoroutine, 1, true, EffectDescription());
                 activateClass.SetIsInheritedEffect(true);
                 activateClass.SetHashString("EX11_033_AT_ESS");
                 cardEffects.Add(activateClass);
