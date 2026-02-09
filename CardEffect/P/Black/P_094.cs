@@ -97,7 +97,7 @@ public class P_094 : CEntity_Effect
             return CardEffectCommons.IsExistOnBattleArea(card)
                 && card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) >= 1;
         }
-      
+
         bool SharedCanSelectPermanentCondition(Permanent permanent)
         {
             return CardEffectCommons.IsPermanentExistsOnOpponentBattleArea(permanent, card)
@@ -111,24 +111,11 @@ public class P_094 : CEntity_Effect
         {
             if (card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) == 1)
             {
-                SelectPermanentEffect selectPermanentEffect = GManager.instance.GetComponent<SelectPermanentEffect>();
+                List<Permanent> targetPermanent = card.Owner.Enemy.GetBattleAreaDigimons().Filter(SharedCanSelectPermanentCondition);
 
-                selectPermanentEffect.SetUp(
-                    selectPlayer: card.Owner,
-                    canTargetCondition: SharedCanSelectPermanentCondition,
-                    canTargetCondition_ByPreSelecetedList: null,
-                    canEndSelectCondition: null,
-                    maxCount: 1,
-                    canNoSelect: false,
-                    canEndNotMax: false,
-                    selectPermanentCoroutine: null,
-                    afterSelectPermanentCoroutine: null,
-                    mode: SelectPermanentEffect.Mode.Destroy,
-                    cardEffect: activateClass);
-
-                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+                yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(targetPermanent, CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
             }
-            else if(card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) >= 1)
+            else if (card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) >= 1)
             {
                 List<Permanent> selectedPermanents = new List<Permanent>();
 
