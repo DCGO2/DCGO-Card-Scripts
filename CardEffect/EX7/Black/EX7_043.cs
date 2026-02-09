@@ -73,7 +73,7 @@ namespace DCGO.CardEffects.EX7
 
                 if (card.Owner.HandCards.Count((cardSource) => CanSelectCardSharedCondition(cardSource)) >= 1)
                 {
-                    int maxCount = Math.Min(3, card.Owner.HandCards.Count((cardSource) => CanSelectCardSharedCondition(cardSource)));
+                    int maxCount = Math.Min(3, card.Owner.HandCards.Count(CanSelectCardSharedCondition));
 
                     SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 
@@ -138,32 +138,32 @@ namespace DCGO.CardEffects.EX7
 
                     }
 
-                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
-
-                    selectCardEffect.SetUp(
-                        canTargetCondition: (cardSource) => true,
-                        canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: null,
-                        canNoSelect: () => false,
-                        selectCardCoroutine: null,
-                        afterSelectCardCoroutine: AfterSelectCardCoroutine,
-                        message: "Specify the order to place the cards in the top of the deck\n(cards will be placed so that cards with lower numbers are on top).",
-                        maxCount: selectedCards.Count,
-                        canEndNotMax: false,
-                        isShowOpponent: true,
-                        mode: SelectCardEffect.Mode.Custom,
-                        root: SelectCardEffect.Root.Custom,
-                        customRootCardList: selectedCards,
-                        canLookReverseCard: true,
-                        selectPlayer: card.Owner,
-                        cardEffect: activateClass);
-
-                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                    IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                    if (selectedCards.Count == 3)
                     {
-                        if (cardSources.Count == 3)
-                        {
+                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+
+                        selectCardEffect.SetUp(
+                            canTargetCondition: (cardSource) => true,
+                            canTargetCondition_ByPreSelecetedList: null,
+                            canEndSelectCondition: null,
+                            canNoSelect: () => false,
+                            selectCardCoroutine: null,
+                            afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                            message: "Specify the order to place the cards in the top of the deck\n(cards will be placed so that cards with lower numbers are on top).",
+                            maxCount: selectedCards.Count,
+                            canEndNotMax: false,
+                            isShowOpponent: true,
+                            mode: SelectCardEffect.Mode.Custom,
+                            root: SelectCardEffect.Root.Custom,
+                            customRootCardList: selectedCards,
+                            canLookReverseCard: true,
+                            selectPlayer: card.Owner,
+                            cardEffect: activateClass);
+
+                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+
+                        IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                        {                       
                             foreach (CardSource selectedCard in selectedCards)
                             {
                                 yield return ContinuousController.instance.StartCoroutine(CardObjectController.RemoveFromAllArea(selectedCard));
