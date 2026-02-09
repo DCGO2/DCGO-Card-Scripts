@@ -71,7 +71,7 @@ namespace DCGO.CardEffects.EX7
             {
                 List<CardSource> selectedCards = new List<CardSource>();
 
-                if (card.Owner.HandCards.Count((cardSource) => CanSelectCardSharedCondition(cardSource)) >= 1)
+                if (card.Owner.HandCards.Count(CanSelectCardSharedCondition) >= 1)
                 {
                     int maxCount = Math.Min(3, card.Owner.HandCards.Count(CanSelectCardSharedCondition));
 
@@ -102,7 +102,7 @@ namespace DCGO.CardEffects.EX7
                     }
                 }
 
-                if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, (cardSource) => CanSelectCardSharedCondition(cardSource)))
+                if (CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardSharedCondition))
                 {
                     int maxCount = 3 - selectedCards.Count;
 
@@ -137,70 +137,70 @@ namespace DCGO.CardEffects.EX7
                         }
 
                     }
+                }
 
-                    if (selectedCards.Count == 3)
-                    {
-                        SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
+                if (selectedCards.Count == 3)
+                {
+                    SelectCardEffect selectCardEffect = GManager.instance.GetComponent<SelectCardEffect>();
 
-                        selectCardEffect.SetUp(
-                            canTargetCondition: (cardSource) => true,
-                            canTargetCondition_ByPreSelecetedList: null,
-                            canEndSelectCondition: null,
-                            canNoSelect: () => false,
-                            selectCardCoroutine: null,
-                            afterSelectCardCoroutine: AfterSelectCardCoroutine,
-                            message: "Specify the order to place the cards in the top of the deck\n(cards will be placed so that cards with lower numbers are on top).",
-                            maxCount: selectedCards.Count,
-                            canEndNotMax: false,
-                            isShowOpponent: true,
-                            mode: SelectCardEffect.Mode.Custom,
-                            root: SelectCardEffect.Root.Custom,
-                            customRootCardList: selectedCards,
-                            canLookReverseCard: true,
-                            selectPlayer: card.Owner,
-                            cardEffect: activateClass);
+                    selectCardEffect.SetUp(
+                        canTargetCondition: (cardSource) => true,
+                        canTargetCondition_ByPreSelecetedList: null,
+                        canEndSelectCondition: null,
+                        canNoSelect: () => false,
+                        selectCardCoroutine: null,
+                        afterSelectCardCoroutine: AfterSelectCardCoroutine,
+                        message: "Specify the order to place the cards in the top of the deck\n(cards will be placed so that cards with lower numbers are on top).",
+                        maxCount: selectedCards.Count,
+                        canEndNotMax: false,
+                        isShowOpponent: true,
+                        mode: SelectCardEffect.Mode.Custom,
+                        root: SelectCardEffect.Root.Custom,
+                        customRootCardList: selectedCards,
+                        canLookReverseCard: true,
+                        selectPlayer: card.Owner,
+                        cardEffect: activateClass);
 
-                        yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
+                    yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
 
-                        IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
-                        {                       
-                            foreach (CardSource selectedCard in selectedCards)
+                    IEnumerator AfterSelectCardCoroutine(List<CardSource> cardSources)
+                    {                       
+                        foreach (CardSource selectedCard in selectedCards)
+                        {
+                            yield return ContinuousController.instance.StartCoroutine(CardObjectController.RemoveFromAllArea(selectedCard));
+                        }
+
+                        cardSources.Reverse();
+
+                        yield return ContinuousController.instance.StartCoroutine(
+                            CardObjectController.AddLibraryTopCards(cardSources));
+
+                        if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentSharedCondition))
+                        {
+                            SelectPermanentEffect selectPermanentEffect =
+                                GManager.instance.GetComponent<SelectPermanentEffect>();
+
+                            selectPermanentEffect.SetUp(
+                                selectPlayer: card.Owner,
+                                canTargetCondition: CanSelectPermanentSharedCondition,
+                                canTargetCondition_ByPreSelecetedList: null,
+                                canEndSelectCondition: null,
+                                maxCount: 1,
+                                canNoSelect: false,
+                                canEndNotMax: false,
+                                selectPermanentCoroutine: SelectPermanentCoroutine,
+                                afterSelectPermanentCoroutine: null,
+                                mode: SelectPermanentEffect.Mode.Custom,
+                                cardEffect: activateClass);
+
+                            selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to De-Digivolve.",
+                                "The opponent is selecting 1 Digimon to De-Digivolve.");
+                            yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
+
+                            IEnumerator SelectPermanentCoroutine(Permanent permanent)
                             {
-                                yield return ContinuousController.instance.StartCoroutine(CardObjectController.RemoveFromAllArea(selectedCard));
-                            }
-
-                            cardSources.Reverse();
-
-                            yield return ContinuousController.instance.StartCoroutine(
-                                CardObjectController.AddLibraryTopCards(cardSources));
-
-                            if (CardEffectCommons.HasMatchConditionPermanent(CanSelectPermanentSharedCondition))
-                            {
-                                SelectPermanentEffect selectPermanentEffect =
-                                    GManager.instance.GetComponent<SelectPermanentEffect>();
-
-                                selectPermanentEffect.SetUp(
-                                    selectPlayer: card.Owner,
-                                    canTargetCondition: CanSelectPermanentSharedCondition,
-                                    canTargetCondition_ByPreSelecetedList: null,
-                                    canEndSelectCondition: null,
-                                    maxCount: 1,
-                                    canNoSelect: false,
-                                    canEndNotMax: false,
-                                    selectPermanentCoroutine: SelectPermanentCoroutine,
-                                    afterSelectPermanentCoroutine: null,
-                                    mode: SelectPermanentEffect.Mode.Custom,
-                                    cardEffect: activateClass);
-
-                                selectPermanentEffect.SetUpCustomMessage("Select 1 Digimon to De-Digivolve.",
-                                    "The opponent is selecting 1 Digimon to De-Digivolve.");
-                                yield return ContinuousController.instance.StartCoroutine(selectPermanentEffect.Activate());
-
-                                IEnumerator SelectPermanentCoroutine(Permanent permanent)
-                                {
-                                    yield return ContinuousController.instance.StartCoroutine(
-                                        new IDegeneration(permanent, 1, activateClass).Degeneration());
-                                }
+                                yield return ContinuousController.instance.StartCoroutine(
+                                    new IDegeneration(permanent, 1, activateClass).Degeneration());
                             }
                         }
                     }
