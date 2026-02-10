@@ -34,10 +34,10 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
         {
             List<int> maxTrashCountList = new List<int>();
 
-            #region ‘I‘ğ‰Â”\ƒgƒ‰ƒbƒVƒ…–‡”‚ğ•ÏX‚·‚éŒø‰Ê
+            #region é¸æŠå¯èƒ½ãƒˆãƒ©ãƒƒã‚·ãƒ¥æšæ•°ã‚’å¤‰æ›´ã™ã‚‹åŠ¹æœ
             foreach (Player player in GManager.instance.turnStateMachine.gameContext.Players_ForTurnPlayer)
             {
-                #region ê‚Ìƒp[ƒ}ƒlƒ“ƒg‚ÌŒø‰Ê
+                #region å ´ã®ãƒ‘ãƒ¼ãƒãƒãƒ³ãƒˆã®åŠ¹æœ
                 foreach (Permanent permanent in player.GetBattleAreaPermanents())
                 {
                     foreach (ICardEffect cardEffect in permanent.EffectList(EffectTiming.None))
@@ -58,7 +58,7 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
                 }
                 #endregion
 
-                #region ƒvƒŒƒCƒ„[‚ÌŒø‰Ê
+                #region ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åŠ¹æœ
                 foreach (ICardEffect cardEffect in player.EffectList(EffectTiming.None))
                 {
                     if (cardEffect is IAddMaxTrashCountDigiXrosEffect)
@@ -77,7 +77,7 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
                 #endregion
             }
 
-            #region ƒJ[ƒh©g‚ÌŒø‰Ê
+            #region ã‚«ãƒ¼ãƒ‰è‡ªèº«ã®åŠ¹æœ
             if (card.PermanentOfThisCard() == null)
             {
                 foreach (ICardEffect cardEffect in card.EffectList(EffectTiming.None))
@@ -129,10 +129,10 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
         {
             List<int> maxTamerDigivolutionCardsCountList = new List<int>();
 
-            #region ‘I‘ğ‰Â”\ƒeƒCƒ}[i‰»Œ³–‡”‚ğ•ÏX‚·‚éŒø‰Ê
+            #region é¸æŠå¯èƒ½ãƒ†ã‚¤ãƒãƒ¼é€²åŒ–å…ƒæšæ•°ã‚’å¤‰æ›´ã™ã‚‹åŠ¹æœ
             foreach (Player player in GManager.instance.turnStateMachine.gameContext.Players_ForTurnPlayer)
             {
-                #region ê‚Ìƒp[ƒ}ƒlƒ“ƒg‚ÌŒø‰Ê
+                #region å ´ã®ãƒ‘ãƒ¼ãƒãƒãƒ³ãƒˆã®åŠ¹æœ
                 foreach (Permanent permanent in player.GetBattleAreaPermanents())
                 {
                     foreach (ICardEffect cardEffect in permanent.EffectList(EffectTiming.None))
@@ -153,7 +153,7 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
                 }
                 #endregion
 
-                #region ƒvƒŒƒCƒ„[‚ÌŒø‰Ê
+                #region ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åŠ¹æœ
                 foreach (ICardEffect cardEffect in player.EffectList(EffectTiming.None))
                 {
                     if (cardEffect is IAddMaxUnderTamerCountDigiXrosEffect)
@@ -172,7 +172,7 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
                 #endregion
             }
 
-            #region ƒJ[ƒh©g‚ÌŒø‰Ê
+            #region ã‚«ãƒ¼ãƒ‰è‡ªèº«ã®åŠ¹æœ
             if (card.PermanentOfThisCard() == null)
             {
                 foreach (ICardEffect cardEffect in card.EffectList(EffectTiming.None))
@@ -382,7 +382,9 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
                     if (_endSelectDigiXros)
                     {
                         _endSelectDigiXros = false;
-                        //break; TODO: Removed for not triggering digixros in all situations
+                        break; 
+                        //Previously, the break was commented out in order to resolve the below problem. I'm reintroducing the break to diagnose what digixross were not triggering.
+                        //break; Removed for not triggering digixros in all situations
                     }
 
                     bool canSelectHand = false;
@@ -518,7 +520,7 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
                         {
                             GManager.instance.commandText.OpenCommandText($"The opponent is choosing from which area to select {element.selectMessage}.", digiXros: true);
 
-                            #region AIƒ‚[ƒh
+                            #region AIãƒ¢ãƒ¼ãƒ‰
                             if (GManager.instance.IsAI)
                             {
                                 List<int> indexes = new List<int>();
@@ -624,7 +626,7 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
     }
     #endregion
 
-    #region Select Battle Area Permanent
+    #region è¼¯elect Battle Area Permanent
     IEnumerator SelectBattleAreaPermanent(DigiXrosCondition digiXrosCondition, DigiXrosConditionElement element, CardSource card)
     {
         bool CanSelectPermanentCondition(Permanent permanent) => permanent.TopCard.Owner.GetBattleAreaPermanents().Contains(permanent) && CanSelectDigiXros(element, permanent.TopCard, card);
@@ -927,7 +929,7 @@ public class SelectDigiXrosClass : MonoBehaviourPunCallbacks
     }
     #endregion
 
-    #region Œø‰Ê‚É‚æ‚Á‚Äi‰»Œ³‚ğ•t—^(“V–ìƒ†ƒE(BT10),ƒVƒƒƒEƒgƒ‚ƒ“X7ƒXƒyƒŠƒIƒ‹ƒ‚[ƒh(BT12))
+    #region åŠ¹æœã«ã‚ˆã£ã¦é€²åŒ–å…ƒã‚’ä»˜ä¸(å¤©é‡ãƒ¦ã‚¦(BT10),ã‚·ãƒ£ã‚¦ãƒˆãƒ¢ãƒ³X7ã‚¹ãƒšãƒªã‚ªãƒ«ãƒ¢ãƒ¼ãƒ‰(BT12))
     public IEnumerator AddDigivolutiuonCardsByEffect(CardSource card)
     {
         if (addDigivolutionCardInfos.Count >= 1)
