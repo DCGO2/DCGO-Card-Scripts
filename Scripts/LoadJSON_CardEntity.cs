@@ -9,6 +9,7 @@ namespace DCGO.CardEntities
     {
         public int prevCardIndex;
         public int setCardIndex;
+        [HideInInspector]
         public int promoCardIndex;
     }
 }
