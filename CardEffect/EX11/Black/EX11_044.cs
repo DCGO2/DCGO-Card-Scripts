@@ -225,7 +225,7 @@ namespace DCGO.CardEffects.EX11
                     selectCardEffect.SetUp(
                         canTargetCondition: HasProperTrait,
                         canTargetCondition_ByPreSelecetedList: null,
-                        canEndSelectCondition: CanEndSelectCondition,
+                        canEndSelectCondition: null,
                         canNoSelect: () => false,
                         selectCardCoroutine: SelectCardCoroutine,
                         afterSelectCardCoroutine: null,
@@ -244,11 +244,6 @@ namespace DCGO.CardEffects.EX11
                     selectCardEffect.SetUpCustomMessage("Select [Mineral] or [Rock] to place on bottom of digivolution cards.", "The opponent is selecting [Mineral] or [Rock] to place on bottom of digivolution cards.");
 
                     yield return ContinuousController.instance.StartCoroutine(selectCardEffect.Activate());
-
-                    bool CanEndSelectCondition(List<CardSource> cardSources)
-                    {
-                        return CardEffectCommons.HasNoElement(cardSources);
-                    }
 
                     IEnumerator SelectCardCoroutine(CardSource cardSource)
                     {
