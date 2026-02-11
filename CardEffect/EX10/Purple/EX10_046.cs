@@ -73,13 +73,13 @@ namespace DCGO.CardEffects.EX10
             if (timing == EffectTiming.OnStartMainPhase)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("if opponent has 10 or less in trash, trash top 2 from both players deck, then if 10 or more add 1 [Fallen Angel]/[Undead] from trash to hand", CanUseCondition, card);
+                activateClass.SetUpICardEffect("If opponent has 10 or less in trash, trash top 2 from both players deck, then if 10 or more, add 1 [Fallen Angel]/[Undead] from trash to hand", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                 {
-                    return "[Start of Your Main Phase] If your opponent has 10 or fewer cards in their trash, tash the top 2 cards of both players' decks. Then, if they have 10 or more cards in their trash, you may return 1 card with the [Fallen Angel] or [Undead] trait from your trash to the hand.";
+                    return "[Start of Your Main Phase] If your opponent has 10 or fewer cards in their trash, trash the top 2 cards of both players' decks. Then, if they have 10 or more cards in their trash, you may return 1 card with the [Fallen Angel] or [Undead] trait from your trash to the hand.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
@@ -101,13 +101,13 @@ namespace DCGO.CardEffects.EX10
             if (timing == EffectTiming.OnEnterFieldAnyone)
             {
                 ActivateClass activateClass = new ActivateClass();
-                activateClass.SetUpICardEffect("if opponent has 10 or less in trash, trash top 2 from both players deck, then if 10 or more add 1 [Fallen Angel]/[Undead] from trash to hand", CanUseCondition, card);
+                activateClass.SetUpICardEffect("If opponent has 10 or less in trash, trash top 2 from both players deck, then if 10 or more, add 1 [Fallen Angel]/[Undead] from trash to hand", CanUseCondition, card);
                 activateClass.SetUpActivateClass(CanActivateCondition, hashtable => SharedActivateCoroutine(hashtable, activateClass), -1, false, EffectDiscription());
                 cardEffects.Add(activateClass);
 
                 string EffectDiscription()
                 {
-                    return "[When Digivolving] If your opponent has 10 or fewer cards in their trash, tash the top 2 cards of both players' decks. Then, if they have 10 or more cards in their trash, you may return 1 card with the [Fallen Angel] or [Undead] trait from your trash to the hand.";
+                    return "[When Digivolving] If your opponent has 10 or fewer cards in their trash, trash the top 2 cards of both players' decks. Then, if they have 10 or more cards in their trash, you may return 1 card with the [Fallen Angel] or [Undead] trait from your trash to the hand.";
                 }
 
                 bool CanUseCondition(Hashtable hashtable)

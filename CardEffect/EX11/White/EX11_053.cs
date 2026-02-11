@@ -65,9 +65,9 @@ namespace DCGO.CardEffects.EX11
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
-                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
-                            || (CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card)
-                                && permanent.IsDigimon))
+                    return (CardEffectCommons.IsPermanentExistsOnOwnerBattleArea(permanent, card)
+                            || CardEffectCommons.IsPermanentExistsOnOwnerBreedingArea(permanent, card))
+                        && permanent.IsDigimon
                         && permanent.TopCard.EqualsCardName("King Drasil_7D6");
                 }
 
@@ -221,7 +221,7 @@ namespace DCGO.CardEffects.EX11
                             yield return null;
                         }
 
-                        if (selection == 1)
+                        if (selection == 0)
                         {
                             SelectHandEffect selectHandEffect = GManager.instance.GetComponent<SelectHandEffect>();
 

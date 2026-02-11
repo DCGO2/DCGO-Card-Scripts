@@ -338,7 +338,8 @@ namespace DCGO.CardEffects.EX11
 
             string SharedEffectName1()
             {
-                return $"May play 1 card with [Royal Base] in it's text for {ReducedPlayCost()} less.";
+                return "May play 1 card with [Royal Base] in it's text for 1 less per face-up card in your security."; 
+                // saved until we can find a method to refresh between card activations - return $"May play 1 card with [Royal Base] in it's text for {ReducedPlayCost()} less.";
             }
 
             string SharedEffectDescription1(string tag)

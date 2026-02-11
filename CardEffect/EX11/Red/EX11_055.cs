@@ -14,7 +14,7 @@ namespace DCGO.CardEffects.EX11
 
             string SharedEffectName = "Trash 1 [Composite] or [Wicked God] from hand to Draw 1 & gain 1 memory";
 
-            string SharedEffectDescription(string tag) => $"[{tag}] [On Play] [Start of Your Main Phase] By trashing 1 [Composite] or [Wicked God] trait card from your hand, <Draw 1> and gain 1 memory.";
+            string SharedEffectDescription(string tag) => $"[{tag}] By trashing 1 [Composite] or [Wicked God] trait card from your hand, <Draw 1> and gain 1 memory.";
 
             bool SharedCanActivateCondition(Hashtable hashtable)
             {
@@ -38,7 +38,7 @@ namespace DCGO.CardEffects.EX11
 
                 selectHandEffect.SetUp(
                     selectPlayer: card.Owner,
-                    canTargetCondition: (cardSource) => true,
+                    canTargetCondition: ValidDiscardCard,
                     canTargetCondition_ByPreSelecetedList: null,
                     canEndSelectCondition: null,
                     maxCount: discardCount,
