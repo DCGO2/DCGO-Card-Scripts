@@ -31,6 +31,38 @@ namespace DCGO.CardEffects.BT24
 
             #endregion
 
+            bool PermamentCondition(Permanent permanent)
+            {
+                return permanent.IsDigimon &&
+                    permanent.TopCard.HasLevel &&
+                    permanent.Level >= 6;
+            }
+
+            #region Ignore Battle
+
+            if (timing == EffectTiming.None)
+            {
+                DontBattleSecurityDigimonClass dontBattleSecurityDigimonClass = new DontBattleSecurityDigimonClass();
+                dontBattleSecurityDigimonClass.SetUpICardEffect("Ignore Battle", CanUseCondition, card);
+                dontBattleSecurityDigimonClass.SetUpDontBattleSecurityDigimonClass(CardSourceCondition: CardSourceCondition);
+                dontBattleSecurityDigimonClass.SetIsSecurityEffect(true);
+                dontBattleSecurityDigimonClass.SetNotShowUI(true);
+                cardEffects.Add(dontBattleSecurityDigimonClass);
+
+                bool CanUseCondition(Hashtable hashtable)
+                {
+                    return CardEffectCommons.CanUseIgnoreBattle(hashtable, card)
+                        && CardEffectCommons.HasMatchConditionOpponentsPermanent(card, PermamentCondition);
+                }
+
+                bool CardSourceCondition(CardSource cardSource)
+                {
+                    return cardSource == card;
+                }
+            }
+
+            #endregion
+
             #region Security
             if (timing == EffectTiming.SecuritySkill)
             {
@@ -48,14 +80,7 @@ namespace DCGO.CardEffects.BT24
                 bool CanUseCondition(Hashtable hashtable)
                 {
                     return CardEffectCommons.CanTriggerSecurityEffect(hashtable, card);
-                }
-
-                bool PermamentCondition(Permanent permanent)
-                {
-                    return permanent.IsDigimon &&
-                        permanent.TopCard.HasLevel && 
-                        permanent.Level >= 6;
-                }
+                }              
 
                 bool CanActivateCondition(Hashtable hashtable)
                 {
