@@ -61,7 +61,11 @@ namespace DCGO.CardEffects.EX11
                             || CardEffectCommons.HasMatchConditionOwnersBreedingPermanent(card, CanSelectPermanentCondition));
                 }
 
-                bool CanSelectCardCondition(CardSource cardSource) => cardSource.EqualsTraits("Royal Knight");
+                bool CanSelectCardCondition(CardSource cardSource)
+                {
+                    return cardSource.IsDigimon
+                        && cardSource.EqualsTraits("Royal Knight");
+                }
 
                 bool CanSelectPermanentCondition(Permanent permanent)
                 {
@@ -92,7 +96,7 @@ namespace DCGO.CardEffects.EX11
                         cardEffect: activateClass);
 
                     selectHandEffect.SetUpCustomMessage("Select 1 Royal Knight to place under a King Drasil_7D6.", "The opponent is selecting 1 card to place.");
-                    selectHandEffect.SetUpCustomMessage_ShowCard("Played Card");
+                    selectHandEffect.SetUpCustomMessage_ShowCard("Placed Card");
 
                     yield return StartCoroutine(selectHandEffect.Activate());
 
