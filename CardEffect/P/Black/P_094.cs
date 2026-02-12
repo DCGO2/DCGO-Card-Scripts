@@ -111,7 +111,7 @@ public class P_094 : CEntity_Effect
         {
             if (card.Owner.Enemy.GetBattleAreaPermanents().Count(SharedCanSelectPermanentCondition) == 1)
             {
-                List<Permanent> targetPermanent = card.Owner.Enemy.GetBattleAreaDigimons().Filter(SharedCanSelectPermanentCondition);
+                List<Permanent> targetPermanent = card.Owner.Enemy.GetBattleAreaPermanents().Filter(SharedCanSelectPermanentCondition);
 
                 yield return ContinuousController.instance.StartCoroutine(new DestroyPermanentsClass(targetPermanent, CardEffectCommons.CardEffectHashtable(activateClass)).Destroy());
             }
