@@ -98,7 +98,6 @@ namespace DCGO.CardEffects.EX9
                     return CardEffectCommons.IsExistOnBattleArea(card) && CardEffectCommons.IsOwnerTurn(card);
                 }
 
-                bool CanSelectPermanentCondition(Permanent permanent) => permanent == card.PermanentOfThisCard();
                 bool CanSelectCardCondition(CardSource cardSource)
                 {
                     if (cardSource.IsTamer && cardSource.CardNames.Contains("Arisa Kinosaki"))
