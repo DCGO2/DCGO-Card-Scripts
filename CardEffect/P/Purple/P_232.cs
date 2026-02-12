@@ -110,7 +110,7 @@ namespace DCGO.CardEffects.P
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card);
                 }
 
-                bool CardCondition(CardSource cardSource)
+                bool CanSelectCardCondition(CardSource cardSource)
                 {
                     return cardSource.IsDigimon
                         && cardSource.HasLevel
@@ -165,19 +165,44 @@ namespace DCGO.CardEffects.P
 
                             #endregion
 
-                            if (selectedDigimon != null) yield return ContinuousController.instance.StartCoroutine(
-                                CardEffectCommons.DigivolveIntoHandOrTrashCard(
+                            bool canSelectHand = CardEffectCommons.HasMatchConditionOwnersHand(card, CanSelectCardCondition);
+                            bool canSelectTrash = CardEffectCommons.HasMatchConditionOwnersCardInTrash(card, CanSelectCardCondition);
+
+                            if (canSelectHand || canSelectTrash)
+                            {
+                                if (canSelectHand && canSelectTrash)
+                                {
+                                    List<SelectionElement<bool>> selectionElements = new List<SelectionElement<bool>>()
+                                    {
+                                        new SelectionElement<bool>(message: $"From hand", value : true, spriteIndex: 0),
+                                        new SelectionElement<bool>(message: $"From trash", value : false, spriteIndex: 1),
+                                    };
+
+                                    string selectPlayerMessage = "From which area do you digivolve a card?";
+                                    string notSelectPlayerMessage = "The opponent is choosing from which area to digivolve a card.";
+
+                                    GManager.instance.userSelectionManager.SetBoolSelection(selectionElements: selectionElements, selectPlayer: card.Owner, selectPlayerMessage: selectPlayerMessage, notSelectPlayerMessage: notSelectPlayerMessage);
+                                }
+                                else
+                                {
+                                    GManager.instance.userSelectionManager.SetBool(canSelectHand);
+                                }
+
+                                yield return ContinuousController.instance.StartCoroutine(GManager.instance.userSelectionManager.WaitForEndSelect());
+
+                                bool fromHand = GManager.instance.userSelectionManager.SelectedBoolValue;
+
+                                yield return ContinuousController.instance.StartCoroutine(CardEffectCommons.DigivolveIntoHandOrTrashCard(
                                     targetPermanent: selectedDigimon,
-                                    cardCondition: CardCondition,
-                                    payCost: true,
-                                    reduceCostTuple: (reduceCost: 3, reduceCostCardCondition: null),
-                                    fixedCostTuple: null,
-                                    ignoreDigivolutionRequirementFixedCost: -1,
-                                    isHand: true,
-                                    activateClass: activateClass,
-                                    successProcess: null
-                                )
-                            );
+                                        cardCondition: CanSelectCardCondition,
+                                        payCost: true,
+                                        reduceCostTuple: (reduceCost: 3, reduceCostCardCondition: null),
+                                        fixedCostTuple: null,
+                                        ignoreDigivolutionRequirementFixedCost: -1,
+                                        isHand: fromHand,
+                                        activateClass: activateClass,
+                                        successProcess: null));
+                            }
                         }
                     }
                 }
