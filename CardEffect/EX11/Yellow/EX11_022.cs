@@ -249,8 +249,8 @@ namespace DCGO.CardEffects.EX11
                 {
                     return CardEffectCommons.IsPermanentExistsOnOwnerBattleAreaDigimon(permanent, card)
                         && permanent != card.PermanentOfThisCard()
-                        && permanent.IsToken
-                            || permanent.TopCard.EqualsTraits("Puppet");
+                        && (permanent.IsToken
+                            || permanent.TopCard.EqualsTraits("Puppet"));
                 }
 
                 bool CanUseCondition(Hashtable hashtable)
