@@ -96,7 +96,7 @@ namespace DCGO.CardEffects.EX11
                         cardEffect: activateClass);
 
                     selectHandEffect.SetUpCustomMessage("Select 1 Royal Knight to place under a King Drasil_7D6.", "The opponent is selecting 1 card to place.");
-                    selectHandEffect.SetUpCustomMessage_ShowCard("Placed Card");
+                    selectHandEffect.SetUpCustomMessage_ShowCard("Selected Card");
 
                     yield return StartCoroutine(selectHandEffect.Activate());
 
