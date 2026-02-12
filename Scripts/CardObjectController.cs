@@ -979,7 +979,11 @@ public class CardObjectController : MonoBehaviour
         {
             yield return ContinuousController.instance.StartCoroutine(RemoveFromAllArea(cardSource));
 
-            if (!cardSource.IsToken)
+            if (cardSource.IsDigiEgg)
+            {
+                cardSource.Owner.DigitamaLibraryCards.Add(cardSource);
+            }
+            else if (!cardSource.IsToken)
             {
                 if (!faceUp)
                     cardSource.SetReverse();
