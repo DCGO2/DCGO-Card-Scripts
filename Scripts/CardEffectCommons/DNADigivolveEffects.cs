@@ -69,6 +69,8 @@ public partial class CardEffectCommons
                     {
                         foreach(Permanent secondPermanent in owner.GetBattleAreaDigimons().Filter(permanent => permanentCondition == null || permanentCondition(permanent)))
                         {
+                            if (secondPermanent == tempPermanent)
+                                continue;
                             if(DNACondition.elements[1].EvoRootCondition(secondPermanent))
                             {
                                 isValid = true;
